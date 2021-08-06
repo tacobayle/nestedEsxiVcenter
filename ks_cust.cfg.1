@@ -1,0 +1,20 @@
+# Accept VMware License agreement
+accepteula
+
+# Set root password
+rootpw Avi_2021
+
+# Install ESXi on the first disk, ignore any SSD and do not create a VMFS
+install --ignoressd --firstdisk --overwritevmfs --novmfsondisk
+
+# Set serial at install
+# serialnum --esx=xxxx
+
+# Set the keyboard
+keyboard US Default
+
+# Set the network to DHCP on the first network adapter
+network --bootproto=static --device=vmnic0 --ip=10.41.134.132 --netmask=255.255.252.0 --gateway=10.41.132.1 --nameserver=10.23.108.1[,10.23.108.2] --hostname=esxi-1.mydomain.com
+
+# reboot the host after installation is completed
+reboot

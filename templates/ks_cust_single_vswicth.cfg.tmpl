@@ -1,0 +1,71 @@
+# Accept VMware License agreement
+accepteula
+
+# Set root password
+rootpw ${esxi_root_password}
+
+# Install ESXi on the first disk, ignore any SSD and do not create a VMFS
+install --ignoressd --firstdisk --overwritevmfs
+
+# Set serial at install
+# serialnum --esx=xxxx
+
+# Set the keyboard
+keyboard '${keyboard_type}'
+
+# Set the network to DHCP on the first network adapter
+network --bootproto=static --device=${device_mgmt} --ip=${ip} --netmask=${netmask} --gateway=${gateway} --nameserver=${nameserver} --hostname=${hostname}
+
+# reboot the host after installation is completed
+reboot
+
+%firstboot --interpreter=busybox
+
+# enable & start remote ESXi Shell  (SSH)
+vim-cmd hostsvc/enable_ssh
+vim-cmd hostsvc/start_ssh
+
+# Suppress ESXi Shell warning
+esxcli system settings advanced set -o /UserVars/SuppressShellWarning -i 1
+
+# Suppress ESXi Shell warning
+esxcli system settings advanced set -o /Disk/AllowUsbClaimedAsSSD -i 1
+
+# Network config
+esxcli network ip interface remove --interface-name=vmk0
+esxcli network ip interface add --interface-name=vmk0 --portgroup-name="Management Network"
+esxcli network ip interface ipv4 set --interface-name=vmk0 --ipv4=${ip} --netmask=${netmask} --gateway=${gateway} --type=static
+esxcli network ip interface tag add -i vmk0 -t Management
+# Adds a tag on a given VMkernel network interface. Supported tags are: Management, VMotion, faultToleranceLogging, vSphereReplication, vSphereReplicationNFC, vSphereProvisioning, VSAN, VSANWitness, vSphereBackupNFC, PrecisionTimeProtocol, VSANReplication
+#
+#esxcli network vswitch standard portgroup add -p "VMotion Network" -v "vSwitch0"
+#esxcli network ip interface add --interface-name=vmk1 --portgroup-name="VMotion Network"
+#esxcli network ip interface ipv4 set --interface-name=vmk1 --ipv4=${ip_vmotion} --netmask=${netmask_vmotion} --type=static
+#esxcli network ip interface tag add -i vmk1 -t VMotion
+#
+#esxcli network vswitch standard portgroup add -p "VSAN Network" -v "vSwitch0"
+#esxcli network ip interface add --interface-name=vmk2 --portgroup-name="VSAN Network"
+#esxcli network ip interface ipv4 set --interface-name=vmk2 --ipv4=${ip_vsan} --netmask=${netmask_vsan} --type=static
+#esxcli network ip interface tag add -i vmk2 -t VSAN
+#
+for i in $(seq 1 ${nic_amount}); do esxcli network vswitch standard uplink add -u vmnic$i -v vSwitch0 ; done
+#
+# Other config
+# This settings should set (to be validated) NTP service startup policy to: "Start and stop with host"
+esxcli system ntp set --server ${ntp} --enabled true
+# Direct Console User Interface (DCUI) idle time before DCUI is automatically logged out
+esxcli system settings advanced set -o /UserVars/DcuiTimeOut -i 7200
+# ESXiShellInteractiveTimeOut idle time before an interactive shell is automatically logged out
+esxcli system settings advanced set -o /UserVars/ESXiShellInteractiveTimeOut -i 7200
+# Host Client CEIP opt-in state (2 for no)
+esxcli system settings advanced set -o /UserVars/HostClientCEIPOptIn -i 2
+# Default console to use when clicking on a VM screen shot in Host Client
+esxcli system settings advanced set -o /UserVars/HostClientDefaultConsole -s vmrc
+# Whether or not to enable MOTD notification on login for Host Client
+esxcli system settings advanced set -o /UserVars/HostClientEnableMOTDNotification -i 0
+# Whether or not to enable visual effects for Host Client
+esxcli system settings advanced set -o /UserVars/HostClientEnableVisualEffects -i 1
+# Default timeout for Host Client sessions in seconds
+esxcli system settings advanced set -o /UserVars/HostClientSessionTimeout -i 7200
+# Whether or not to show only recent objects in Host Client
+esxcli system settings advanced set -o /UserVars/HostClientShowOnlyRecentObjects -i 0

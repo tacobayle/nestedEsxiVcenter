@@ -1,0 +1,158 @@
+#cloud-config
+users:
+  - name: ${username}
+    lock_passwd: true
+    shell: /bin/bash
+    sudo:  ALL=(ALL) NOPASSWD:ALL
+    chpasswd: {expire: False}
+    ssh_authorized_keys:
+      - ${pubkey}
+
+packages:
+  - language-pack-en
+  - python3-pip
+  - python-pip
+  - python-jmespath
+  - sshpass
+  - bind9
+  - bind9utils
+  - bind9-doc
+  - bind9-host
+  - ntp
+
+write_files:
+  - content: |
+      #!/bin/bash
+      #
+      #
+      #
+      iface=`ip -o link show | awk -F': ' '{print $2}' | tail -1`
+      mac=`ip -o link show | awk -F'link/ether ' '{print $2}' | awk -F' ' '{print $1}'| tail -1`
+      hostname=`hostname`
+      echo "${ip} $hostname" | sudo tee -a /etc/hosts
+      cp ${netplanFile} ${netplanFile}.old
+      echo "network:" | sudo tee ${netplanFile}
+      echo "    ethernets:" | sudo tee -a ${netplanFile}
+      echo "        $iface:" | sudo tee -a ${netplanFile}
+      echo "            dhcp4: false" | sudo tee -a ${netplanFile}
+      echo "            addresses: [${ipCidr}]" | sudo tee -a ${netplanFile}
+      echo "            match:" | sudo tee -a ${netplanFile}
+      echo "                macaddress: $mac" | sudo tee -a ${netplanFile}
+      echo "            set-name: $iface" | sudo tee -a ${netplanFile}
+      echo "            gateway4: ${defaultGw}" | sudo tee -a ${netplanFile}
+      echo "            nameservers:" | sudo tee -a ${netplanFile}
+      echo "              addresses: [${dns}]" | sudo tee -a ${netplanFile}
+      echo "    version: 2" | sudo tee -a ${netplanFile}
+      sudo netplan apply
+      #
+      # NTP config
+      #
+      #sudo cp /etc/ntp.conf /etc/ntp.conf.old
+      #sudo tee /etc/ntp.conf  > /dev/null <<EOT
+      #pool 0.ubuntu.pool.ntp.org iburst
+      #pool 1.ubuntu.pool.ntp.org iburst
+      #pool 2.ubuntu.pool.ntp.org iburst
+      #pool 3.ubuntu.pool.ntp.org iburst
+      #EOT
+      cp /etc/ntp.conf /etc/ntp.conf.old
+      rm /etc/ntp.conf
+      touch /etc/ntp.conf
+      IFS=","
+      ntp_servers=${ntp}
+      for ntp_server in $ntp_servers
+      do
+        echo "pool $ntp_server iburst" | tee -a /etc/ntp.conf
+      done
+      #
+      # Bind config
+      #
+      sudo cp /etc/bind/named.conf /etc/bind/named.conf.old
+      sudo tee /etc/bind/named.conf > /dev/null <<EOT
+      include "/etc/bind/named.conf.options";
+      include "/etc/bind/named.conf.local";
+      include "/etc/bind/named.conf.default-zones";
+      key ${keyName}. {
+       algorithm hmac-md5;
+       secret ${secret};
+       };
+      EOT
+      #
+      sudo cp /etc/bind/named.conf.options /etc/bind/named.conf.options.old
+      sudo tee /etc/bind/named.conf.options > /dev/null <<EOT
+      options {
+        directory "/var/cache/bind";
+        recursion yes;
+        notify yes;
+        allow-query { any; };
+        allow-query-cache { any; };
+        allow-recursion { any; };
+        forwarders { ${forwarders} ; };
+        dnssec-validation no;
+        auth-nxdomain no; # conform to RFC1035
+        listen-on { localhost; any; };
+        listen-on-v6 { localhost; any; };
+        allow-transfer { any; };
+      };
+      EOT
+      #
+      sudo cp /etc/bind/named.conf.local /etc/bind/named.conf.local.old
+      sudo tee /etc/bind/named.conf.local > /dev/null <<EOT
+      zone "${domain}" {
+        type master;
+        allow-transfer { any; };
+        update-policy {
+          grant myKeyName zonesub any;
+        };
+        file "/var/lib/bind/db.${domain}";
+      };
+      zone "${reverse}.in-addr.arpa" {
+        type master;
+        update-policy {
+          grant myKeyName zonesub any;
+        };
+        allow-transfer { any; };
+        file "/var/lib/bind/db.${reverse}";
+      };
+      EOT
+      #
+      sudo tee /var/lib/bind/db.${domain} > /dev/null <<EOT
+      \$ORIGIN .
+      \$TTL 60
+      ${domain}                IN SOA dns.${domain}. admin.${domain}. (
+                                      329        ; serial
+                                      604800     ; refresh (1 week)
+                                      86400      ; retry (1 day)
+                                      2419200    ; expire (4 weeks)
+                                      604800     ; minimum (1 week)
+                                      )
+                              NS      dns.${domain}.
+      \$ORIGIN ${domain}.
+      dns                     A       ${ip}
+      \$TTL 3600       ; 1 hour
+      EOT
+      #
+      sudo tee /var/lib/bind/db.${reverse} > /dev/null <<EOT
+      \$ORIGIN .
+      \$TTL 60
+      ${reverse}.in-addr.arpa     IN SOA  dns.${domain}. admin.${domain}. (
+                                      298        ; serial
+                                      604800     ; refresh (1 week)
+                                      86400      ; retry (1 day)
+                                      2419200    ; expire (4 weeks)
+                                      604800     ; minimum (1 week)
+                                      )
+                              NS      dns.${domain}.
+      \$ORIGIN ${reverse}.in-addr.arpa.
+      ${lastOctet}            PTR     dns.${domain}.
+      EOT
+      sudo service bind9 restart
+      echo "cloud init done" | tee /tmp/cloudInitDone.log
+    path: /opt/bootstrap.sh
+    permissions: 0755
+
+  - content: |
+      ${username} ALL=(ALL) NOPASSWD:ALL
+    path: /etc/sudoers.d/${username}
+
+runcmd:
+  - /opt/bootstrap.sh

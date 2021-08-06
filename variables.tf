@@ -1,0 +1,10 @@
+variable "esxi" {}
+variable "esxi_root_password" {}
+variable "vsphere_user" {}
+variable "vsphere_password" {}
+variable "vcenter_underlay" {}
+variable "bind_password" {}
+variable "dns-ntp" {}
+variable "ntp" {}
+variable "dns" {}
+variable "vcenter" {}

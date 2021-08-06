@@ -1,0 +1,57 @@
+- hosts: localhost
+  tasks:
+
+    #    - name: Migrate uplinks to the VDS
+    #      vmware_dvs_host:
+    #        hostname: 10.41.134.135
+    #        username: administrator@mydomain.com
+    #        password: Avi_2021
+    #        validate_certs: false
+    #        esxi_hostname: 10.41.134.131
+    #        switch_name: dvs-0-mgmt
+    #        vmnics:
+    #          - vmnic3
+    #        state: present
+
+
+    - name: Migrate vmk0 (Mgmt) to the VDS
+      vmware_migrate_vmk:
+        hostname: "{{ vcenter.ip }}"
+        username: "administrator@{{ vcenter.sso.domain_name }}"
+        password: "{{ lookup('env', 'TF_VAR_vcenter_root_password') }}"
+        validate_certs: false
+        esxi_hostname: "{{ item }}"
+        device: 'vmk0'
+        current_switch_name: 'vSwitch0'
+        current_portgroup_name: 'Management Network'
+        migrate_switch_name: "{{ vcenter.dvs.basename }}-0-mgmt"
+        migrate_portgroup_name: management-vmk
+      loop: "{{ esxi.ips_mgmt }}"
+
+    - name: Migrate vmk1 (VMotion) to the VDS
+      vmware_migrate_vmk:
+        hostname: "{{ vcenter.ip }}"
+        username: "administrator@{{ vcenter.sso.domain_name }}"
+        password: "{{ lookup('env', 'TF_VAR_vcenter_root_password') }}"
+        validate_certs: false
+        esxi_hostname: "{{ item }}"
+        device: 'vmk1'
+        current_switch_name: 'vSwitch1'
+        current_portgroup_name: 'VMotion Network'
+        migrate_switch_name: "{{ vcenter.dvs.basename }}-1-VMotion"
+        migrate_portgroup_name: "{{ vcenter.dvs.portgroup.VMotion.name }}"
+      loop: "{{ esxi.ips_mgmt }}"
+
+    - name: Migrate vmk2 (VSAN) to the VDS
+      vmware_migrate_vmk:
+        hostname: "{{ vcenter.ip }}"
+        username: "administrator@{{ vcenter.sso.domain_name }}"
+        password: "{{ lookup('env', 'TF_VAR_vcenter_root_password') }}"
+        validate_certs: false
+        esxi_hostname: "{{ item }}"
+        device: 'vmk2'
+        current_switch_name: 'vSwitch2'
+        current_portgroup_name: 'VSAN Network'
+        migrate_switch_name: "{{ vcenter.dvs.basename }}-2-VSAN"
+        migrate_portgroup_name: "{{ vcenter.dvs.portgroup.VSAN.name }}"
+      loop: "{{ esxi.ips_mgmt }}"

@@ -1,0 +1,139 @@
+{
+  "vcenter_underlay": {
+    "dc": "sof2-01-vc08",
+    "cluster": "sof2-01-vc08c01",
+    "datastore": "sof2-01-vc08c01-vsan",
+    "resource_pool": "sof2-01-vc08c01/Resources",
+    "folder": "nicNestedEsxiVcenter",
+    "server": "sof2-01-vc08.oc.vmware.com",
+    "cl": {
+      "name": "ubuntu",
+      "file": "/home/ubuntu/bionic-server-cloudimg-amd64.ova"
+    },
+    "networks": {
+      "management": {
+        "name": "vxw-dvs-34-virtualwire-3-sid-1080002-sof2-01-vc08-avi-mgmt",
+        "netmask": "255.255.252.0",
+        "prefix": "22",
+        "gateway": "10.41.132.1"
+      },
+      "vmotion": {
+        "name": "vxw-dvs-34-virtualwire-120-sid-1080119-sof2-01-vc08-avi-dev116",
+        "netmask": "255.255.255.0",
+        "prefix": "24",
+        "gateway": "100.64.133.1"
+      },
+      "vsan": {
+        "name": "vxw-dvs-34-virtualwire-119-sid-1080118-sof2-01-vc08-avi-dev115",
+        "netmask": "255.255.255.0",
+        "prefix": "24",
+        "gateway": "100.64.132.1"
+      }
+    }
+  },
+  "dns": {
+    "nameserver": "10.41.134.134",
+    "domain": "mydomain.com"
+  },
+  "ntp": {
+    "server": "time.vmware.com",
+    "timezone": "Europe/Zurich"
+  },
+  "esxi": {
+    "count": 3,
+    "iso_source_location": "/home/ubuntu/bin/VMware-VMvisor-Installer-7.0U2a-17867351.x86_64.iso",
+    "iso_location": "/tmp/esxi",
+    "boot_cfg_location": "efi/boot/boot.cfg",
+    "boot_cfg_lines": ["kernelopt=runweasel ks=cdrom:/KS_CUST.CFG"],
+    "bios": "efi",
+    "guest_id": "vmkernel65Guest",
+    "keyboard_type": "US Default",
+    "device_mgmt": "vmnic3",
+    "networks": ["vxw-dvs-34-virtualwire-3-sid-1080002-sof2-01-vc08-avi-mgmt", "vxw-dvs-34-virtualwire-119-sid-1080118-sof2-01-vc08-avi-dev115", "vxw-dvs-34-virtualwire-120-sid-1080119-sof2-01-vc08-avi-dev116"],
+    "ips_mgmt": ["10.41.134.131", "10.41.134.132", "10.41.134.133"],
+    "ips_vmotion": ["100.64.133.11", "100.64.133.12", "100.64.133.13"],
+    "ips_vsan": ["100.64.132.11", "100.64.132.12", "100.64.132.13"],
+    "single_standard_vswitch": false,
+    "basename": "esxi",
+    "cpu": 8,
+    "memory": 65536,
+    "disks": [
+      {
+        "size": 32,
+        "label": "disk0",
+        "unit_number": 0,
+        "thin_provisioned": true
+      },
+      {
+        "size": 64,
+        "label": "disk1",
+        "unit_number": 1,
+        "thin_provisioned": true
+      },
+      {
+        "size": 448,
+        "label": "disk2",
+        "unit_number": 2,
+        "thin_provisioned": true
+      }
+    ],
+    "wait_for_guest_net_timeout": 0,
+    "nested_hv_enabled": "true"
+  },
+  "dns-ntp": {
+    "create": true,
+    "ip": "10.41.134.134",
+    "dns": "10.23.108.1, 10.16.142.111",
+    "name": "dns-ntp",
+    "cpu": 2,
+    "memory": 4096,
+    "disk": 20,
+    "public_key_path": "~/.ssh/cloudKey.pub",
+    "private_key_path": "~/.ssh/cloudKey",
+    "wait_for_guest_net_timeout": 2,
+    "username": "ubuntu",
+    "netplanFile": "/etc/netplan/50-cloud-init.yaml",
+    "bind": {
+      "keyName": "myKeyName",
+      "forwarders": "10.23.108.1; 10.23.108.2; 10.16.142.111",
+      "reverse": "134.41.10"
+    },
+    "ntp": "0.ubuntu.pool.ntp.org,1.ubuntu.pool.ntp.org,2.ubuntu.pool.ntp.org,3.ubuntu.pool.ntp.org"
+  },
+  "vcenter": {
+    "iso_source_location": "/home/ubuntu/bin/VMware-VCSA-all-7.0.2-17958471.iso",
+    "json_config_file": "vcsa-cli-installer/templates/install/vCSA_with_cluster_on_ESXi.json",
+    "datacenter": "dc1",
+    "cluster": "cluster1",
+    "cache_disk": "mpx.vmhba0:C0:T1:L0",
+    "capacity_disk": "mpx.vmhba0:C0:T2:L0",
+    "thin_disk_mode": true,
+    "deployment_option": "small",
+    "name": "vcsa-01",
+    "ip": "10.41.134.135",
+    "ssh_enable": true,
+    "sso": {
+      "domain_name": "mydomain.com"
+    },
+    "ceip_enabled": false,
+    "dvs" : {
+      "basename": "dvs",
+      "mtu": 1500,
+      "discovery_protocol": "lldp",
+      "portgroup": {
+        "management": {
+          "name": "management",
+          "vlan": 0
+        },
+        "VMotion": {
+          "name": "VMotion",
+          "vlan": 100
+        },
+        "VSAN": {
+          "name": "VSAN",
+          "vlan": 110
+        }
+      }
+    }
+  }
+}

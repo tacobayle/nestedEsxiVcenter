@@ -120,7 +120,25 @@ if [[ $(jq -c -r .esxi.single_standard_vswitch $jsonFile) == false ]] ; then
     govc dvs.add -dvs "$(jq -r .vcenter.dvs.basename $jsonFile)-2-VSAN" -pnic=vmnic2 $ip
   done
 fi
-
+#
+#
+#
 ansible-playbook pb-migrate-vmk.yml --extra-vars "@variables.json"
+#
+#
+#
 govc vm.network.change -vm $(jq -r .vcenter.name $jsonFile) -net $(jq -r .vcenter.dvs.portgroup.management.name $jsonFile) ethernet-0
-
+#
+#
+#
+IFS=$'\n'
+echo ""
+echo "++++++++++++++++++++++++++++++++"
+for ip in $(cat $jsonFile | jq -c -r .esxi.ips_mgmt[])
+do
+export GOVC_URL=$ip
+govc host.vswitch.remove vSwitch0
+govc host.vswitch.remove vSwitch1
+govc host.vswitch.remove vSwitch2
+govc host.esxcli
+done

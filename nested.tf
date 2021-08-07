@@ -84,10 +84,10 @@ resource "null_resource" "wait_vsca" {
   }
 }
 
-resource "null_resource" "vcenter_configure" {
-  depends_on = [null_resource.wait_vsca]
-
-  provisioner "local-exec" {
-    command = "/bin/bash vCenter_config.sh"
-  }
-}
+//resource "null_resource" "vcenter_configure" {
+//  depends_on = [null_resource.wait_vsca]
+//
+//  provisioner "local-exec" {
+//    command = "/bin/bash vCenter_config.sh"
+//  }
+//}

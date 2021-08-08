@@ -57,4 +57,5 @@
       loop: "{{ vcenter_underlay.networks.management.esxi_ips }}"
       register: result
       until: result is not failed
+      retries: 5
 

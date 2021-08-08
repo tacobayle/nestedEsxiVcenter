@@ -24,7 +24,7 @@ else
 fi
 #
 export GOVC_DATACENTER=$(cat $jsonFile | jq -r .vcenter_underlay.dc)
-export GOVC_USERNAME=$(echo TF_VAR_vsphere_username)
+export GOVC_USERNAME=$(echo $TF_VAR_vsphere_username)
 export GOVC_PASSWORD=$(echo $TF_VAR_vsphere_password)
 export GOVC_URL=$(cat $jsonFile | jq -r .vcenter_underlay.server)
 export GOVC_INSECURE=true

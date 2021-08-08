@@ -10,7 +10,7 @@ if [[ $(jq -c -r .esxi.single_standard_vswitch $jsonFile) == false ]] ; then
   govc dvs.portgroup.add -dvs "$(jq -r .vcenter.dvs.basename $jsonFile)-1-VMotion" -vlan 0 "$(jq -r .vcenter.dvs.portgroup.VMotion.name $jsonFile)"
   govc dvs.portgroup.add -dvs "$(jq -r .vcenter.dvs.basename $jsonFile)-2-VSAN" -vlan 0 "$(jq -r .vcenter.dvs.portgroup.VSAN.name $jsonFile)"
   IFS=$'\n'
-  for ip in $(jq -r .esxi.ips_mgmt[] $jsonFile)
+  for ip in $(jq -r .vcenter_underlay.networks.management.esxi_ips[] $jsonFile)
   do
     govc dvs.add -dvs "$(jq -r .vcenter.dvs.basename $jsonFile)-0-mgmt" -pnic=vmnic0 $ip
     govc dvs.add -dvs "$(jq -r .vcenter.dvs.basename $jsonFile)-1-VMotion" -pnic=vmnic1 $ip

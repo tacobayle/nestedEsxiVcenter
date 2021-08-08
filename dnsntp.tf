@@ -4,9 +4,9 @@ data "template_file" "dnsntp_userdata" {
   vars = {
     pubkey        = file(var.dns-ntp.public_key_path)
     username = var.dns-ntp.username
-    ipCidr  = "${var.dns-ntp.ip}/${var.vcenter_underlay.networks.management.prefix}"
-    ip = var.dns-ntp.ip
-    lastOctet = split(".", var.dns-ntp.ip)[3]
+    ipCidr  = "${var.vcenter_underlay.networks.management.dns-ntp_ip}/${var.vcenter_underlay.networks.management.prefix}"
+    ip = var.vcenter_underlay.networks.management.dns-ntp_ip
+    lastOctet = split(".", var.vcenter_underlay.networks.management.dns-ntp_ip)[3]
     defaultGw = var.vcenter_underlay.networks.management.gateway
     dns      = var.dns-ntp.dns
     netplanFile = var.dns-ntp.netplanFile
@@ -58,7 +58,7 @@ resource "vsphere_virtual_machine" "dnsntp" {
   }
 
   connection {
-    host        = var.dns-ntp.ip
+    host        = var.vcenter_underlay.networks.management.dns-ntp_ip
     type        = "ssh"
     agent       = false
     user        = var.dns-ntp.username

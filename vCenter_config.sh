@@ -77,7 +77,7 @@ curl_put $token '{"name":'\"$(jq -r .ntp.timezone $jsonFile)\"'}' $api_host "app
 #done
 IFS=$'\n'
 count=0
-for ip in $(jq -r .esxi.ips_mgmt[] $jsonFile)
+for ip in $(jq -r .vcenter_underlay.networks.management.esxi_ips[] $jsonFile)
 do
   if [[ $count -ne 0 ]] ; then
   echo "Adding host $ip in the cluster"
@@ -113,7 +113,7 @@ if [[ $(jq -c -r .esxi.single_standard_vswitch $jsonFile) == false ]] ; then
   govc dvs.portgroup.add -dvs "$(jq -r .vcenter.dvs.basename $jsonFile)-1-VMotion" -vlan 0 "$(jq -r .vcenter.dvs.portgroup.VMotion.name $jsonFile)"
   govc dvs.portgroup.add -dvs "$(jq -r .vcenter.dvs.basename $jsonFile)-2-VSAN" -vlan 0 "$(jq -r .vcenter.dvs.portgroup.VSAN.name $jsonFile)"
   IFS=$'\n'
-  for ip in $(jq -r .esxi.ips_mgmt[] $jsonFile)
+  for ip in $(jq -r .vcenter_underlay.networks.management.esxi_ips[] $jsonFile)
   do
     govc dvs.add -dvs "$(jq -r .vcenter.dvs.basename $jsonFile)-0-mgmt" -pnic=vmnic0 $ip
     govc dvs.add -dvs "$(jq -r .vcenter.dvs.basename $jsonFile)-1-VMotion" -pnic=vmnic1 $ip
@@ -127,18 +127,29 @@ ansible-playbook pb-migrate-vmk.yml --extra-vars "@variables.json"
 #
 #
 #
-govc vm.network.change -vm $(jq -r .vcenter.name $jsonFile) -net $(jq -r .vcenter.dvs.portgroup.management.name $jsonFile) ethernet-0
+echo "Update vCenter Appliance port group location"
+govc vm.network.change -vm $(jq -r .vcenter.name $jsonFile) -net $(jq -r .vcenter.dvs.portgroup.management.name $jsonFile) ethernet-0 &
 #
 #
 #
 IFS=$'\n'
+export GOVC_USERNAME="root"
+unset GOVC_DATACENTER
 echo ""
 echo "++++++++++++++++++++++++++++++++"
-for ip in $(cat $jsonFile | jq -c -r .esxi.ips_mgmt[])
+for ip in $(cat $jsonFile | jq -c -r .vcenter_underlay.networks.management.esxi_ips[])
 do
 export GOVC_URL=$ip
+echo "Deleting port group called Management Network for Host $ip"
+govc host.portgroup.remove "Management Network"
+echo "Deleting port group called VMotion Network for Host $ip"
+govc host.portgroup.remove "VMotion Network"
+echo "Deleting port group called VSAN Network for Host $ip"
+govc host.portgroup.remove "VSAN Network"
+echo "Deleting vswitch called vSwitch0 for Host $ip"
 govc host.vswitch.remove vSwitch0
+echo "Deleting vswitch called vSwitch1 for Host $ip"
 govc host.vswitch.remove vSwitch1
+echo "Deleting vswitch called vSwitch2 for Host $ip"
 govc host.vswitch.remove vSwitch2
-govc host.esxcli
 done

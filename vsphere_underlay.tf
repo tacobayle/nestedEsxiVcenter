@@ -18,8 +18,8 @@ data "vsphere_resource_pool" "pool" {
 }
 
 data "vsphere_network" "esxi_networks" {
-  count = length(var.esxi.networks)
-  name = var.esxi.networks[count.index]
+  count = length(values(var.vcenter_underlay.networks))
+  name = values(var.vcenter_underlay.networks)[count.index].name
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 

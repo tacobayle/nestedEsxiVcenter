@@ -50,7 +50,7 @@ echo ""
 echo "++++++++++++++++++++++++++++++++"
 echo "Building template file"
 template_file_location="templates/$(basename $(jq -r .vcenter.json_config_file $jsonFile))"
-contents="$(jq '.new_vcsa.esxi.hostname = "'$(jq -r .esxi.ips_mgmt[0] $jsonFile)'" |
+contents="$(jq '.new_vcsa.esxi.hostname = "'$(jq -r .vcenter_underlay.networks.management.esxi_ips[0] $jsonFile)'" |
          .new_vcsa.esxi.username = "root" |
          .new_vcsa.esxi.password = "'$TF_VAR_esxi_root_password'" |
          .new_vcsa.esxi.VCSA_cluster.datacenter = "'$(jq -r .vcenter.datacenter $jsonFile)'" |
@@ -61,7 +61,7 @@ contents="$(jq '.new_vcsa.esxi.hostname = "'$(jq -r .esxi.ips_mgmt[0] $jsonFile)
          .new_vcsa.appliance.thin_disk_mode = '$(jq -r .vcenter.thin_disk_mode $jsonFile)' |
          .new_vcsa.appliance.deployment_option = "'$(jq -r .vcenter.deployment_option $jsonFile)'" |
          .new_vcsa.appliance.name = "'$(jq -r .vcenter.name $jsonFile)'" |
-         .new_vcsa.network.ip = "'$(jq -r .vcenter.ip $jsonFile)'" |
+         .new_vcsa.network.ip = "'$(jq -r .vcenter_underlay.networks.management.vcenter_ip $jsonFile)'" |
          .new_vcsa.network.dns_servers[0] = "'$(jq -r .dns.nameserver $jsonFile)'" |
          .new_vcsa.network.prefix = "'$(jq -r .vcenter_underlay.networks.management.prefix $jsonFile)'" |
          .new_vcsa.network.gateway = "'$(jq -r .vcenter_underlay.networks.management.gateway $jsonFile)'" |
@@ -77,9 +77,9 @@ echo "${contents}" | tee vcenter_config.json
 echo ""
 echo "++++++++++++++++++++++++++++++++"
 echo "updating local /etc/hosts with vCenter FQDN and IP"
-contents=$(cat /etc/hosts | grep -v $(jq -r .vcenter.ip $jsonFile))
+contents=$(cat /etc/hosts | grep -v $(jq -r .vcenter_underlay.networks.management.vcenter_ip $jsonFile))
 echo "${contents}" | sudo tee /etc/hosts
-contents="$(jq -r .vcenter.ip $jsonFile) $(jq -r .vcenter.name $jsonFile).$(jq -r .dns.domain $jsonFile)"
+contents="$(jq -r .vcenter_underlay.networks.management.vcenter_ip $jsonFile) $(jq -r .vcenter.name $jsonFile).$(jq -r .dns.domain $jsonFile)"
 echo "${contents}" | sudo tee -a /etc/hosts
 #
 echo ""

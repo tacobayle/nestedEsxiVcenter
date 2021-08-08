@@ -35,7 +35,7 @@ for ip in $(cat $jsonFile | jq -c -r .vcenter_underlay.networks.management.esxi_
 do
   export GOVC_URL=$ip
   echo "+++++++++++++++++++"
-  echo "Mark all ESXi disks as SSD for ESXi host $ip"
+  echo "Mark all disks as SSD for ESXi host $ip"
   EsxiMarkDiskAsSsd=$(govc host.storage.info -rescan | grep /vmfs/devices/disks | awk '{print $1}' | sort)
   for u in ${EsxiMarkDiskAsSsd[@]} ; do govc host.storage.mark -ssd $u ; done
 done

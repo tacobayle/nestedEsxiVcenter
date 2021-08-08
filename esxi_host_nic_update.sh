@@ -6,7 +6,7 @@ else
   exit 1
 fi
 #
-export GOVC_USERNAME=TF_VAR_vsphere_username
+export GOVC_USERNAME=$TF_VAR_vsphere_username
 export GOVC_PASSWORD=$TF_VAR_vsphere_password
 export GOVC_DATACENTER=$(jq -r .vcenter_underlay.dc $jsonFile)
 export GOVC_INSECURE=true

@@ -1,4 +1,4 @@
-resource "vsphere_virtual_machine" "esxi_multiple_vswicth" {
+resource "vsphere_virtual_machine" "esxi_multiple_vswitch" {
   depends_on = [ vsphere_file.iso_upload ]
   count = (var.esxi.single_vswitch == false ? var.esxi.count : 0)
   name             = "${var.esxi.basename}-${count.index}"
@@ -43,7 +43,7 @@ resource "vsphere_virtual_machine" "esxi_multiple_vswicth" {
   }
 }
 
-resource "vsphere_virtual_machine" "esxi_single_vswicth" {
+resource "vsphere_virtual_machine" "esxi_single_vswitch" {
   depends_on = [ vsphere_file.iso_upload ]
   count = (var.esxi.single_vswitch == true ? var.esxi.count : 0)
   name             = "${var.esxi.basename}-${count.index}"
@@ -82,17 +82,26 @@ resource "vsphere_virtual_machine" "esxi_single_vswicth" {
   }
 }
 
-resource "null_resource" "wait_esxi" {
-  depends_on = [vsphere_virtual_machine.esxi_multiple_vswicth, vsphere_virtual_machine.esxi_single_vswicth]
-  count      = var.esxi.count
+resource "null_resource" "wait_esxi_multiple_vswitch" {
+  depends_on = [vsphere_virtual_machine.esxi_multiple_vswitch]
+  count = (var.esxi.single_vswitch == false ? var.esxi.count : 0)
 
   provisioner "local-exec" {
     command = "count=1 ; until $(curl --output /dev/null --silent --head -k https://${var.vcenter_underlay.networks.management.esxi_ips[count.index]}); do echo \"Attempt $count: Waiting for ESXi host ${count.index} to be reachable...\"; sleep 40 ; count=$((count+1)) ;  if [ \"$count\" = 30 ]; then echo \"ERROR: Unable to connect to ESXi host\" ; exit 1 ; fi ; done"
   }
 }
 
+resource "null_resource" "wait_esxi_single_vswitch" {
+  depends_on = [vsphere_virtual_machine.esxi_single_vswitch]
+  count = (var.esxi.single_vswitch == true ? var.esxi.count : 0)
+
+  provisioner "local-exec" {
+    command = "count=1 ; until $(curl --output /dev/null --silent --head -k https://${var.vcenter_underlay.network.esxi_ips[count.index]}); do echo \"Attempt $count: Waiting for ESXi host ${count.index} to be reachable...\"; sleep 40 ; count=$((count+1)) ;  if [ \"$count\" = 30 ]; then echo \"ERROR: Unable to connect to ESXi host\" ; exit 1 ; fi ; done"
+  }
+}
+
 resource "null_resource" "esxi_customization" {
-  depends_on = [null_resource.wait_esxi]
+  depends_on = [null_resource.wait_esxi_multiple_vswitch, null_resource.wait_esxi_single_vswitch]
 
   provisioner "local-exec" {
     command = "/bin/bash esxi_customization.sh"

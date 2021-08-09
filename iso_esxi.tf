@@ -13,7 +13,6 @@ resource "local_file" "ks_cust_single_vswicth" {
     ntp = var.ntp.server,
     nameserver = var.dns.nameserver,
     hostname = "${var.esxi.basename}-${count.index}.${var.dns.domain}"
-    nic_amount = length(var.esxi.networks)
   }
   )
   filename = "${path.module}/ks_cust.cfg.${count.index}"

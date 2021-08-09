@@ -63,7 +63,7 @@ if [[ $(jq -c -r .esxi.single_vswitch $jsonFile) == false ]] ; then
            .new_vcsa.appliance.thin_disk_mode = '$(jq -r .vcenter.thin_disk_mode $jsonFile)' |
            .new_vcsa.appliance.deployment_option = "'$(jq -r .vcenter.deployment_option $jsonFile)'" |
            .new_vcsa.appliance.name = "'$(jq -r .vcenter.name $jsonFile)'" |
-           .new_vcsa.network.ip = "'$(jq -r .vcenter.dvs.portgroup.management.vcenter_ip)'" |
+           .new_vcsa.network.ip = "'$(jq -r .vcenter.dvs.portgroup.management.vcenter_ip $jsonFile)'" |
            .new_vcsa.network.dns_servers[0] = "'$(jq -r .dns.nameserver $jsonFile)'" |
            .new_vcsa.network.prefix = "'$(jq -r .vcenter.dvs.portgroup.management.prefix $jsonFile)'" |
            .new_vcsa.network.gateway = "'$(jq -r .vcenter.dvs.portgroup.management.gateway $jsonFile)'" |
@@ -90,7 +90,7 @@ if [[ $(jq -c -r .esxi.single_vswitch $jsonFile) == true ]] ; then
            .new_vcsa.appliance.thin_disk_mode = '$(jq -r .vcenter.thin_disk_mode $jsonFile)' |
            .new_vcsa.appliance.deployment_option = "'$(jq -r .vcenter.deployment_option $jsonFile)'" |
            .new_vcsa.appliance.name = "'$(jq -r .vcenter.name $jsonFile)'" |
-           .new_vcsa.network.ip = "'$(jq -r .vcenter.dvs.portgroup.management.vcenter_ip)'" |
+           .new_vcsa.network.ip = "'$(jq -r .vcenter.dvs.portgroup.management.vcenter_ip $jsonFile)'" |
            .new_vcsa.network.dns_servers[0] = "'$(jq -r .dns.nameserver $jsonFile)'" |
            .new_vcsa.network.prefix = "'$(jq -r .vcenter.dvs.portgroup.management.prefix $jsonFile)'" |
            .new_vcsa.network.gateway = "'$(jq -r .vcenter.dvs.portgroup.management.gateway $jsonFile)'" |

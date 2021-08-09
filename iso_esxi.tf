@@ -26,7 +26,7 @@ resource "local_file" "ks_cust_multiple_vswitch" {
     ip = var.vcenter.dvs.portgroup.management.esxi_ips[count.index],
     netmask = var.vcenter.dvs.portgroup.management.netmask,
     gateway = var.vcenter.dvs.portgroup.management.gateway,
-    ip_vmotion = var.vcenter.dvs.portgroup.VMotion.esx_ips[count.index],
+    ip_vmotion = var.vcenter.dvs.portgroup.VMotion.esxi_ips[count.index],
     netmask_vmotion = var.vcenter.dvs.portgroup.VMotion.netmask,
     ip_vsan = var.vcenter.dvs.portgroup.VSAN.esxi_ips[count.index],
     netmask_vsan = var.vcenter.dvs.portgroup.VSAN.netmask,

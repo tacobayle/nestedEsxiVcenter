@@ -17,7 +17,7 @@ IFS=$'\n'
 echo ""
 echo "++++++++++++++++++++++++++++++++"
 count=0
-for ip in $(jq -c -r .vcenter_underlay.networks.management.esxi_ips[] $jsonFile)
+for ip in $(jq -c -r .vcenter.dvs.portgroup.management.esxi_ips[] $jsonFile)
 do
   echo "removing vnic3 from ESXI $ip"
   govc device.remove -vm "$(jq -c -r .esxi.basename $jsonFile)-$count" ethernet-3

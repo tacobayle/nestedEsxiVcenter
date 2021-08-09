@@ -77,7 +77,7 @@ curl_put $token '{"name":'\"$(jq -r .ntp.timezone $jsonFile)\"'}' $api_host "app
 #done
 IFS=$'\n'
 count=0
-for ip in $(jq -r .vcenter_underlay.networks.management.esxi_ips[] $jsonFile)
+for ip in $(jq -r .vcenter.dvs.portgroup.management.esxi_ips[] $jsonFile)
 do
   if [[ $count -ne 0 ]] ; then
   echo "Adding host $ip in the cluster"
@@ -103,7 +103,7 @@ if [[ $(jq -c -r .esxi.single_vswitch $jsonFile) == true ]] ; then
   govc dvs.portgroup.add -dvs "$(jq -r .vcenter.dvs.basename $jsonFile)-0" -vlan $(jq -r .vcenter.dvs.portgroup.management.vlan $jsonFile) "$(jq -r .vcenter.dvs.portgroup.management.name $jsonFile)-vmk"
   govc dvs.portgroup.add -dvs "$(jq -r .vcenter.dvs.basename $jsonFile)-0" -vlan $(jq -r .vcenter.dvs.portgroup.VMotion.vlan $jsonFile) "$(jq -r .vcenter.dvs.portgroup.VMotion.name $jsonFile)"
   govc dvs.portgroup.add -dvs "$(jq -r .vcenter.dvs.basename $jsonFile)-0" -vlan $(jq -r .vcenter.dvs.portgroup.VSAN.vlan $jsonFile) "$(jq -r .vcenter.dvs.portgroup.VSAN.name $jsonFile)"
-  for ip in $(jq -r .vcenter_underlay.networks.management.esxi_ips[] $jsonFile)
+  for ip in $(jq -r .vcenter.dvs.portgroup.management.esxi_ips[] $jsonFile)
   do
     govc dvs.add -dvs "$(jq -r .vcenter.dvs.basename $jsonFile)-0" -pnic=vmnic0 $ip
   done
@@ -118,7 +118,7 @@ if [[ $(jq -c -r .esxi.single_vswitch $jsonFile) == false ]] ; then
   govc dvs.portgroup.add -dvs "$(jq -r .vcenter.dvs.basename $jsonFile)-1-VMotion" -vlan 0 "$(jq -r .vcenter.dvs.portgroup.VMotion.name $jsonFile)"
   govc dvs.portgroup.add -dvs "$(jq -r .vcenter.dvs.basename $jsonFile)-2-VSAN" -vlan 0 "$(jq -r .vcenter.dvs.portgroup.VSAN.name $jsonFile)"
   IFS=$'\n'
-  for ip in $(jq -r .vcenter_underlay.networks.management.esxi_ips[] $jsonFile)
+  for ip in $(jq -r .vcenter.dvs.portgroup.management.esxi_ips[] $jsonFile)
   do
     govc dvs.add -dvs "$(jq -r .vcenter.dvs.basename $jsonFile)-0-mgmt" -pnic=vmnic0 $ip
     govc dvs.add -dvs "$(jq -r .vcenter.dvs.basename $jsonFile)-1-VMotion" -pnic=vmnic1 $ip
@@ -148,7 +148,7 @@ export GOVC_USERNAME="root"
 unset GOVC_DATACENTER
 echo ""
 echo "++++++++++++++++++++++++++++++++"
-for ip in $(cat $jsonFile | jq -c -r .vcenter_underlay.networks.management.esxi_ips[])
+for ip in $(cat $jsonFile | jq -c -r .vcenter.dvs.portgroup.management.esxi_ips[])
 do
 export GOVC_URL=$ip
 echo "Deleting port group called Management Network for Host $ip"
@@ -171,7 +171,7 @@ done
 #
 if [[ $(jq -c -r .esxi.single_vswitch $jsonFile) == true ]] ; then
   echo "++++++++++++++++++++++++++++++++"
-  for ip in $(jq -r .vcenter_underlay.networks.management.esxi_ips[] $jsonFile)
+  for ip in $(jq -r .vcenter.dvs.portgroup.management.esxi_ips[] $jsonFile)
   do
     echo "Adding physical port vmnic1 for ESXi host $ip for VDS $(jq -r .vcenter.dvs.basename $jsonFile)-0"
     govc dvs.add -dvs "$(jq -r .vcenter.dvs.basename $jsonFile)-0" -pnic=vmnic1 $ip

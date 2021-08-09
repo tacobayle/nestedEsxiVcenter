@@ -23,7 +23,7 @@ resource "local_file" "ks_cust_multiple_vswitch" {
   content     = templatefile("${path.module}/templates/ks_cust_multiple_vswitch.cfg.tmpl",
   { esxi_root_password = var.esxi_root_password,
     keyboard_type = var.esxi.keyboard_type,
-    ip = var.vcenter_underlay.networks.management.esxi_ips[count.index],
+    ip = var.vcenter.dvs.portgroup.management.esxi_ips[count.index],
     netmask = var.vcenter.dvs.portgroup.management.netmask,
     gateway = var.vcenter.dvs.portgroup.management.gateway,
     ip_vmotion = var.vcenter.dvs.portgroup.VMotion.esx_ips[count.index],

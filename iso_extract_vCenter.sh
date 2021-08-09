@@ -52,7 +52,7 @@ echo "Building template file"
 # if multiple vds switch
 if [[ $(jq -c -r .esxi.single_vswitch $jsonFile) == false ]] ; then
   template_file_location="templates/$(basename $(jq -r .vcenter.json_config_file $jsonFile))"
-  contents="$(jq '.new_vcsa.esxi.hostname = "'$(jq -r .vcenter_underlay.networks.management.esxi_ips[0] $jsonFile)'" |
+  contents="$(jq '.new_vcsa.esxi.hostname = "'$(jq -r .vcenter.dvs.portgroup.management.esxi_ips[0] $jsonFile)'" |
            .new_vcsa.esxi.username = "root" |
            .new_vcsa.esxi.password = "'$TF_VAR_esxi_root_password'" |
            .new_vcsa.esxi.VCSA_cluster.datacenter = "'$(jq -r .vcenter.datacenter $jsonFile)'" |
@@ -79,7 +79,7 @@ fi
 #
 if [[ $(jq -c -r .esxi.single_vswitch $jsonFile) == true ]] ; then
   template_file_location="templates/$(basename $(jq -r .vcenter.json_config_file $jsonFile))"
-  contents="$(jq '.new_vcsa.esxi.hostname = "'$(jq -r .vcenter_underlay.networks.management.esxi_ips[0] $jsonFile)'" |
+  contents="$(jq '.new_vcsa.esxi.hostname = "'$(jq -r .vcenter.dvs.portgroup.management.esxi_ips[0] $jsonFile)'" |
            .new_vcsa.esxi.username = "root" |
            .new_vcsa.esxi.password = "'$TF_VAR_esxi_root_password'" |
            .new_vcsa.esxi.VCSA_cluster.datacenter = "'$(jq -r .vcenter.datacenter $jsonFile)'" |

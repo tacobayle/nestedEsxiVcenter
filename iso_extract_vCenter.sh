@@ -66,10 +66,10 @@ contents="$(jq '.new_vcsa.esxi.hostname = "'$(jq -r .vcenter_underlay.networks.m
          .new_vcsa.network.prefix = "'$(jq -r .vcenter_underlay.networks.management.prefix $jsonFile)'" |
          .new_vcsa.network.gateway = "'$(jq -r .vcenter_underlay.networks.management.gateway $jsonFile)'" |
          .new_vcsa.network.system_name = "'$(jq -r .vcenter.name $jsonFile)'.'$(jq -r .dns.domain $jsonFile)'" |
-         .new_vcsa.os.password = "'$TF_VAR_vcenter_root_password'" |
+         .new_vcsa.os.password = "'$TF_VAR_vcenter_password'" |
          .new_vcsa.os.ntp_servers = "'$(jq -r .ntp.server $jsonFile)'" |
          .new_vcsa.os.ssh_enable = '$(jq -r .vcenter.ssh_enable $jsonFile)' |
-         .new_vcsa.sso.password = "'$TF_VAR_vcenter_root_password'" |
+         .new_vcsa.sso.password = "'$TF_VAR_vcenter_password'" |
          .new_vcsa.sso.domain_name = "'$(jq -r .vcenter.sso.domain_name $jsonFile)'" |
          .ceip.settings.ceip_enabled = '$(jq -r .vcenter.ceip_enabled $jsonFile)' ' $template_file_location)"
 echo "${contents}" | tee vcenter_config.json

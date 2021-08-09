@@ -7,7 +7,7 @@
       vmware_migrate_vmk:
         hostname: "{{ vcenter_underlay.networks.management.vcenter_ip }}"
         username: "administrator@{{ vcenter.sso.domain_name }}"
-        password: "{{ lookup('env', 'TF_VAR_vcenter_root_password') }}"
+        password: "{{ lookup('env', 'TF_VAR_vcenter_password') }}"
         validate_certs: false
         esxi_hostname: "{{ item }}"
         device: 'vmk1'
@@ -22,7 +22,7 @@
       vmware_migrate_vmk:
         hostname: "{{ vcenter_underlay.networks.management.vcenter_ip }}"
         username: "administrator@{{ vcenter.sso.domain_name }}"
-        password: "{{ lookup('env', 'TF_VAR_vcenter_root_password') }}"
+        password: "{{ lookup('env', 'TF_VAR_vcenter_password') }}"
         validate_certs: false
         esxi_hostname: "{{ item }}"
         device: 'vmk2'
@@ -37,7 +37,7 @@
       vmware_migrate_vmk:
         hostname: "{{ vcenter_underlay.networks.management.vcenter_ip }}"
         username: "administrator@{{ vcenter.sso.domain_name }}"
-        password: "{{ lookup('env', 'TF_VAR_vcenter_root_password') }}"
+        password: "{{ lookup('env', 'TF_VAR_vcenter_password') }}"
         validate_certs: false
         esxi_hostname: "{{ item }}"
         device: 'vmk0'
@@ -57,7 +57,7 @@
       vmware_migrate_vmk:
         hostname: "{{ vcenter_underlay.networks.management.vcenter_ip }}"
         username: "administrator@{{ vcenter.sso.domain_name }}"
-        password: "{{ lookup('env', 'TF_VAR_vcenter_root_password') }}"
+        password: "{{ lookup('env', 'TF_VAR_vcenter_password') }}"
         validate_certs: false
         esxi_hostname: "{{ item }}"
         device: 'vmk1'
@@ -72,7 +72,7 @@
       vmware_migrate_vmk:
         hostname: "{{ vcenter_underlay.networks.management.vcenter_ip }}"
         username: "administrator@{{ vcenter.sso.domain_name }}"
-        password: "{{ lookup('env', 'TF_VAR_vcenter_root_password') }}"
+        password: "{{ lookup('env', 'TF_VAR_vcenter_password') }}"
         validate_certs: false
         esxi_hostname: "{{ item }}"
         device: 'vmk2'
@@ -87,7 +87,7 @@
       vmware_migrate_vmk:
         hostname: "{{ vcenter_underlay.networks.management.vcenter_ip }}"
         username: "administrator@{{ vcenter.sso.domain_name }}"
-        password: "{{ lookup('env', 'TF_VAR_vcenter_root_password') }}"
+        password: "{{ lookup('env', 'TF_VAR_vcenter_password') }}"
         validate_certs: false
         esxi_hostname: "{{ item }}"
         device: 'vmk0'

@@ -9,7 +9,7 @@ fi
 api_host="$(jq -r .vcenter.name $jsonFile).$(jq -r .dns.domain $jsonFile)"
 vcenter_username=administrator
 vcenter_domain=$(jq -r .vcenter.sso.domain_name $jsonFile)
-vcenter_password=$TF_VAR_vcenter_root_password
+vcenter_password=$TF_VAR_vcenter_password
 #
 export GOVC_USERNAME="$vcenter_username@$vcenter_domain"
 export GOVC_PASSWORD=$vcenter_password
@@ -128,15 +128,21 @@ fi
 #
 #
 #
+echo "++++++++++++++++++++++++++++++++"
+echo "Migrating vmk0, vmk1, vmk2 to from standard switch to VDS switch"
 ansible-playbook pb-migrate-vmk.yml --extra-vars "@variables.json"
 #
 #
 #
+echo "++++++++++++++++++++++++++++++++"
 echo "Update vCenter Appliance port group location"
 govc vm.network.change -vm $(jq -r .vcenter.name $jsonFile) -net $(jq -r .vcenter.dvs.portgroup.management.name $jsonFile) ethernet-0 &
+govc_pid=$(echo $!)
 #
 # Cleaning unused Standard vswitch config
 #
+echo "++++++++++++++++++++++++++++++++"
+echo "Cleaning unused Standard vswitch config"
 IFS=$'\n'
 export GOVC_USERNAME="root"
 unset GOVC_DATACENTER
@@ -164,8 +170,14 @@ done
 # if single vds switch # add the second physical uplink
 #
 if [[ $(jq -c -r .esxi.single_vswitch $jsonFile) == true ]] ; then
+  echo "++++++++++++++++++++++++++++++++"
   for ip in $(jq -r .vcenter_underlay.networks.management.esxi_ips[] $jsonFile)
   do
+    echo "Adding physical port vmnic1 for ESXi host $ip for VDS $(jq -r .vcenter.dvs.basename $jsonFile)-0"
     govc dvs.add -dvs "$(jq -r .vcenter.dvs.basename $jsonFile)-0" -pnic=vmnic1 $ip
   done
 fi
+#
+# Sometimes the GOVC command to migrate the vCenter VM will fail
+#
+kill $(echo $govc_pid) || true

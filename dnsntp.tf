@@ -27,7 +27,7 @@ resource "vsphere_virtual_machine" "dnsntp" {
   resource_pool_id = data.vsphere_resource_pool.pool.id
   folder           = vsphere_folder.esxi_folder.path
   network_interface {
-    network_id = data.vsphere_network.vcenter_underlay_network_mgmt.id
+    network_id = data.vsphere_network.vcenter_underlay_network_mgmt[0].id
   }
 
   num_cpus = var.dns-ntp.cpu

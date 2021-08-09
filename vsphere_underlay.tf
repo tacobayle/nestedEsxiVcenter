@@ -18,7 +18,7 @@ data "vsphere_resource_pool" "pool" {
 }
 
 data "vsphere_network" "esxi_networks" {
-  count = length(values(var.vcenter_underlay.networks))
+  count = (var.esxi.single_vswitch == false ? length(values(var.vcenter_underlay.networks)) : 0)
   name = values(var.vcenter_underlay.networks)[count.index].name
   datacenter_id = data.vsphere_datacenter.dc.id
 }
@@ -30,6 +30,7 @@ data "vsphere_network" "esxi_network" {
 }
 
 data "vsphere_network" "vcenter_underlay_network_mgmt" {
+  count = (var.esxi.single_vswitch == false ? 1 : 0)
   name = var.vcenter_underlay.networks.management.name
   datacenter_id = data.vsphere_datacenter.dc.id
 }

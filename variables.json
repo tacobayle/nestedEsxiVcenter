@@ -12,37 +12,17 @@
     },
     "networks": {
       "management": {
-        "name": "vxw-dvs-34-virtualwire-3-sid-1080002-sof2-01-vc08-avi-mgmt",
-        "netmask": "255.255.252.0",
-        "prefix": "22",
-        "gateway": "10.41.132.1",
-        "esxi_ips": ["10.41.134.131", "10.41.134.132", "10.41.134.133"],
-        "dns-ntp_ip": "10.41.134.134",
-        "vcenter_ip": "10.41.134.135"
+        "name": "vxw-dvs-34-virtualwire-3-sid-1080002-sof2-01-vc08-avi-mgmt"
       },
       "vmotion": {
-        "name": "vxw-dvs-34-virtualwire-120-sid-1080119-sof2-01-vc08-avi-dev116",
-        "netmask": "255.255.255.0",
-        "prefix": "24",
-        "gateway": "100.64.133.1",
-        "esxi_ips": ["100.64.133.11", "100.64.133.12", "100.64.133.13"]
+        "name": "vxw-dvs-34-virtualwire-120-sid-1080119-sof2-01-vc08-avi-dev116"
       },
       "vsan": {
-        "name": "vxw-dvs-34-virtualwire-119-sid-1080118-sof2-01-vc08-avi-dev115",
-        "netmask": "255.255.255.0",
-        "prefix": "24",
-        "gateway": "100.64.132.1",
-        "esxi_ips": ["100.64.132.11", "100.64.132.12", "100.64.132.13"]
+        "name": "vxw-dvs-34-virtualwire-119-sid-1080118-sof2-01-vc08-avi-dev115"
       }
     },
     "network": {
-      "name": "vxw-dvs-34-virtualwire-3-sid-1080002-sof2-01-vc08-avi-mgmt",
-      "netmask": "255.255.252.0",
-      "prefix": "22",
-      "gateway": "10.41.132.1",
-      "esxi_ips": ["10.41.134.131", "10.41.134.132", "10.41.134.133"],
-      "dns-ntp_ip": "10.41.134.134",
-      "vcenter_ip": "10.41.134.135"
+      "name": "vxw-dvs-34-virtualwire-3-sid-1080002-sof2-01-vc08-avi-mgmt"
       }
     },
   "dns": {
@@ -130,15 +110,27 @@
       "portgroup": {
         "management": {
           "name": "management",
-          "vlan": 0
+          "vlan": 0,
+          "esxi_ips": ["10.41.134.131", "10.41.134.132", "10.41.134.133"],
+          "netmask": "255.255.252.0",
+          "prefix": "22",
+          "gateway": "10.41.132.1",
+          "vcenter_ip": "10.41.134.135",
+          "dns-ntp_ip": "10.41.134.134"
         },
         "VMotion": {
           "name": "VMotion",
-          "vlan": 100
+          "vlan": 100,
+          "esxi_ips": ["100.64.133.11", "100.64.133.12", "100.64.133.13"],
+          "netmask": "255.255.255.0",
+          "prefix": "24"
         },
         "VSAN": {
           "name": "VSAN",
-          "vlan": 110
+          "vlan": 110,
+          "esxi_ips": ["100.64.132.11", "100.64.132.12", "100.64.132.13"],
+          "netmask": "255.255.255.0",
+          "prefix": "24"
         }
       }
     }

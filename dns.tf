@@ -21,7 +21,7 @@ resource "dns_a_record_set" "vcenter" {
   depends_on = [vsphere_virtual_machine.dnsntp]
   zone  = "${var.dns.domain}."
   name  = var.vcenter.name
-  addresses = [var.vcenter_underlay.networks.management.vcenter_ip]
+  addresses = [var.vcenter.dvs.portgroup.management.vcenter_ip]
   ttl = 60
 }
 
@@ -29,7 +29,7 @@ resource "dns_ptr_record" "vcenter" {
   count = (var.dns-ntp.create == true ? 1 : 0)
   depends_on = [vsphere_virtual_machine.dnsntp]
   zone = "${var.dns-ntp.bind.reverse}.in-addr.arpa."
-  name = split(".", var.vcenter_underlay.networks.management.vcenter_ip)[3]
+  name = split(".", var.vcenter.dvs.portgroup.management.vcenter_ip)[3]
   ptr  = "${var.vcenter.name}.${var.dns.domain}."
   ttl  = 60
 }

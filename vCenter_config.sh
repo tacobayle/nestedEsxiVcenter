@@ -178,6 +178,6 @@ if [[ $(jq -c -r .esxi.single_vswitch $jsonFile) == true ]] ; then
   done
 fi
 #
-# Sometimes the GOVC command to migrate the vCenter VM will fail
+# Sometimes the GOVC command to migrate the vCenter VM to new port group fails
 #
 kill $(echo $govc_pid) || true

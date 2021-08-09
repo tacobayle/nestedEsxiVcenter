@@ -14,7 +14,7 @@ install --ignoressd --firstdisk --overwritevmfs
 keyboard '${keyboard_type}'
 
 # Set the network to DHCP on the first network adapter
-network --bootproto=static --device=vmnic1 --ip=${ip} --netmask=${netmask} --gateway=${gateway} --nameserver=${nameserver} --hostname=${hostname}
+network --bootproto=static --device=vmnic1 --ip=${ip} --netmask=${netmask} --nameserver=${nameserver} --hostname=${hostname}
 
 # reboot the host after installation is completed
 reboot
@@ -36,6 +36,7 @@ esxcli network ip interface remove --interface-name=vmk0
 esxcli network ip interface add --interface-name=vmk0 --portgroup-name="Management Network"
 esxcli network ip interface ipv4 set --interface-name=vmk0 --ipv4=${ip} --netmask=${netmask} --gateway=${gateway} --type=static
 esxcli network ip interface tag add -i vmk0 -t Management
+#esxcli network ip route ipv4 add -g ${gateway} -n 0.0.0.0/0
 # Adds a tag on a given VMkernel network interface. Supported tags are: Management, VMotion, faultToleranceLogging, vSphereReplication, vSphereReplicationNFC, vSphereProvisioning, VSAN, VSANWitness, vSphereBackupNFC, PrecisionTimeProtocol, VSANReplication
 #
 esxcli network vswitch standard add -v vSwitch1

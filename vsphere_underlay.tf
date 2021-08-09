@@ -23,6 +23,12 @@ data "vsphere_network" "esxi_networks" {
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
+data "vsphere_network" "esxi_network" {
+  count = (var.esxi.single_vswitch == true ? 1 : 0)
+  name = var.vcenter_underlay.network.name
+  datacenter_id = data.vsphere_datacenter.dc.id
+}
+
 data "vsphere_network" "vcenter_underlay_network_mgmt" {
   name = var.vcenter_underlay.networks.management.name
   datacenter_id = data.vsphere_datacenter.dc.id

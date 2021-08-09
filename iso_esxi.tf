@@ -1,9 +1,8 @@
 resource "local_file" "ks_cust_single_vswicth" {
-  count = (var.esxi.single_standard_vswitch == true ? var.esxi.count : 0)
+  count = (var.esxi.single_vswitch == true ? var.esxi.count : 0)
   content     = templatefile("${path.module}/templates/ks_cust_single_vswicth.cfg.tmpl",
   { esxi_root_password = var.esxi_root_password,
     keyboard_type = var.esxi.keyboard_type,
-    device_mgmt = var.esxi.device_mgmt,
     ip = var.vcenter_underlay.networks.management.esxi_ips[count.index],
     netmask = var.vcenter_underlay.networks.management.netmask,
     gateway = var.vcenter_underlay.networks.management.gateway,
@@ -21,11 +20,10 @@ resource "local_file" "ks_cust_single_vswicth" {
 }
 
 resource "local_file" "ks_cust_multiple_vswitch" {
-  count = (var.esxi.single_standard_vswitch == false ? var.esxi.count : 0)
+  count = (var.esxi.single_vswitch == false ? var.esxi.count : 0)
   content     = templatefile("${path.module}/templates/ks_cust_multiple_vswitch.cfg.tmpl",
   { esxi_root_password = var.esxi_root_password,
     keyboard_type = var.esxi.keyboard_type,
-    device_mgmt = var.esxi.device_mgmt,
     ip = var.vcenter_underlay.networks.management.esxi_ips[count.index],
     netmask = var.vcenter_underlay.networks.management.netmask,
     gateway = var.vcenter_underlay.networks.management.gateway,

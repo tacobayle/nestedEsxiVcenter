@@ -1,7 +1,7 @@
 - create esxi with 4 interfaces (pnic0 and pnic3 should be bind to the same network)
 - run the following:
 ```
-if [[ $(jq -c -r .esxi.single_standard_vswitch $jsonFile) == false ]] ; then
+if [[ $(jq -c -r .esxi.single_vswitch $jsonFile) == false ]] ; then
   govc dvs.create -mtu $(jq -r .vcenter.dvs.mtu $jsonFile) -discovery-protocol $(jq -r .vcenter.dvs.discovery_protocol $jsonFile) "$(jq -r .vcenter.dvs.basename $jsonFile)-0-mgmt"
   govc dvs.create -mtu $(jq -r .vcenter.dvs.mtu $jsonFile) -discovery-protocol $(jq -r .vcenter.dvs.discovery_protocol $jsonFile) "$(jq -r .vcenter.dvs.basename $jsonFile)-1-VMotion"
   govc dvs.create -mtu $(jq -r .vcenter.dvs.mtu $jsonFile) -discovery-protocol $(jq -r .vcenter.dvs.discovery_protocol $jsonFile) "$(jq -r .vcenter.dvs.basename $jsonFile)-2-VSAN"

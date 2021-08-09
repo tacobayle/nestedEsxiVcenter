@@ -1,6 +1,6 @@
-resource "vsphere_virtual_machine" "esxi" {
+resource "vsphere_virtual_machine" "esxi_multiple_vswicth" {
   depends_on = [ vsphere_file.iso_upload ]
-  count            = var.esxi.count
+  count = (var.esxi.single_vswitch == false ? var.esxi.count : 0)
   name             = "${var.esxi.basename}-${count.index}"
   datastore_id     = data.vsphere_datastore.datastore.id
   resource_pool_id = data.vsphere_resource_pool.pool.id
@@ -43,8 +43,47 @@ resource "vsphere_virtual_machine" "esxi" {
   }
 }
 
+resource "vsphere_virtual_machine" "esxi_single_vswicth" {
+  depends_on = [ vsphere_file.iso_upload ]
+  count = (var.esxi.single_vswitch == true ? var.esxi.count : 0)
+  name             = "${var.esxi.basename}-${count.index}"
+  datastore_id     = data.vsphere_datastore.datastore.id
+  resource_pool_id = data.vsphere_resource_pool.pool.id
+  folder           = vsphere_folder.esxi_folder.path
+
+  network_interface {
+    network_id = data.vsphere_network.esxi_network[0].id
+  }
+
+  network_interface {
+    network_id = data.vsphere_network.esxi_network[0].id
+  }
+
+  num_cpus = var.esxi.cpu
+  memory = var.esxi.memory
+  guest_id = var.esxi.guest_id
+  wait_for_guest_net_timeout = var.esxi.wait_for_guest_net_timeout
+  nested_hv_enabled = var.esxi.nested_hv_enabled
+  firmware = var.esxi.bios
+
+  dynamic "disk" {
+    for_each = var.esxi.disks
+    content {
+      size = disk.value["size"]
+      label = "${var.esxi.basename}-${count.index}-${disk.value["label"]}.lab_vmdk"
+      unit_number = disk.value["unit_number"]
+      thin_provisioned = disk.value["thin_provisioned"]
+    }
+  }
+
+  cdrom {
+    datastore_id = data.vsphere_datastore.datastore.id
+    path         = "isos/${basename(var.esxi.iso_location)}${count.index}.iso"
+  }
+}
+
 resource "null_resource" "wait_esxi" {
-  depends_on = [vsphere_virtual_machine.esxi]
+  depends_on = [vsphere_virtual_machine.esxi_multiple_vswicth, vsphere_virtual_machine.esxi_single_vswicth]
   count      = var.esxi.count
 
   provisioner "local-exec" {
@@ -94,7 +133,7 @@ resource "null_resource" "vcenter_configure" {
 
 resource "null_resource" "esxi_host_nic_update" {
   depends_on = [null_resource.vcenter_configure]
-
+  count = (var.esxi.single_vswitch == false ? 1 : 0)
   provisioner "local-exec" {
     command = "/bin/bash esxi_host_nic_update.sh"
   }

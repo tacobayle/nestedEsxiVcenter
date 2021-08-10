@@ -142,10 +142,11 @@ if [[ $(jq -c -r .esxi.single_vswitch $jsonFile) == false ]] ; then
 fi
 #
 #
+sleep 5
 #
-echo "++++++++++++++++++++++++++++++++"
-echo "Migrating vmk0, vmk1, vmk2 to from standard switch to VDS switch"
-ansible-playbook pb-migrate-vmk.yml --extra-vars "@variables.json"
+#echo "++++++++++++++++++++++++++++++++"
+#echo "Migrating vmk0, vmk1, vmk2 to from standard switch to VDS switch"
+#ansible-playbook pb-migrate-vmk.yml --extra-vars "@variables.json"
 #
 #
 #
@@ -170,44 +171,48 @@ fi
 #
 # Cleaning unused Standard vswitch config and VM port group
 #
-echo "++++++++++++++++++++++++++++++++"
-echo "Cleaning unused Standard vswitch config"
-IFS=$'\n'
-load_govc_esxi
-echo ""
-echo "++++++++++++++++++++++++++++++++"
-for ip in $(cat $jsonFile | jq -c -r .vcenter.dvs.portgroup.management.esxi_ips[])
-do
-  export GOVC_URL=$ip
-  govc host.esxcli network vswitch standard portgroup remove -p "VM Network" -v "vSwitch0"
-  govc host.esxcli network vswitch standard remove -v vSwitch0
-  govc host.esxcli network vswitch standard remove -v vSwitch1
-  govc host.esxcli network vswitch standard remove -v vSwitch2
-# govc host.esxcli network vswitch standard portgroup remove -p "VM Network" -v "vSwitch0"
-#echo "Deleting port group called Management Network for Host $ip"
-#govc host.portgroup.remove "Management Network"
-#echo "Deleting port group called VM Network for Host $ip"
-#govc host.portgroup.remove "VM Network"
-#echo "Deleting port group called VMotion Network for Host $ip"
-#govc host.portgroup.remove "VMotion Network"
-#echo "Deleting port group called VSAN Network for Host $ip"
-#govc host.portgroup.remove "VSAN Network"
-#echo "Deleting vswitch called vSwitch0 for Host $ip"
-#govc host.vswitch.remove vSwitch0
-#echo "Deleting vswitch called vSwitch1 for Host $ip"
-#govc host.vswitch.remove vSwitch1
-#echo "Deleting vswitch called vSwitch2 for Host $ip"
-#govc host.vswitch.remove vSwitch2
-# govc host.esxcli network vswitch standard remove -v vSwitch1
-done
-#
-# if single vds switch # add the second physical uplink
-#
-if [[ $(jq -c -r .esxi.single_vswitch $jsonFile) == true ]] ; then
-  echo "++++++++++++++++++++++++++++++++"
-  for ip in $(jq -r .vcenter.dvs.portgroup.management.esxi_ips[] $jsonFile)
-  do
-    echo "Adding physical port vmnic1 for ESXi host $ip for VDS $(jq -r .vcenter.dvs.basename $jsonFile)-0"
-    govc dvs.add -dvs "$(jq -r .vcenter.dvs.basename $jsonFile)-0" -pnic=vmnic1 $ip
-  done
-fi
+#echo "++++++++++++++++++++++++++++++++"
+#echo "Cleaning unused Standard vswitch config"
+#IFS=$'\n'
+#load_govc_esxi
+#echo ""
+#echo "++++++++++++++++++++++++++++++++"
+#for ip in $(cat $jsonFile | jq -c -r .vcenter.dvs.portgroup.management.esxi_ips[])
+#do
+#  export GOVC_URL=$ip
+#  echo "Deleting port group called VM Network for Host $ip"
+#  govc host.esxcli network vswitch standard portgroup remove -p "VM Network" -v "vSwitch0"
+#  echo "Deleting vswitch called vSwitch0 for Host $ip"
+#  govc host.esxcli network vswitch standard remove -v vSwitch0
+#  echo "Deleting vswitch called vSwitch1 for Host $ip"
+#  govc host.esxcli network vswitch standard remove -v vSwitch1
+#  echo "Deleting vswitch called vSwitch2 for Host $ip"
+#  govc host.esxcli network vswitch standard remove -v vSwitch2
+## govc host.esxcli network vswitch standard portgroup remove -p "VM Network" -v "vSwitch0"
+##echo "Deleting port group called Management Network for Host $ip"
+##govc host.portgroup.remove "Management Network"
+##echo "Deleting port group called VM Network for Host $ip"
+##govc host.portgroup.remove "VM Network"
+##echo "Deleting port group called VMotion Network for Host $ip"
+##govc host.portgroup.remove "VMotion Network"
+##echo "Deleting port group called VSAN Network for Host $ip"
+##govc host.portgroup.remove "VSAN Network"
+##echo "Deleting vswitch called vSwitch0 for Host $ip"
+##govc host.vswitch.remove vSwitch0
+##echo "Deleting vswitch called vSwitch1 for Host $ip"
+##govc host.vswitch.remove vSwitch1
+##echo "Deleting vswitch called vSwitch2 for Host $ip"
+##govc host.vswitch.remove vSwitch2
+## govc host.esxcli network vswitch standard remove -v vSwitch1
+#done
+##
+## if single vds switch # add the second physical uplink
+##
+#if [[ $(jq -c -r .esxi.single_vswitch $jsonFile) == true ]] ; then
+#  echo "++++++++++++++++++++++++++++++++"
+#  for ip in $(jq -r .vcenter.dvs.portgroup.management.esxi_ips[] $jsonFile)
+#  do
+#    echo "Adding physical port vmnic1 for ESXi host $ip for VDS $(jq -r .vcenter.dvs.basename $jsonFile)-0"
+#    govc dvs.add -dvs "$(jq -r .vcenter.dvs.basename $jsonFile)-0" -pnic=vmnic1 $ip
+#  done
+#fi

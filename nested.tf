@@ -132,18 +132,34 @@ resource "null_resource" "wait_vsca" {
   }
 }
 
-resource "null_resource" "vcenter_configure" {
+resource "null_resource" "vcenter_configure1" {
   depends_on = [null_resource.wait_vsca]
 
   provisioner "local-exec" {
-    command = "/bin/bash vCenter_config.sh"
+    command = "/bin/bash vCenter_config1.sh"
   }
 }
 
-resource "null_resource" "esxi_host_nic_update" {
-  depends_on = [null_resource.vcenter_configure]
-  count = (var.esxi.single_vswitch == false ? 1 : 0)
-  provisioner "local-exec" {
-    command = "/bin/bash esxi_host_nic_update.sh"
-  }
-}
+//resource "null_resource" "vcenter_migrating_vmk_to_dvs" {
+//  depends_on = [null_resource.vcenter_configure1]
+//
+//  provisioner "local-exec" {
+//    command = "/bin/bash ansible-playbook pb-migrate-vmk.yml --extra-vars @variables.json"
+//  }
+//}
+//
+//resource "null_resource" "vcenter_configure2" {
+//  depends_on = [null_resource.vcenter_migrating_vmk_to_dvs]
+//
+//  provisioner "local-exec" {
+//    command = "/bin/bash vCenter_config2.sh"
+//  }
+//}
+//
+//resource "null_resource" "esxi_host_nic_update" {
+//  depends_on = [null_resource.vcenter_configure2]
+//  count = (var.esxi.single_vswitch == false ? 1 : 0)
+//  provisioner "local-exec" {
+//    command = "/bin/bash esxi_host_nic_update.sh"
+//  }
+//}

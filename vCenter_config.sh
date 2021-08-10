@@ -153,6 +153,7 @@ echo "Update vCenter Appliance port group location"
 load_govc_env
 govc vm.network.change -vm $(jq -r .vcenter.name $jsonFile) -net $(jq -r .vcenter.dvs.portgroup.management.name $jsonFile) ethernet-0 &
 govc_pid=$(echo $!)
+sleep 5
 #
 # Cleaning unused Standard vswitch config
 #
@@ -165,6 +166,7 @@ govc_pid=$(echo $!)
 #for ip in $(cat $jsonFile | jq -c -r .vcenter.dvs.portgroup.management.esxi_ips[])
 #do
 #export GOVC_URL=$ip
+# govc host.esxcli network vswitch standard portgroup remove -p "VM Network" -v "vSwitch0"
 #echo "Deleting port group called Management Network for Host $ip"
 #govc host.portgroup.remove "Management Network"
 #echo "Deleting port group called VM Network for Host $ip"
@@ -179,6 +181,7 @@ govc_pid=$(echo $!)
 #govc host.vswitch.remove vSwitch1
 #echo "Deleting vswitch called vSwitch2 for Host $ip"
 #govc host.vswitch.remove vSwitch2
+# govc host.esxcli network vswitch standard remove -v vSwitch1
 #done
 #
 # if single vds switch # add the second physical uplink

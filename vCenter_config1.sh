@@ -169,6 +169,9 @@ else
   exit
 fi
 #
+#
+sleep 60
+#
 # Cleaning unused Standard vswitch config and VM port group
 #
 #echo "++++++++++++++++++++++++++++++++"

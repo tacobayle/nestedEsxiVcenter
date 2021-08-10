@@ -29,6 +29,9 @@ load_govc_esxi () {
   unset GOVC_URL
 }
 #
+sleep 60
+#
+#
 # Cleaning unused Standard vswitch config and VM port group
 #
 echo "++++++++++++++++++++++++++++++++"

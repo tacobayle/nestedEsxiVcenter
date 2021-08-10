@@ -25,7 +25,8 @@ load_govc_esxi () {
   export GOVC_PASSWORD=$TF_VAR_esxi_root_password
   export GOVC_INSECURE=true
   unset GOVC_DATACENTER
-  unset  GOVC_CLUSTER
+  unset GOVC_CLUSTER
+  unset GOVC_URL
 }
 #
 curl_put () {
@@ -153,19 +154,35 @@ echo "Update vCenter Appliance port group location"
 load_govc_env
 govc vm.network.change -vm $(jq -r .vcenter.name $jsonFile) -net $(jq -r .vcenter.dvs.portgroup.management.name $jsonFile) ethernet-0 &
 govc_pid=$(echo $!)
-sleep 5
+echo "Waiting 5 secs to check if vCenter VM is UP"
+sleep 10
+if ping -c 1 $api_host &> /dev/null
+then
+  echo "vCenter VM is UP"
+  #
+  # Sometimes the GOVC command to migrate the vCenter VM to new port group fails
+  #
+  kill $(echo $govc_pid) || true
+else
+  echo "vCenter VM is DOWN - exit script config"
+  exit
+fi
 #
-# Cleaning unused Standard vswitch config
+# Cleaning unused Standard vswitch config and VM port group
 #
-#echo "++++++++++++++++++++++++++++++++"
-#echo "Cleaning unused Standard vswitch config"
-#IFS=$'\n'
-#load_govc_esxi
-#echo ""
-#echo "++++++++++++++++++++++++++++++++"
-#for ip in $(cat $jsonFile | jq -c -r .vcenter.dvs.portgroup.management.esxi_ips[])
-#do
-#export GOVC_URL=$ip
+echo "++++++++++++++++++++++++++++++++"
+echo "Cleaning unused Standard vswitch config"
+IFS=$'\n'
+load_govc_esxi
+echo ""
+echo "++++++++++++++++++++++++++++++++"
+for ip in $(cat $jsonFile | jq -c -r .vcenter.dvs.portgroup.management.esxi_ips[])
+do
+  export GOVC_URL=$ip
+  govc host.esxcli network vswitch standard portgroup remove -p "VM Network" -v "vSwitch0"
+  govc host.esxcli network vswitch standard remove -v vSwitch0
+  govc host.esxcli network vswitch standard remove -v vSwitch1
+  govc host.esxcli network vswitch standard remove -v vSwitch2
 # govc host.esxcli network vswitch standard portgroup remove -p "VM Network" -v "vSwitch0"
 #echo "Deleting port group called Management Network for Host $ip"
 #govc host.portgroup.remove "Management Network"
@@ -182,7 +199,7 @@ sleep 5
 #echo "Deleting vswitch called vSwitch2 for Host $ip"
 #govc host.vswitch.remove vSwitch2
 # govc host.esxcli network vswitch standard remove -v vSwitch1
-#done
+done
 #
 # if single vds switch # add the second physical uplink
 #
@@ -194,7 +211,3 @@ if [[ $(jq -c -r .esxi.single_vswitch $jsonFile) == true ]] ; then
     govc dvs.add -dvs "$(jq -r .vcenter.dvs.basename $jsonFile)-0" -pnic=vmnic1 $ip
   done
 fi
-#
-# Sometimes the GOVC command to migrate the vCenter VM to new port group fails
-#
-kill $(echo $govc_pid) || true

@@ -11,12 +11,22 @@ vcenter_username=administrator
 vcenter_domain=$(jq -r .vcenter.sso.domain_name $jsonFile)
 vcenter_password=$TF_VAR_vcenter_password
 #
-export GOVC_USERNAME="$vcenter_username@$vcenter_domain"
-export GOVC_PASSWORD=$vcenter_password
-export GOVC_DATACENTER=$(jq -r .vcenter.datacenter $jsonFile)
-export GOVC_INSECURE=true
-export GOVC_CLUSTER=$(jq -r .vcenter.cluster $jsonFile)
-export GOVC_URL=$api_host
+load_govc_env () {
+  export GOVC_USERNAME="$vcenter_username@$vcenter_domain"
+  export GOVC_PASSWORD=$vcenter_password
+  export GOVC_DATACENTER=$(jq -r .vcenter.datacenter $jsonFile)
+  export GOVC_INSECURE=true
+  export GOVC_CLUSTER=$(jq -r .vcenter.cluster $jsonFile)
+  export GOVC_URL=$api_host
+}
+#
+load_govc_esxi () {
+  export GOVC_USERNAME="root"
+  export GOVC_PASSWORD=$TF_VAR_esxi_root_password
+  export GOVC_INSECURE=true
+  unset GOVC_DATACENTER
+  unset  GOVC_CLUSTER
+}
 #
 curl_put () {
 #  echo $1
@@ -79,6 +89,7 @@ IFS=$'\n'
 count=0
 for ip in $(jq -r .vcenter.dvs.portgroup.management.esxi_ips[] $jsonFile)
 do
+  load_govc_env
   if [[ $count -ne 0 ]] ; then
   echo "Adding host $ip in the cluster"
   govc cluster.add -hostname $ip -username "root" -password "$TF_VAR_esxi_root_password" -noverify
@@ -88,6 +99,7 @@ do
   count=$((count+1))
 done
 #
+load_govc_env
 govc cluster.change -drs-enabled -ha-enabled -vsan-enabled -vsan-autoclaim "$(jq -r .vcenter.cluster $jsonFile)"
 #
 #curl -k -H "vmware-api-session-id: $token" https://$api_host/api/vcenter/host
@@ -98,6 +110,7 @@ govc cluster.change -drs-enabled -ha-enabled -vsan-enabled -vsan-autoclaim "$(jq
 #
 # if single vds switch
 if [[ $(jq -c -r .esxi.single_vswitch $jsonFile) == true ]] ; then
+  load_govc_env
   govc dvs.create -mtu $(jq -r .vcenter.dvs.mtu $jsonFile) -discovery-protocol $(jq -r .vcenter.dvs.discovery_protocol $jsonFile) "$(jq -r .vcenter.dvs.basename $jsonFile)-0"
   govc dvs.portgroup.add -dvs "$(jq -r .vcenter.dvs.basename $jsonFile)-0" -vlan $(jq -r .vcenter.dvs.portgroup.management.vlan $jsonFile) "$(jq -r .vcenter.dvs.portgroup.management.name $jsonFile)"
   govc dvs.portgroup.add -dvs "$(jq -r .vcenter.dvs.basename $jsonFile)-0" -vlan $(jq -r .vcenter.dvs.portgroup.management.vlan $jsonFile) "$(jq -r .vcenter.dvs.portgroup.management.name $jsonFile)-vmk"
@@ -110,6 +123,7 @@ if [[ $(jq -c -r .esxi.single_vswitch $jsonFile) == true ]] ; then
 fi
 # if multiple vds switch
 if [[ $(jq -c -r .esxi.single_vswitch $jsonFile) == false ]] ; then
+  load_govc_env
   govc dvs.create -mtu $(jq -r .vcenter.dvs.mtu $jsonFile) -discovery-protocol $(jq -r .vcenter.dvs.discovery_protocol $jsonFile) "$(jq -r .vcenter.dvs.basename $jsonFile)-0-mgmt"
   govc dvs.create -mtu $(jq -r .vcenter.dvs.mtu $jsonFile) -discovery-protocol $(jq -r .vcenter.dvs.discovery_protocol $jsonFile) "$(jq -r .vcenter.dvs.basename $jsonFile)-1-VMotion"
   govc dvs.create -mtu $(jq -r .vcenter.dvs.mtu $jsonFile) -discovery-protocol $(jq -r .vcenter.dvs.discovery_protocol $jsonFile) "$(jq -r .vcenter.dvs.basename $jsonFile)-2-VSAN"
@@ -136,36 +150,36 @@ ansible-playbook pb-migrate-vmk.yml --extra-vars "@variables.json"
 #
 echo "++++++++++++++++++++++++++++++++"
 echo "Update vCenter Appliance port group location"
+load_govc_env
 govc vm.network.change -vm $(jq -r .vcenter.name $jsonFile) -net $(jq -r .vcenter.dvs.portgroup.management.name $jsonFile) ethernet-0 &
 govc_pid=$(echo $!)
 #
 # Cleaning unused Standard vswitch config
 #
-echo "++++++++++++++++++++++++++++++++"
-echo "Cleaning unused Standard vswitch config"
-IFS=$'\n'
-export GOVC_USERNAME="root"
-unset GOVC_DATACENTER
-echo ""
-echo "++++++++++++++++++++++++++++++++"
-for ip in $(cat $jsonFile | jq -c -r .vcenter.dvs.portgroup.management.esxi_ips[])
-do
-export GOVC_URL=$ip
-echo "Deleting port group called Management Network for Host $ip"
-govc host.portgroup.remove "Management Network"
-echo "Deleting port group called VM Network for Host $ip"
-govc host.portgroup.remove "VM Network"
-echo "Deleting port group called VMotion Network for Host $ip"
-govc host.portgroup.remove "VMotion Network"
-echo "Deleting port group called VSAN Network for Host $ip"
-govc host.portgroup.remove "VSAN Network"
-echo "Deleting vswitch called vSwitch0 for Host $ip"
-govc host.vswitch.remove vSwitch0
-echo "Deleting vswitch called vSwitch1 for Host $ip"
-govc host.vswitch.remove vSwitch1
-echo "Deleting vswitch called vSwitch2 for Host $ip"
-govc host.vswitch.remove vSwitch2
-done
+#echo "++++++++++++++++++++++++++++++++"
+#echo "Cleaning unused Standard vswitch config"
+#IFS=$'\n'
+#load_govc_esxi
+#echo ""
+#echo "++++++++++++++++++++++++++++++++"
+#for ip in $(cat $jsonFile | jq -c -r .vcenter.dvs.portgroup.management.esxi_ips[])
+#do
+#export GOVC_URL=$ip
+#echo "Deleting port group called Management Network for Host $ip"
+#govc host.portgroup.remove "Management Network"
+#echo "Deleting port group called VM Network for Host $ip"
+#govc host.portgroup.remove "VM Network"
+#echo "Deleting port group called VMotion Network for Host $ip"
+#govc host.portgroup.remove "VMotion Network"
+#echo "Deleting port group called VSAN Network for Host $ip"
+#govc host.portgroup.remove "VSAN Network"
+#echo "Deleting vswitch called vSwitch0 for Host $ip"
+#govc host.vswitch.remove vSwitch0
+#echo "Deleting vswitch called vSwitch1 for Host $ip"
+#govc host.vswitch.remove vSwitch1
+#echo "Deleting vswitch called vSwitch2 for Host $ip"
+#govc host.vswitch.remove vSwitch2
+#done
 #
 # if single vds switch # add the second physical uplink
 #

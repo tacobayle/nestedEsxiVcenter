@@ -44,8 +44,8 @@
     "keyboard_type": "US Default",
     "single_vswitch": false,
     "basename": "esxi",
-    "cpu": 16,
-    "memory": 131072,
+    "cpu": 8,
+    "memory": 65536,
     "disks": [
       {
         "size": 32,

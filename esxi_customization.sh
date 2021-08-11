@@ -26,6 +26,9 @@ fi
 export GOVC_USERNAME=root
 export GOVC_PASSWORD=$(echo $TF_VAR_esxi_root_password)
 export GOVC_INSECURE=true
+unset GOVC_DATACENTER
+unset GOVC_CLUSTER
+unset GOVC_URL
 #
 IFS=$'\n'
 echo ""

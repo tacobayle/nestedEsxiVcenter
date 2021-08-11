@@ -125,17 +125,17 @@ fi
 # if multiple vds switch
 if [[ $(jq -c -r .esxi.single_vswitch $jsonFile) == false ]] ; then
   load_govc_env
-  govc dvs.create -mtu $(jq -r .vcenter.dvs.mtu $jsonFile) -discovery-protocol $(jq -r .vcenter.dvs.discovery_protocol $jsonFile) "$(jq -r .vcenter.dvs.basename $jsonFile)-0-mgmt"
+  govc dvs.create -mtu $(jq -r .vcenter.dvs.mtu $jsonFile) -discovery-protocol $(jq -r .vcenter.dvs.discovery_protocol $jsonFile) "$(jq -r .vcenter.dvs.basename $jsonFile)-0"
   govc dvs.create -mtu $(jq -r .vcenter.dvs.mtu $jsonFile) -discovery-protocol $(jq -r .vcenter.dvs.discovery_protocol $jsonFile) "$(jq -r .vcenter.dvs.basename $jsonFile)-1-VMotion"
   govc dvs.create -mtu $(jq -r .vcenter.dvs.mtu $jsonFile) -discovery-protocol $(jq -r .vcenter.dvs.discovery_protocol $jsonFile) "$(jq -r .vcenter.dvs.basename $jsonFile)-2-VSAN"
-  govc dvs.portgroup.add -dvs "$(jq -r .vcenter.dvs.basename $jsonFile)-0-mgmt" -vlan 0 "$(jq -r .vcenter.dvs.portgroup.management.name $jsonFile)"
-  govc dvs.portgroup.add -dvs "$(jq -r .vcenter.dvs.basename $jsonFile)-0-mgmt" -vlan 0 "$(jq -r .vcenter.dvs.portgroup.management.name $jsonFile)-vmk"
+  govc dvs.portgroup.add -dvs "$(jq -r .vcenter.dvs.basename $jsonFile)-0" -vlan 0 "$(jq -r .vcenter.dvs.portgroup.management.name $jsonFile)"
+  govc dvs.portgroup.add -dvs "$(jq -r .vcenter.dvs.basename $jsonFile)-0" -vlan 0 "$(jq -r .vcenter.dvs.portgroup.management.name $jsonFile)-vmk"
   govc dvs.portgroup.add -dvs "$(jq -r .vcenter.dvs.basename $jsonFile)-1-VMotion" -vlan 0 "$(jq -r .vcenter.dvs.portgroup.VMotion.name $jsonFile)"
   govc dvs.portgroup.add -dvs "$(jq -r .vcenter.dvs.basename $jsonFile)-2-VSAN" -vlan 0 "$(jq -r .vcenter.dvs.portgroup.VSAN.name $jsonFile)"
   IFS=$'\n'
   for ip in $(jq -r .vcenter.dvs.portgroup.management.esxi_ips[] $jsonFile)
   do
-    govc dvs.add -dvs "$(jq -r .vcenter.dvs.basename $jsonFile)-0-mgmt" -pnic=vmnic0 $ip
+    govc dvs.add -dvs "$(jq -r .vcenter.dvs.basename $jsonFile)-0" -pnic=vmnic0 $ip
     govc dvs.add -dvs "$(jq -r .vcenter.dvs.basename $jsonFile)-1-VMotion" -pnic=vmnic1 $ip
     govc dvs.add -dvs "$(jq -r .vcenter.dvs.basename $jsonFile)-2-VSAN" -pnic=vmnic2 $ip
   done
@@ -170,7 +170,7 @@ else
 fi
 #
 #
-sleep 60
+#sleep 60
 #
 # Cleaning unused Standard vswitch config and VM port group
 #

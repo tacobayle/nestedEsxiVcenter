@@ -106,7 +106,7 @@ resource "null_resource" "cleaning_vmk3" {
 }
 
 resource "null_resource" "vcenter_configure2" {
-  depends_on = [null_resource.vcenter_migrating_vmk_to_dvs]
+  depends_on = [null_resource.cleaning_vmk3]
 
   provisioner "local-exec" {
     command = "/bin/bash vCenter_config2.sh"

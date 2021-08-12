@@ -43,6 +43,8 @@ do
   export GOVC_URL=$ip
   echo "Deleting port group called VM Network for Host $ip"
   govc host.esxcli network vswitch standard portgroup remove -p "VM Network" -v "vSwitch0"
+  echo "Deleting port group called Management Network for Host $ip"
+  govc host.esxcli network vswitch standard portgroup remove -p "Management Network" -v "vSwitch0"
   echo "Deleting vswitch called vSwitch0 for Host $ip"
   govc host.esxcli network vswitch standard remove -v vSwitch0
   echo "Deleting vswitch called vSwitch1 for Host $ip"

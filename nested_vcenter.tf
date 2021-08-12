@@ -112,3 +112,22 @@ resource "null_resource" "vcenter_configure2" {
     command = "/bin/bash vCenter_config2.sh"
   }
 }
+
+resource "null_resource" "dual_uplink_update" {
+  depends_on = [null_resource.vcenter_configure2]
+  count = (var.esxi.single_vswitch == true ? var.esxi.count : 0)
+  connection {
+    host        = var.vcenter.dvs.portgroup.management.esxi_ips[count.index]
+    type        = "ssh"
+    agent       = false
+    user        = "root"
+    password    = var.esxi_root_password
+  }
+
+  provisioner "remote-exec" {
+    inline      = [
+      "portid=$(esxcfg-vswitch -l |grep -A2 DVPort | grep -A1 vmnic0 | grep -v vmnic0 |awk '{print $1}')",
+      "esxcfg-vswitch -P vmnic1 -V ${var.vcenter.dvs.basename}-0"
+    ]
+  }
+}

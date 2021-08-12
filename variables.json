@@ -86,7 +86,7 @@
       "forwarders": "10.23.108.1; 10.23.108.2; 10.16.142.111",
       "reverse": "134.41.10"
     },
-    "ntp": "0.ubuntu.pool.ntp.org,1.ubuntu.pool.ntp.org,2.ubuntu.pool.ntp.org,3.ubuntu.pool.ntp.org"
+    "ntp": "0.pool.ntp.org,1.pool.ntp.org,2.pool.ntp.org,3.pool.ntp.org"
   },
   "vcenter": {
     "iso_source_location": "/home/ubuntu/bin/VMware-VCSA-all-7.0.2-17958471.iso",

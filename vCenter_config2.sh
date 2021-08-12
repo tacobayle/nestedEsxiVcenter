@@ -55,15 +55,15 @@ done
 #
 # if single vds switch # add the second physical uplink
 #
-if [[ $(jq -c -r .esxi.single_vswitch $jsonFile) == true ]] ; then
-  load_govc_env
-  echo "++++++++++++++++++++++++++++++++"
-  for ip in $(jq -r .vcenter.dvs.portgroup.management.esxi_ips[] $jsonFile)
-  do
-    echo "Adding physical port vmnic1 for ESXi host $ip for VDS $(jq -r .vcenter.dvs.basename $jsonFile)-0"
-    govc dvs.add -dvs "$(jq -r .vcenter.dvs.basename $jsonFile)-0" -pnic=vmnic1 $ip
-  done
-fi
+#if [[ $(jq -c -r .esxi.single_vswitch $jsonFile) == true ]] ; then
+#  load_govc_env
+#  echo "++++++++++++++++++++++++++++++++"
+#  for ip in $(jq -r .vcenter.dvs.portgroup.management.esxi_ips[] $jsonFile)
+#  do
+#    echo "Adding physical port vmnic1 for ESXi host $ip for VDS $(jq -r .vcenter.dvs.basename $jsonFile)-0"
+#    govc dvs.add -dvs "$(jq -r .vcenter.dvs.basename $jsonFile)-0" -pnic=vmnic1 $ip
+#  done
+#fi
 #
 # VSAN Configuration
 #

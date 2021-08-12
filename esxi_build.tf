@@ -147,6 +147,7 @@ resource "vsphere_virtual_machine" "esxi_single_vswitch" {
 
 resource "null_resource" "wait_esxi" {
   depends_on = [vsphere_virtual_machine.esxi_multiple_vswitch, vsphere_virtual_machine.esxi_single_vswitch]
+  count = var.esxi.count
 
   provisioner "local-exec" {
     command = "count=1 ; until $(curl --output /dev/null --silent --head -k https://${var.vcenter.dvs.portgroup.management.esxi_ips[count.index]}); do echo \"Attempt $count: Waiting for ESXi host ${count.index} to be reachable...\"; sleep 40 ; count=$((count+1)) ;  if [ \"$count\" = 30 ]; then echo \"ERROR: Unable to connect to ESXi host\" ; exit 1 ; fi ; done"

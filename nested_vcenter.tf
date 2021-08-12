@@ -89,7 +89,7 @@ resource "null_resource" "migrating_vmk0" {
 
 resource "null_resource" "cleaning_vmk3" {
   depends_on = [null_resource.migrating_vmk0]
-  count = (var.esxi.single_vswitch == false ? var.esxi.count : 0)
+  count = var.esxi.count
   connection {
     host        = var.vcenter.dvs.portgroup.management.esxi_ips[count.index]
     type        = "ssh"

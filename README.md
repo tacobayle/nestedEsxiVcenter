@@ -28,6 +28,16 @@ Each port group will be configured with a VLAN ID.
 
 ### DNS NTP - if dns-ntp.create == true
 
+#### prerequisites on the Linux machine
+- OS VERSION
+```
+18.04.2 LTS (Bionic Beaver)
+```
+- TF VERSION
+#### prerequisites on the Linux machine - Terraform
+
+
+
 ## variables
 
 ### non sensitive variables

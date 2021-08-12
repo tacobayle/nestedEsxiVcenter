@@ -100,9 +100,6 @@ do
   count=$((count+1))
 done
 #
-load_govc_env
-govc cluster.change -drs-enabled -ha-enabled -vsan-enabled -vsan-autoclaim "$(jq -r .vcenter.cluster $jsonFile)"
-#
 #curl -k -H "vmware-api-session-id: $token" https://$api_host/api/vcenter/host
 #  curl_post $token '{"folder":'\"$folder_host\"',"hostname":'\"$ip\"',"password":'\"$TF_VAR_esxi_root_password\"',"thumbprint_verification":"NONE","user_name":"root"}' $api_host "vcenter/host"
 #
@@ -169,7 +166,8 @@ else
   exit
 fi
 #
-#
+
+
 #sleep 60
 #
 # Cleaning unused Standard vswitch config and VM port group

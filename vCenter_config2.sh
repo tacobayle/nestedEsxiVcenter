@@ -64,3 +64,21 @@ if [[ $(jq -c -r .esxi.single_vswitch $jsonFile) == true ]] ; then
     govc dvs.add -dvs "$(jq -r .vcenter.dvs.basename $jsonFile)-0" -pnic=vmnic1 $ip
   done
 fi
+#
+# VSAN Configuration
+#
+load_govc_env
+echo "Enabling VSAN configuration"
+govc cluster.change -drs-enabled -ha-enabled -vsan-enabled -vsan-autoclaim "$(jq -r .vcenter.cluster $jsonFile)"
+IFS=$'\n'
+count=0
+for ip in $(jq -r .vcenter.dvs.portgroup.management.esxi_ips[] $jsonFile)
+do
+  load_govc_esxi
+  if [[ $count -ne 0 ]] ; then
+    export GOVC_URL=$ip
+    echo "Adding host $ip in VSAN configuration"
+    govc host.esxcli vsan storage tag add -t capacityFlash -d "$(jq -r .vcenter.capacity_disk $jsonFile)"
+    govc host.esxcli vsan storage add --disks "$(jq -r .vcenter.capacity_disk $jsonFile)" -s "$(jq -r .vcenter.cache_disk $jsonFile)"
+  fi
+done

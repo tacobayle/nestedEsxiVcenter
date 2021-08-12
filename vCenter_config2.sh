@@ -81,4 +81,5 @@ do
     govc host.esxcli vsan storage tag add -t capacityFlash -d "$(jq -r .vcenter.capacity_disk $jsonFile)"
     govc host.esxcli vsan storage add --disks "$(jq -r .vcenter.capacity_disk $jsonFile)" -s "$(jq -r .vcenter.cache_disk $jsonFile)"
   fi
+  count=$((count+1))
 done

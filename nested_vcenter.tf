@@ -127,7 +127,7 @@ resource "null_resource" "dual_uplink_update" {
   provisioner "remote-exec" {
     inline      = [
       "portid=$(esxcfg-vswitch -l |grep -A2 DVPort | grep -A1 vmnic0 | grep -v vmnic0 |awk '{print $1}')",
-      "esxcfg-vswitch -P vmnic1 -V ${var.vcenter.dvs.basename}-0"
+      "esxcfg-vswitch -P vmnic1 -V $portid ${var.vcenter.dvs.basename}-0"
     ]
   }
 }

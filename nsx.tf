@@ -42,3 +42,11 @@ resource "vsphere_virtual_machine" "nsx" {
     }
   }
 }
+
+resource "null_resource" "wait_nsx" {
+  depends_on = [vsphere_virtual_machine.nsx]
+
+  provisioner "local-exec" {
+    command = "count=1 ; until $(curl --output /dev/null --silent --head -k https://${var.vcenter.dvs.portgroup.management.nsx_ip}); do echo \"Attempt $count: Waiting for NSX Manager to be reachable...\"; sleep 30 ; count=$((count+1)) ;  if [ \"$count\" = 60 ]; then echo \"ERROR: Unable to connect to NSX Manager\" ; exit 1 ; fi ; done"
+  }
+}

@@ -55,7 +55,7 @@ done
 #
 # if single vds switch # add the second physical uplink
 #
-#if [[ $(jq -c -r .esxi.single_vswitch $jsonFile) == true ]] ; then
+#if [[ $(jq -c -r .vcenter.dvs.single_vds $jsonFile) == true ]] ; then
 #  load_govc_env
 #  echo "++++++++++++++++++++++++++++++++"
 #  for ip in $(jq -r .vcenter.dvs.portgroup.management.esxi_ips[] $jsonFile)

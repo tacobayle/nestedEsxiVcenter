@@ -18,19 +18,19 @@ data "vsphere_resource_pool" "pool" {
 }
 
 data "vsphere_network" "esxi_networks" {
-  count = (var.esxi.single_vswitch == false ? length(values(var.vcenter_underlay.networks)) : 0)
+  count = (var.vcenter.dvs.single_vds == false ? length(values(var.vcenter_underlay.networks)) : 0)
   name = values(var.vcenter_underlay.networks)[count.index].name
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
 data "vsphere_network" "esxi_network" {
-  count = (var.esxi.single_vswitch == true ? 1 : 0)
+  count = (var.vcenter.dvs.single_vds == true ? 1 : 0)
   name = var.vcenter_underlay.network.name
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
 data "vsphere_network" "vcenter_underlay_network_mgmt" {
-  count = (var.esxi.single_vswitch == false ? 1 : 0)
+  count = (var.vcenter.dvs.single_vds == false ? 1 : 0)
   name = var.vcenter_underlay.networks.management.name
   datacenter_id = data.vsphere_datacenter.dc.id
 }

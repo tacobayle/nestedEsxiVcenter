@@ -1,7 +1,7 @@
 - hosts: localhost
   tasks:
 
-# use case when not esxi.single_vswitch
+# use case when not vcenter.dvs.single_vds
 
     - name: Migrate vmk1 (VMotion) to the VDS
       community.vmware.vmware_migrate_vmk:
@@ -16,7 +16,7 @@
         migrate_switch_name: "{{ vcenter.dvs.basename }}-1-VMotion"
         migrate_portgroup_name: "{{ vcenter.dvs.portgroup.VMotion.name }}"
       loop: "{{ vcenter.dvs.portgroup.management.esxi_ips }}"
-      when: not esxi.single_vswitch
+      when: not vcenter.dvs.single_vds
 
     - name: Migrate vmk2 (VSAN) to the VDS
       community.vmware.vmware_migrate_vmk:
@@ -31,7 +31,7 @@
         migrate_switch_name: "{{ vcenter.dvs.basename }}-2-VSAN"
         migrate_portgroup_name: "{{ vcenter.dvs.portgroup.VSAN.name }}"
       loop: "{{ vcenter.dvs.portgroup.management.esxi_ips }}"
-      when: not esxi.single_vswitch
+      when: not vcenter.dvs.single_vds
 
 #    - name: Migrate vmk0 (Mgmt) to the VDS
 #      community.vmware.vmware_migrate_vmk:
@@ -50,7 +50,7 @@
 #      until: result is not failed
 #      retries: 5
 #      delay: 10
-#      when: not esxi.single_vswitch
+#      when: not vcenter.dvs.single_vds
 
 #    - name: Add Management vmkernel port using static network type for vmk3
 #      community.vmware.vmware_vmkernel:
@@ -69,7 +69,7 @@
 #        state: present
 #        enable_mgmt: True
 #      loop: "{{ vcenter.dvs.portgroup.management.esxi_ips | zip(vcenter.dvs.portgroup.management.esxi_ips_temp) | list }}"
-#      when: not esxi.single_vswitch
+#      when: not vcenter.dvs.single_vds
 #
 #    - name: Add Management vmkernel port using static network type for vmk4
 #      community.vmware.vmware_vmkernel:
@@ -86,9 +86,9 @@
 #        state: present
 #        enable_mgmt: True
 #      loop: "{{ vcenter.dvs.portgroup.management.esxi_ips }}"
-#      when: not esxi.single_vswitch
+#      when: not vcenter.dvs.single_vds
 
-# use case when esxi.single_vswitch
+# use case when vcenter.dvs.single_vds
 
     - name: Migrate vmk1 (VMotion) to the VDS
       community.vmware.vmware_migrate_vmk:
@@ -103,7 +103,7 @@
         migrate_switch_name: "{{ vcenter.dvs.basename }}-0"
         migrate_portgroup_name: "{{ vcenter.dvs.portgroup.VMotion.name }}"
       loop: "{{ vcenter.dvs.portgroup.management.esxi_ips }}"
-      when: esxi.single_vswitch
+      when: vcenter.dvs.single_vds
 
     - name: Migrate vmk2 (VSAN) to the VDS
       community.vmware.vmware_migrate_vmk:
@@ -118,7 +118,7 @@
         migrate_switch_name: "{{ vcenter.dvs.basename }}-0"
         migrate_portgroup_name: "{{ vcenter.dvs.portgroup.VSAN.name }}"
       loop: "{{ vcenter.dvs.portgroup.management.esxi_ips }}"
-      when: esxi.single_vswitch
+      when: vcenter.dvs.single_vds
 
 #    - name: Migrate vmk0 (Mgmt) to the VDS
 #      community.vmware.vmware_migrate_vmk:
@@ -136,7 +136,7 @@
 #      register: result
 #      until: result is not failed
 #      retries: 5
-#      when: esxi.single_vswitch
+#      when: vcenter.dvs.single_vds
 
     - name: Add Management vmkernel port using static network type for vmk3
       community.vmware.vmware_vmkernel:
@@ -155,7 +155,7 @@
         state: present
         enable_mgmt: True
       loop: "{{ vcenter.dvs.portgroup.management.esxi_ips | zip(vcenter.dvs.portgroup.management.esxi_ips_temp) | list }}"
-#      when: esxi.single_vswitch
+#      when: vcenter.dvs.single_vds
 
 #    - name: Add Management vmkernel port using static network type for vmk3
 #      community.vmware.vmware_vmkernel:
@@ -174,7 +174,7 @@
 #        state: present
 #        enable_mgmt: True
 #      loop: "{{ vcenter.dvs.portgroup.management.esxi_ips | zip(vcenter.dvs.portgroup.management.esxi_ips_temp) | list }}"
-#      when: not esxi.single_vswitch
+#      when: not vcenter.dvs.single_vds
 
     - name: Add Management vmkernel port using static network type for vmk4
       community.vmware.vmware_vmkernel:
@@ -191,7 +191,7 @@
         state: present
         enable_mgmt: True
       loop: "{{ vcenter.dvs.portgroup.management.esxi_ips }}"
-#      when: not esxi.single_vswitch
+#      when: not vcenter.dvs.single_vds
 
 #    - name: Add Management vmkernel port using static network type for vmk4
 #      community.vmware.vmware_vmkernel:
@@ -208,4 +208,4 @@
 #        state: present
 #        enable_mgmt: True
 #      loop: "{{ vcenter.dvs.portgroup.management.esxi_ips }}"
-#      when: esxi.single_vswitch
+#      when: vcenter.dvs.single_vds

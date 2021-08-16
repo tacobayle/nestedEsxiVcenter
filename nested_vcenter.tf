@@ -2,7 +2,7 @@
 
 //resource "null_resource" "wait_esxi_single_vswitch" {
 //  depends_on = [vsphere_virtual_machine.esxi_single_vswitch]
-//  count = (var.esxi.single_vswitch == true ? var.esxi.count : 0)
+//  count = (var.vcenter.dvs.single_vds == true ? var.esxi.count : 0)
 //
 //  provisioner "local-exec" {
 //    command = "count=1 ; until $(curl --output /dev/null --silent --head -k https://${var.vcenter.dvs.portgroup.management.esxi_ips[count.index]}); do echo \"Attempt $count: Waiting for ESXi host ${count.index} to be reachable...\"; sleep 40 ; count=$((count+1)) ;  if [ \"$count\" = 30 ]; then echo \"ERROR: Unable to connect to ESXi host\" ; exit 1 ; fi ; done"
@@ -45,7 +45,7 @@ resource "null_resource" "vcenter_migrating_vmk_to_dvs" {
 
 //resource "null_resource" "migrating_vmk0_multiple" {
 //  depends_on = [null_resource.vcenter_migrating_vmk_to_dvs]
-//  count = (var.esxi.single_vswitch == false ? var.esxi.count : 0)
+//  count = (var.vcenter.dvs.single_vds == false ? var.esxi.count : 0)
 //  connection {
 //    host        = var.vcenter.dvs.portgroup.management.esxi_ips_temp[count.index]
 //    type        = "ssh"
@@ -113,9 +113,9 @@ resource "null_resource" "vcenter_configure2" {
   }
 }
 
-resource "null_resource" "dual_uplink_update" {
+resource "null_resource" "dual_uplink_update_single_vds" {
   depends_on = [null_resource.vcenter_configure2]
-  count = (var.esxi.single_vswitch == true ? var.esxi.count : 0)
+  count = (var.vcenter.dvs.single_vds == true ? var.esxi.count : 0)
   connection {
     host        = var.vcenter.dvs.portgroup.management.esxi_ips[count.index]
     type        = "ssh"
@@ -126,8 +126,31 @@ resource "null_resource" "dual_uplink_update" {
 
   provisioner "remote-exec" {
     inline      = [
-      "portid=$(esxcfg-vswitch -l |grep -A2 DVPort | grep -A1 vmnic0 | grep -v vmnic0 |awk '{print $1}')",
+      "portid=$(esxcfg-vswitch -l | grep -A2 DVPort | grep -A1 vmnic0 | grep -v vmnic0 |awk '{print $1}')",
       "esxcfg-vswitch -P vmnic1 -V $portid ${var.vcenter.dvs.basename}-0"
+    ]
+  }
+}
+
+resource "null_resource" "dual_uplink_update_multiple_vds" {
+  depends_on = [null_resource.vcenter_configure2]
+  count = (var.vcenter.dvs.single_vds == false ? var.esxi.count : 0)
+  connection {
+    host        = var.vcenter.dvs.portgroup.management.esxi_ips[count.index]
+    type        = "ssh"
+    agent       = false
+    user        = "root"
+    password    = var.esxi_root_password
+  }
+
+  provisioner "remote-exec" {
+    inline      = [
+      "portid=$(esxcfg-vswitch -l | grep -A4 ${var.vcenter.dvs.basename}-0 | grep -A2 DVPort | grep -A1 vmnic0 | grep -v vmnic0 |awk '{print $1}')",
+      "esxcfg-vswitch -P vmnic3 -V $portid ${var.vcenter.dvs.basename}-0",
+      "portid=$(esxcfg-vswitch -l | grep -A4 ${var.vcenter.dvs.basename}-1-VMotion | grep -A2 DVPort | grep -A1 vmnic1 | grep -v vmnic1 |awk '{print $1}')",
+      "esxcfg-vswitch -P vmnic4 -V $portid ${var.vcenter.dvs.basename}-1-VMotion",
+      "portid=$(esxcfg-vswitch -l | grep -A4 ${var.vcenter.dvs.basename}-2-VSAN | grep -A2 DVPort | grep -A1 vmnic2 | grep -v vmnic2 |awk '{print $1}')",
+      "esxcfg-vswitch -P vmnic5 -V $portid ${var.vcenter.dvs.basename}-2-VSAN"
     ]
   }
 }

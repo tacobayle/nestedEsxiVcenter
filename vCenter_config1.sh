@@ -107,7 +107,7 @@ done
 #
 #
 # if single vds switch
-if [[ $(jq -c -r .esxi.single_vswitch $jsonFile) == true ]] ; then
+if [[ $(jq -c -r .vcenter.dvs.single_vds $jsonFile) == true ]] ; then
   load_govc_env
   govc dvs.create -mtu $(jq -r .vcenter.dvs.mtu $jsonFile) -discovery-protocol $(jq -r .vcenter.dvs.discovery_protocol $jsonFile) "$(jq -r .vcenter.dvs.basename $jsonFile)-0"
   govc dvs.portgroup.add -dvs "$(jq -r .vcenter.dvs.basename $jsonFile)-0" -vlan $(jq -r .vcenter.dvs.portgroup.management.vlan $jsonFile) "$(jq -r .vcenter.dvs.portgroup.management.name $jsonFile)"
@@ -120,7 +120,7 @@ if [[ $(jq -c -r .esxi.single_vswitch $jsonFile) == true ]] ; then
   done
 fi
 # if multiple vds switch
-if [[ $(jq -c -r .esxi.single_vswitch $jsonFile) == false ]] ; then
+if [[ $(jq -c -r .vcenter.dvs.single_vds $jsonFile) == false ]] ; then
   load_govc_env
   govc dvs.create -mtu $(jq -r .vcenter.dvs.mtu $jsonFile) -discovery-protocol $(jq -r .vcenter.dvs.discovery_protocol $jsonFile) "$(jq -r .vcenter.dvs.basename $jsonFile)-0"
   govc dvs.create -mtu $(jq -r .vcenter.dvs.mtu $jsonFile) -discovery-protocol $(jq -r .vcenter.dvs.discovery_protocol $jsonFile) "$(jq -r .vcenter.dvs.basename $jsonFile)-1-VMotion"
@@ -209,7 +209,7 @@ fi
 ##
 ## if single vds switch # add the second physical uplink
 ##
-#if [[ $(jq -c -r .esxi.single_vswitch $jsonFile) == true ]] ; then
+#if [[ $(jq -c -r .vcenter.dvs.single_vds $jsonFile) == true ]] ; then
 #  echo "++++++++++++++++++++++++++++++++"
 #  for ip in $(jq -r .vcenter.dvs.portgroup.management.esxi_ips[] $jsonFile)
 #  do

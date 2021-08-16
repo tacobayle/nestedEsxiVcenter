@@ -10,3 +10,4 @@ variable "esxi_root_password" {}
 variable "vsphere_username" {}
 variable "vsphere_password" {}
 variable "bind_password" {}
+variable "vcenter_password" {}

@@ -6,7 +6,7 @@ This Infrastructure as code will deploy nested ESXi/vCenter on the top of vCente
 
 ## Use cases
 
-### Single VDS - if esxi.single_vswitch == true
+### Single VDS - if vcenter.dvs.single_vds == true
 In this use case, a single vds switch is configured in the nested vCenter with three port groups:
 - Management
 - Vmotion
@@ -20,7 +20,7 @@ The following port groups are configured with a specific VLAN ID:
 Two "physical" uplink NICs (per ESXi host) are connected to this single VDS.
 These two NICs are connected to the underlay vCenter network defined in underlay_vcenter.network (leveraging 802.1q).
 
-### Multiple VDS - if esxi.single_vswitch == false
+### Multiple VDS - if vcenter.dvs.single_vds == false
 In this use case, multiple vds switches are configured in the nested vCenter:
 - dvs-0 with a port group called vcenter.dvs.portgroup.management.name and a port group called "vcenter.dvs.portgroup.management.name"-vmk - connected to a "physical" uplink to the underlay network (vcenter_underlay.networks.management)
 - dvs-1-VMotion with a port group called vcenter.dvs.portgroup.management.VMotion.name - connected to a "physical" uplink to the underlay network (vcenter_underlay.vmotion.management)
@@ -95,4 +95,5 @@ export TF_VAR_esxi_root_password=******              # Nested ESXi root password
 export TF_VAR_vsphere_username=******                # Underlay vCenter username
 export TF_VAR_vsphere_password=******                # Underlay vCenter password
 export TF_VAR_bind_password=******                   # Bind password - needs to be defined even if if dns-ntp.create == true
+export TF_VAR_vcenter_password=******                # Overlay vCenter password 
 ```

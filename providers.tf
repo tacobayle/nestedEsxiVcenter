@@ -13,3 +13,11 @@ provider "dns" {
     key_secret    = base64encode(var.bind_password)
   }
 }
+
+provider "vsphere_overlay" {
+  user           = "administrator@${var.vcenter.sso.domain_name}"
+  password       = var.vcenter_password
+  vsphere_server = "${var.vcenter.name}.${var.dns.domain}"
+  allow_unverified_ssl = true
+  alias          = "overlay"
+}

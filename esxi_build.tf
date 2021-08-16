@@ -1,5 +1,5 @@
 resource "local_file" "ks_cust_single_vswicth" {
-  count = (var.esxi.single_vswitch == true ? var.esxi.count : 0)
+  count = (var.vcenter.dvs.single_vds == true ? var.esxi.count : 0)
   content     = templatefile("${path.module}/templates/ks_cust_single_vswicth.cfg.tmpl",
   { esxi_root_password = var.esxi_root_password,
     keyboard_type = var.esxi.keyboard_type,
@@ -19,7 +19,7 @@ resource "local_file" "ks_cust_single_vswicth" {
 }
 
 resource "local_file" "ks_cust_multiple_vswitch" {
-  count = (var.esxi.single_vswitch == false ? var.esxi.count : 0)
+  count = (var.vcenter.dvs.single_vds == false ? var.esxi.count : 0)
   content     = templatefile("${path.module}/templates/ks_cust_multiple_vswitch.cfg.tmpl",
   { esxi_root_password = var.esxi_root_password,
     keyboard_type = var.esxi.keyboard_type,
@@ -63,7 +63,7 @@ resource "null_resource" "iso_destroy" {
 
 resource "vsphere_virtual_machine" "esxi_multiple_vswitch" {
   depends_on = [ vsphere_file.iso_upload ]
-  count = (var.esxi.single_vswitch == false ? var.esxi.count : 0)
+  count = (var.vcenter.dvs.single_vds == false ? var.esxi.count : 0)
   name             = "${var.esxi.basename}-${count.index}"
   datastore_id     = data.vsphere_datastore.datastore.id
   resource_pool_id = data.vsphere_resource_pool.pool.id
@@ -108,7 +108,7 @@ resource "vsphere_virtual_machine" "esxi_multiple_vswitch" {
 
 resource "vsphere_virtual_machine" "esxi_single_vswitch" {
   depends_on = [ vsphere_file.iso_upload ]
-  count = (var.esxi.single_vswitch == true ? var.esxi.count : 0)
+  count = (var.vcenter.dvs.single_vds == true ? var.esxi.count : 0)
   name             = "${var.esxi.basename}-${count.index}"
   datastore_id     = data.vsphere_datastore.datastore.id
   resource_pool_id = data.vsphere_resource_pool.pool.id

@@ -14,7 +14,7 @@ resource "vsphere_virtual_machine" "nsx" {
   datastore_id     = data.vsphere_datastore.datastore_nested.id
   resource_pool_id = data.vsphere_resource_pool.resource_pool_nested.id
   folder           = vsphere_folder.nsx[0].path
-  deployment_option = var.nsx.deployment
+//  deployment_option = var.nsx.deployment
 
   network_interface {
     network_id = data.vsphere_network.vcenter_network_mgmt_nested.id

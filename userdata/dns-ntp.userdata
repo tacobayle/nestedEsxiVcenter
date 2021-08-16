@@ -63,6 +63,7 @@ write_files:
       do
         echo "pool $ntp_server iburst" | tee -a /etc/ntp.conf
       done
+      systemctl restart ntp
       #
       # Bind config
       #

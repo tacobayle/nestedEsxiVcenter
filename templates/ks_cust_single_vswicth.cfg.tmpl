@@ -37,6 +37,7 @@ esxcli network ip interface add --interface-name=vmk0 --portgroup-name="Manageme
 esxcli network ip interface ipv4 set --interface-name=vmk0 --ipv4=${ip} --netmask=${netmask} --type=static
 esxcli network ip interface tag add -i vmk0 -t Management
 esxcli network ip route ipv4 add -g ${gateway} -n 0.0.0.0/0
+esxcfg-vmknic -a -i ip_address -n netmask -m MTU portgroup_name
 # Adds a tag on a given VMkernel network interface. Supported tags are: Management, VMotion, faultToleranceLogging, vSphereReplication, vSphereReplicationNFC, vSphereProvisioning, VSAN, VSANWitness, vSphereBackupNFC, PrecisionTimeProtocol, VSANReplication
 #
 esxcli network vswitch standard add -v vSwitch1

@@ -81,8 +81,14 @@ resource "null_resource" "migrating_vmk0" {
       "portid=$(esxcfg-vswitch -l |grep vmk4 |awk '{print $1}')",
       "esxcli network ip interface remove --interface-name=vmk0",
       "esxcli network ip interface remove --interface-name=vmk4",
+//      "esxcfg-vmknic -a -i ${var.vcenter.dvs.portgroup.management.esxi_ips[count.index]} -n ${var.vcenter.dvs.portgroup.management.netmask} -s ${var.vcenter.dvs.basename}-0 -v $portid -m ${var.vcenter.dvs.mtu}",
+      "esxcli network ip interface tag remove -i vmk1 -t Management",
       "esxcli network ip interface add --interface-name=vmk0 --dvs-name=${var.vcenter.dvs.basename}-0 --dvport-id=$portid",
-      "esxcli network ip interface ipv4 set --interface-name=vmk0 --ipv4=${var.vcenter.dvs.portgroup.management.esxi_ips[count.index]} --netmask=${var.vcenter.dvs.portgroup.management.netmask} --type=static"
+      "esxcli network ip interface ipv4 set --interface-name=vmk0 --ipv4=${var.vcenter.dvs.portgroup.management.esxi_ips[count.index]} --netmask=${var.vcenter.dvs.portgroup.management.netmask} --type=static",
+      "esxcli network ip interface tag add -i vmk0 -t Management",
+      "esxcli network ip interface set -m ${var.vcenter.dvs.mtu} -i vmk0",
+      "esxcli network ip interface set -m ${var.vcenter.dvs.mtu} -i vmk1",
+      "esxcli network ip interface set -m ${var.vcenter.dvs.mtu} -i vmk2"
     ]
   }
 }

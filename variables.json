@@ -117,7 +117,8 @@
           "prefix": "22",
           "gateway": "10.41.132.1",
           "vcenter_ip": "10.41.134.135",
-          "dns-ntp_ip": "10.41.134.134"
+          "dns-ntp_ip": "10.41.134.134",
+          "nsx_ip": "10.41.134.136"
         },
         "VMotion": {
           "name": "VMotion",
@@ -135,5 +136,12 @@
         }
       }
     }
+  },
+  "nsx": {
+    "create": true,
+    "ova_location": "/home/ubuntu/bin/nsx-unified-appliance-3.1.3.0.0.18329005.ova",
+    "deployment": "Medium",
+    "basename": "nsx-manager",
+    "role": "NSX Manager"
   }
 }

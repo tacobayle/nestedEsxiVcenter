@@ -20,25 +20,34 @@ resource "vsphere_virtual_machine" "nsx" {
     network_id = data.vsphere_network.vcenter_network_mgmt_nested.id
   }
 
+  num_cpus = var.nsx.cpu
+  memory = var.nsx.memory
+
+  disk {
+    size             = var.nsx.disk
+    label            = "{var.nsx.basename}-${count.index}.lab_vmdk"
+    thin_provisioned = true
+  }
+
   clone {
     template_uuid = vsphere_content_library_item.OvaNSX[0].id
   }
 
   vapp {
     properties = {
-      nsx_allowSSHRootLogin = true
+      nsx_allowSSHRootLogin = "True"
       nsx_cli_audit_passwd_0 = var.nsx_password
       nsx_cli_passwd_0 = var.nsx_password
       nsx_dns1_0 = var.dns.nameserver
       nsx_gateway_0 = var.vcenter.dvs.portgroup.management.gateway
       nsx_hostname = "${var.nsx.basename}-${count.index}"
       nsx_ip_0 = var.vcenter.dvs.portgroup.management.nsx_ip
-      nsx_isSSHEnabled = true
+      nsx_isSSHEnabled = "True"
       nsx_netmask_0 = var.vcenter.dvs.portgroup.management.netmask
       nsx_ntp_0 = var.ntp.server
       nsx_passwd_0 = var.nsx_password
       nsx_role = var.nsx.role
-      nsx_swIntegrityCheck = false
+      nsx_swIntegrityCheck = "False"
     }
   }
 }

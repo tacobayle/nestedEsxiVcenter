@@ -1,5 +1,5 @@
 data "vsphere_datacenter" "dc_nested" {
-  depends_on = [null_resource.dual_uplink_update_multiple_vds, null_resource.dual_uplink_update_single_vds]
+//  depends_on = [null_resource.dual_uplink_update_multiple_vds, null_resource.dual_uplink_update_single_vds]
   provider        = vsphere.overlay
   name = var.vcenter.datacenter
 }

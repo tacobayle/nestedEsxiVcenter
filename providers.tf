@@ -14,7 +14,7 @@ provider "dns" {
   }
 }
 
-provider "vsphere_overlay" {
+provider "vsphere" {
   user           = "administrator@${var.vcenter.sso.domain_name}"
   password       = var.vcenter_password
   vsphere_server = "${var.vcenter.name}.${var.dns.domain}"

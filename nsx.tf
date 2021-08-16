@@ -21,7 +21,7 @@ resource "vsphere_virtual_machine" "nsx" {
   }
 
   clone {
-    template_uuid = vsphere_content_library_item.OvaNSX.id
+    template_uuid = vsphere_content_library_item.OvaNSX[0].id
   }
 
   vapp {

@@ -6,10 +6,12 @@ resource "vsphere_folder" "nsx" {
   datacenter_id = data.vsphere_datacenter.dc_nested.id
 }
 
+# https://docs.vmware.com/en/VMware-NSX-T-Data-Center/3.1/installation/GUID-AECA2EE0-90FC-48C4-8EDB-66517ACFE415.html
 
-resource "vsphere_virtual_machine" "nsx" {
+
+resource "vsphere_virtual_machine" "nsx_medium" {
   provider        = vsphere.overlay
-  count            = (var.nsx.create == true ? 1 : 0)
+  count            = (var.nsx.create == true && var.nsx.deployment == "Medium" ? 1 : 0)
   name             = "${var.nsx.basename}-${count.index}"
   datastore_id     = data.vsphere_datastore.datastore_nested.id
   resource_pool_id = data.vsphere_resource_pool.resource_pool_nested.id
@@ -20,11 +22,11 @@ resource "vsphere_virtual_machine" "nsx" {
     network_id = data.vsphere_network.vcenter_network_mgmt_nested.id
   }
 
-  num_cpus = var.nsx.cpu
-  memory = var.nsx.memory
+  num_cpus = 6
+  memory = 24576
 
   disk {
-    size             = var.nsx.disk
+    size             = 200
     label            = "{var.nsx.basename}-${count.index}.lab_vmdk"
     thin_provisioned = true
   }
@@ -53,7 +55,7 @@ resource "vsphere_virtual_machine" "nsx" {
 }
 
 resource "null_resource" "wait_nsx" {
-  depends_on = [vsphere_virtual_machine.nsx]
+  depends_on = [vsphere_virtual_machine.nsx_medium]
 
   provisioner "local-exec" {
     command = "count=1 ; until $(curl --output /dev/null --silent --head -k https://${var.vcenter.dvs.portgroup.management.nsx_ip}); do echo \"Attempt $count: Waiting for NSX Manager to be reachable...\"; sleep 30 ; count=$((count+1)) ;  if [ \"$count\" = 60 ]; then echo \"ERROR: Unable to connect to NSX Manager\" ; exit 1 ; fi ; done"

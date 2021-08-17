@@ -86,7 +86,7 @@ resource "null_resource" "migrating_vmk0" {
       "esxcli network ip interface add --interface-name=vmk0 --dvs-name=${var.vcenter.dvs.basename}-0 --dvport-id=$portid",
       "esxcli network ip interface ipv4 set --interface-name=vmk0 --ipv4=${var.vcenter.dvs.portgroup.management.esxi_ips[count.index]} --netmask=${var.vcenter.dvs.portgroup.management.netmask} --type=static",
       "esxcli network ip interface tag add -i vmk0 -t Management",
-      "esxcli network ip interface set -m ${var.vcenter.dvs.mtu} -i vmk0",
+      "esxcli network ip interface set -m 1500 -i vmk0",
       "esxcli network ip interface set -m ${var.vcenter.dvs.mtu} -i vmk1",
       "esxcli network ip interface set -m ${var.vcenter.dvs.mtu} -i vmk2"
     ]

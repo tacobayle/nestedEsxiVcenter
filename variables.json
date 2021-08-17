@@ -145,6 +145,6 @@
     "role": "NSX Manager",
     "cpu": 6,
     "memory": 24576,
-    "disk": 300
+    "disk": 200
   }
 }

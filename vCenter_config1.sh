@@ -116,9 +116,12 @@ if [[ $(jq -c -r .vcenter.dvs.single_vds $jsonFile) == true ]] ; then
   govc dvs.portgroup.add -dvs "$(jq -r .vcenter.dvs.basename $jsonFile)-0" -vlan $(jq -r .vcenter.dvs.portgroup.management.vlan $jsonFile) "$(jq -r .vcenter.dvs.portgroup.management.name $jsonFile)-vmk"
   govc dvs.portgroup.add -dvs "$(jq -r .vcenter.dvs.basename $jsonFile)-0" -vlan $(jq -r .vcenter.dvs.portgroup.VMotion.vlan $jsonFile) "$(jq -r .vcenter.dvs.portgroup.VMotion.name $jsonFile)"
   govc dvs.portgroup.add -dvs "$(jq -r .vcenter.dvs.basename $jsonFile)-0" -vlan $(jq -r .vcenter.dvs.portgroup.VSAN.vlan $jsonFile) "$(jq -r .vcenter.dvs.portgroup.VSAN.name $jsonFile)"
+  IFS=$'\n'
+  count=1
   for ip in $(jq -r .vcenter.dvs.portgroup.management.esxi_ips[] $jsonFile)
   do
-    govc dvs.add -dvs "$(jq -r .vcenter.dvs.basename $jsonFile)-0" -pnic=vmnic0 $ip
+    govc dvs.add -dvs "$(jq -r .vcenter.dvs.basename $jsonFile)-0" -pnic=vmnic0 "$(jq -r .esxi.basename $jsonFile)$count.$(jq -r .dns.domain $jsonFile)"
+    count=$((count+1))
   done
 fi
 # if multiple vds switch
@@ -132,11 +135,13 @@ if [[ $(jq -c -r .vcenter.dvs.single_vds $jsonFile) == false ]] ; then
   govc dvs.portgroup.add -dvs "$(jq -r .vcenter.dvs.basename $jsonFile)-1-VMotion" -vlan 0 "$(jq -r .vcenter.dvs.portgroup.VMotion.name $jsonFile)"
   govc dvs.portgroup.add -dvs "$(jq -r .vcenter.dvs.basename $jsonFile)-2-VSAN" -vlan 0 "$(jq -r .vcenter.dvs.portgroup.VSAN.name $jsonFile)"
   IFS=$'\n'
+  count=1
   for ip in $(jq -r .vcenter.dvs.portgroup.management.esxi_ips[] $jsonFile)
   do
-    govc dvs.add -dvs "$(jq -r .vcenter.dvs.basename $jsonFile)-0" -pnic=vmnic0 $ip
-    govc dvs.add -dvs "$(jq -r .vcenter.dvs.basename $jsonFile)-1-VMotion" -pnic=vmnic1 $ip
-    govc dvs.add -dvs "$(jq -r .vcenter.dvs.basename $jsonFile)-2-VSAN" -pnic=vmnic2 $ip
+    govc dvs.add -dvs "$(jq -r .vcenter.dvs.basename $jsonFile)-0" -pnic=vmnic0 "$(jq -r .esxi.basename $jsonFile)$count.$(jq -r .dns.domain $jsonFile)"
+    govc dvs.add -dvs "$(jq -r .vcenter.dvs.basename $jsonFile)-1-VMotion" -pnic=vmnic1 "$(jq -r .esxi.basename $jsonFile)$count.$(jq -r .dns.domain $jsonFile)"
+    govc dvs.add -dvs "$(jq -r .vcenter.dvs.basename $jsonFile)-2-VSAN" -pnic=vmnic2 "$(jq -r .esxi.basename $jsonFile)$count.$(jq -r .dns.domain $jsonFile)"
+    count=$((count+1))
   done
 fi
 #

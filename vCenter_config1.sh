@@ -87,13 +87,15 @@ curl_put $token '{"name":'\"$(jq -r .ntp.timezone $jsonFile)\"'}' $api_host "app
 #  fi
 #done
 IFS=$'\n'
-count=0
+count=1
 for ip in $(jq -r .vcenter.dvs.portgroup.management.esxi_ips[] $jsonFile)
 do
   load_govc_env
-  if [[ $count -ne 0 ]] ; then
+  if [[ $count -ne 1 ]] ; then
   echo "Adding host $ip in the cluster"
-  govc cluster.add -hostname $ip -username "root" -password "$TF_VAR_esxi_root_password" -noverify
+  govc cluster.add -hostname "$(jq -r .esxi.basename $jsonFile)-0$(count).$(jq -r .dns.domain $jsonFile)" -username "root" -password "$TF_VAR_esxi_root_password" -noverify
+#   govc cluster.add -hostname $ip -username "root" -password "$TF_VAR_esxi_root_password" -noverify
+#   $(jq -r .esxi.basename $jsonFile)-0$(count)".$(jq -r .dns.domain $jsonFile)
 #  govc host.maintenance.exit $ip
 #  curl_post $token '{"folder":'\"$folder_host\"',"hostname":'\"$ip\"',"password":'\"$TF_VAR_esxi_root_password\"',"thumbprint_verification":"NONE","user_name":"root"}' $api_host "vcenter/host"
   fi

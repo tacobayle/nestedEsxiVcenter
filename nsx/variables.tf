@@ -13,5 +13,6 @@ variable "vsphere_password" {}
 variable "bind_password" {}
 variable "vcenter_password" {}
 variable "nsx_password" {}
+variable "nsx_license" {}
 
 

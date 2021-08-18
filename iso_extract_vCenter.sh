@@ -81,11 +81,20 @@ contents=$(cat /etc/hosts | grep -v $(jq -r .vcenter.dvs.portgroup.management.vc
 echo "${contents}" | sudo tee /etc/hosts
 contents="$(jq -r .vcenter.dvs.portgroup.management.vcenter_ip $jsonFile) $(jq -r .vcenter.name $jsonFile).$(jq -r .dns.domain $jsonFile)"
 echo "${contents}" | sudo tee -a /etc/hosts
-contents=$(cat /etc/hosts | grep -v $(jq -r .vcenter.dvs.portgroup.management.esxi_ips[0] $jsonFile))
-echo "${contents}" | sudo tee /etc/hosts
-contents="$(jq -r .vcenter.dvs.portgroup.management.esxi_ips[0] $jsonFile) $(jq -r .esxi.basename $jsonFile)1.$(jq -r .dns.domain $jsonFile)"
-echo "${contents}" | sudo tee -a /etc/hosts
-
+IFS=$'\n'
+count=1
+for ip in $(cat $jsonFile | jq -c -r .vcenter.dvs.portgroup.management.esxi_ips[])
+do
+  contents=$(cat /etc/hosts | grep -v $ip)
+  echo "${contents}" | sudo tee /etc/hosts
+  contents="$ip $(jq -r .esxi.basename $jsonFile)$count.$(jq -r .dns.domain $jsonFile)"
+  echo "${contents}" | sudo tee -a /etc/hosts
+  count=$((count+1))
+done
+#contents=$(cat /etc/hosts | grep -v $(jq -r .vcenter.dvs.portgroup.management.esxi_ips[0] $jsonFile))
+#echo "${contents}" | sudo tee /etc/hosts
+#contents="$(jq -r .vcenter.dvs.portgroup.management.esxi_ips[0] $jsonFile) $(jq -r .esxi.basename $jsonFile)1.$(jq -r .dns.domain $jsonFile)"
+#echo "${contents}" | sudo tee -a /etc/hosts
 #
 echo ""
 echo "++++++++++++++++++++++++++++++++"

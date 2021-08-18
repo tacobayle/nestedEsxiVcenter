@@ -76,7 +76,7 @@ echo "${contents}" | tee vcenter_config.json
 #
 echo ""
 echo "++++++++++++++++++++++++++++++++"
-echo "updating local /etc/hosts with vCenter FQDN and IP"
+echo "updating local /etc/hosts with vCenter and esxi0"
 contents=$(cat /etc/hosts | grep -v $(jq -r .vcenter.dvs.portgroup.management.vcenter_ip $jsonFile))
 echo "${contents}" | sudo tee /etc/hosts
 contents="$(jq -r .vcenter.dvs.portgroup.management.vcenter_ip $jsonFile) $(jq -r .vcenter.name $jsonFile).$(jq -r .dns.domain $jsonFile)"

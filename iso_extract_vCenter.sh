@@ -50,7 +50,7 @@ echo ""
 echo "++++++++++++++++++++++++++++++++"
 echo "Building template file"
 template_file_location="templates/$(basename $(jq -r .vcenter.json_config_file $jsonFile))"
-contents="$(jq '.new_vcsa.esxi.hostname = "'$(jq -r .esxi.basename $jsonFile)'1.'$(jq -r .dns.domain $jsonFile)'" |
+contents=.new_vcsa.esxi.hostname = "'$(jq -r .esxi.basename $jsonFile)'1.'$(jq -r .dns.domain $jsonFile)'" |
          .new_vcsa.esxi.username = "root" |
          .new_vcsa.esxi.password = "'$TF_VAR_esxi_root_password'" |
          .new_vcsa.esxi.VCSA_cluster.datacenter = "'$(jq -r .vcenter.datacenter $jsonFile)'" |

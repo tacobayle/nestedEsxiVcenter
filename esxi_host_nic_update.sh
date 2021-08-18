@@ -16,14 +16,14 @@ export GOVC_URL="$(jq -r .vcenter_underlay.server $jsonFile)"
 IFS=$'\n'
 echo ""
 echo "++++++++++++++++++++++++++++++++"
-count=0
+count=1
 for ip in $(jq -c -r .vcenter.dvs.portgroup.management.esxi_ips[] $jsonFile)
 do
   echo "removing vnic3 from ESXI $ip"
-  govc device.remove -vm "$(jq -c -r .esxi.basename $jsonFile)-$count" ethernet-3
+  govc device.remove -vm "$(jq -c -r .esxi.basename $jsonFile)$count" ethernet-3
   echo "removing vnic4 from ESXI $ip"
-  govc device.remove -vm "$(jq -c -r .esxi.basename $jsonFile)-$count" ethernet-4
+  govc device.remove -vm "$(jq -c -r .esxi.basename $jsonFile)$count" ethernet-4
   echo "removing vnic5 from ESXI $ip"
-  govc device.remove -vm "$(jq -c -r .esxi.basename $jsonFile)-$count" ethernet-5
+  govc device.remove -vm "$(jq -c -r .esxi.basename $jsonFile)$count" ethernet-5
   count=$((count+1))
 done

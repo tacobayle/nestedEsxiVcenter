@@ -93,7 +93,7 @@ do
   load_govc_env
   if [[ $count -ne 1 ]] ; then
   echo "Adding host $ip in the cluster"
-  govc cluster.add -hostname "$(jq -r .esxi.basename $jsonFile)-0$(count).$(jq -r .dns.domain $jsonFile)" -username "root" -password "$TF_VAR_esxi_root_password" -noverify
+  govc cluster.add -hostname "$(jq -r .esxi.basename $jsonFile)$(count).$(jq -r .dns.domain $jsonFile)" -username "root" -password "$TF_VAR_esxi_root_password" -noverify
 #   govc cluster.add -hostname $ip -username "root" -password "$TF_VAR_esxi_root_password" -noverify
 #   $(jq -r .esxi.basename $jsonFile)-0$(count)".$(jq -r .dns.domain $jsonFile)
 #  govc host.maintenance.exit $ip

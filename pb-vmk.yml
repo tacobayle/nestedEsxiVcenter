@@ -9,13 +9,15 @@
         username: "administrator@{{ vcenter.sso.domain_name }}"
         password: "{{ lookup('env', 'TF_VAR_vcenter_password') }}"
         validate_certs: false
-        esxi_hostname: "{{ item }}"
+        esxi_hostname: "{{ esxi.basename }}{{ my_idx + 1 }}.{{ dns.domain }}"
         device: 'vmk1'
         current_switch_name: 'vSwitch1'
         current_portgroup_name: 'VMotion Network'
         migrate_switch_name: "{{ vcenter.dvs.basename }}-1-VMotion"
         migrate_portgroup_name: "{{ vcenter.dvs.portgroup.VMotion.name }}"
       loop: "{{ vcenter.dvs.portgroup.management.esxi_ips }}"
+      loop_control:
+        index_var: index
       when: not vcenter.dvs.single_vds
 
     - name: Migrate vmk2 (VSAN) to the VDS
@@ -24,13 +26,15 @@
         username: "administrator@{{ vcenter.sso.domain_name }}"
         password: "{{ lookup('env', 'TF_VAR_vcenter_password') }}"
         validate_certs: false
-        esxi_hostname: "{{ item }}"
+        esxi_hostname: "{{ esxi.basename }}{{ my_idx + 1 }}.{{ dns.domain }}"
         device: 'vmk2'
         current_switch_name: 'vSwitch2'
         current_portgroup_name: 'VSAN Network'
         migrate_switch_name: "{{ vcenter.dvs.basename }}-2-VSAN"
         migrate_portgroup_name: "{{ vcenter.dvs.portgroup.VSAN.name }}"
       loop: "{{ vcenter.dvs.portgroup.management.esxi_ips }}"
+      loop_control:
+        index_var: index
       when: not vcenter.dvs.single_vds
 
 #    - name: Migrate vmk0 (Mgmt) to the VDS
@@ -96,13 +100,15 @@
         username: "administrator@{{ vcenter.sso.domain_name }}"
         password: "{{ lookup('env', 'TF_VAR_vcenter_password') }}"
         validate_certs: false
-        esxi_hostname: "{{ item }}"
+        esxi_hostname: "{{ esxi.basename }}{{ my_idx + 1 }}.{{ dns.domain }}"
         device: 'vmk1'
         current_switch_name: 'vSwitch1'
         current_portgroup_name: 'VMotion Network'
         migrate_switch_name: "{{ vcenter.dvs.basename }}-0"
         migrate_portgroup_name: "{{ vcenter.dvs.portgroup.VMotion.name }}"
       loop: "{{ vcenter.dvs.portgroup.management.esxi_ips }}"
+      loop_control:
+        index_var: index
       when: vcenter.dvs.single_vds
 
     - name: Migrate vmk2 (VSAN) to the VDS
@@ -111,13 +117,15 @@
         username: "administrator@{{ vcenter.sso.domain_name }}"
         password: "{{ lookup('env', 'TF_VAR_vcenter_password') }}"
         validate_certs: false
-        esxi_hostname: "{{ item }}"
+        esxi_hostname: "{{ esxi.basename }}{{ my_idx + 1 }}.{{ dns.domain }}"
         device: 'vmk2'
         current_switch_name: 'vSwitch2'
         current_portgroup_name: 'VSAN Network'
         migrate_switch_name: "{{ vcenter.dvs.basename }}-0"
         migrate_portgroup_name: "{{ vcenter.dvs.portgroup.VSAN.name }}"
       loop: "{{ vcenter.dvs.portgroup.management.esxi_ips }}"
+      loop_control:
+        index_var: index
       when: vcenter.dvs.single_vds
 
 #    - name: Migrate vmk0 (Mgmt) to the VDS
@@ -145,7 +153,7 @@
         password: "{{ lookup('env', 'TF_VAR_vcenter_password') }}"
         validate_certs: false
         device: vmk3
-        esxi_hostname: "{{ item.0 }}"
+        esxi_hostname: "{{ esxi.basename }}{{ my_idx + 1 }}.{{ dns.domain }}"
         dvswitch_name: "{{ vcenter.dvs.basename }}-0"
         portgroup_name: "{{ vcenter.dvs.portgroup.management.name }}-vmk"
         network:
@@ -183,7 +191,7 @@
         password: "{{ lookup('env', 'TF_VAR_vcenter_password') }}"
         validate_certs: false
         device: vmk4
-        esxi_hostname: "{{ item }}"
+        esxi_hostname: "{{ esxi.basename }}{{ my_idx + 1 }}.{{ dns.domain }}"
         dvswitch_name: "{{ vcenter.dvs.basename }}-0"
         portgroup_name: "{{ vcenter.dvs.portgroup.management.name }}-vmk"
         network:

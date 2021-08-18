@@ -1,6 +1,6 @@
-resource "local_file" "ks_cust_single_vswicth" {
+resource "local_file" "ks_cust_single_vswitch" {
   count = (var.vcenter.dvs.single_vds == true ? var.esxi.count : 0)
-  content     = templatefile("${path.module}/templates/ks_cust_single_vswicth.cfg.tmpl",
+  content     = templatefile("${path.module}/templates/ks_cust_single_vswitch.cfg.tmpl",
   { esxi_root_password = var.esxi_root_password,
     keyboard_type = var.esxi.keyboard_type,
     ip = var.vcenter.dvs.portgroup.management.esxi_ips[count.index],
@@ -12,7 +12,7 @@ resource "local_file" "ks_cust_single_vswicth" {
     netmask_vsan = var.vcenter.dvs.portgroup.VSAN.netmask,
     ntp = var.ntp.server,
     nameserver = var.dns.nameserver,
-    hostname = "${var.esxi.basename}-${count.index}.${var.dns.domain}"
+    hostname = "${var.esxi.basename}-0${count.index + 1}.${var.dns.domain}"
   }
   )
   filename = "${path.module}/ks_cust.cfg.${count.index}"
@@ -32,14 +32,14 @@ resource "local_file" "ks_cust_multiple_vswitch" {
     netmask_vsan = var.vcenter.dvs.portgroup.VSAN.netmask,
     ntp = var.ntp.server,
     nameserver = var.dns.nameserver,
-    hostname = "${var.esxi.basename}-${count.index}.${var.dns.domain}"
+    hostname = "${var.esxi.basename}-0${count.index + 1}.${var.dns.domain}"
   }
   )
   filename = "${path.module}/ks_cust.cfg.${count.index}"
 }
 
 resource "null_resource" "iso_build" {
-  depends_on = [local_file.ks_cust_single_vswicth, local_file.ks_cust_multiple_vswitch]
+  depends_on = [local_file.ks_cust_single_vswitch, local_file.ks_cust_multiple_vswitch]
   provisioner "local-exec" {
     command = "/bin/bash iso_esxi_build.sh"
   }
@@ -64,7 +64,7 @@ resource "null_resource" "iso_destroy" {
 resource "vsphere_virtual_machine" "esxi_multiple_vswitch" {
   depends_on = [ vsphere_file.iso_upload ]
   count = (var.vcenter.dvs.single_vds == false ? var.esxi.count : 0)
-  name             = "${var.esxi.basename}-${count.index}"
+  name             = "${var.esxi.basename}-0${count.index + 1}"
   datastore_id     = data.vsphere_datastore.datastore.id
   resource_pool_id = data.vsphere_resource_pool.pool.id
   folder           = vsphere_folder.esxi_folder.path
@@ -94,7 +94,7 @@ resource "vsphere_virtual_machine" "esxi_multiple_vswitch" {
     for_each = var.esxi.disks
     content {
       size = disk.value["size"]
-      label = "${var.esxi.basename}-${count.index}-${disk.value["label"]}.lab_vmdk"
+      label = "${var.esxi.basename}-0${count.index + 1}-${disk.value["label"]}.lab_vmdk"
       unit_number = disk.value["unit_number"]
       thin_provisioned = disk.value["thin_provisioned"]
     }
@@ -109,7 +109,7 @@ resource "vsphere_virtual_machine" "esxi_multiple_vswitch" {
 resource "vsphere_virtual_machine" "esxi_single_vswitch" {
   depends_on = [ vsphere_file.iso_upload ]
   count = (var.vcenter.dvs.single_vds == true ? var.esxi.count : 0)
-  name             = "${var.esxi.basename}-${count.index}"
+  name             = "${var.esxi.basename}-0${count.index + 1}"
   datastore_id     = data.vsphere_datastore.datastore.id
   resource_pool_id = data.vsphere_resource_pool.pool.id
   folder           = vsphere_folder.esxi_folder.path
@@ -133,7 +133,7 @@ resource "vsphere_virtual_machine" "esxi_single_vswitch" {
     for_each = var.esxi.disks
     content {
       size = disk.value["size"]
-      label = "${var.esxi.basename}-${count.index}-${disk.value["label"]}.lab_vmdk"
+      label = "${var.esxi.basename}-0${count.index + 1}-${disk.value["label"]}.lab_vmdk"
       unit_number = disk.value["unit_number"]
       thin_provisioned = disk.value["thin_provisioned"]
     }

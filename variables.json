@@ -42,7 +42,7 @@
     "bios": "efi",
     "guest_id": "vmkernel65Guest",
     "keyboard_type": "US Default",
-    "basename": "esxi-",
+    "basename": "esxi-0",
     "cpu": 12,
     "memory": 65536,
     "disks": [

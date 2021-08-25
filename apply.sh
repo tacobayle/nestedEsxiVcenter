@@ -12,9 +12,10 @@ fi
 #
 echo "Build of a DNS/NTP server on the underlay infrastructure"
 if [[ $(jq -c -r .dns_ntp.create $jsonFile) == true ]] ; then
-  cd dns-ntp
-  terraform init ; terraform apply auto-approve -var-file=../$jsonFile
-  cd -
+  cd dns_ntp
+  terraform init
+  terraform apply auto-approve -var-file=../$jsonFile
+  cd ..
 fi
 echo "----------------------------------------------------------"
 #
@@ -28,7 +29,7 @@ terraform init ; terraform apply -auto-approve -var-file=variables.json
 if [[ $(jq -c -r .nsx.create $jsonFile) == true ]] ; then
   cd nsx
   terraform init ; terraform apply auto-approve -var-file=../$jsonFile
-  cd -
+  cd ..
 fi
 echo "----------------------------------------------------------"
 #
@@ -38,6 +39,6 @@ echo "Build of Avi infrastructure"
 if [[ $(jq -c -r .avi.create $jsonFile) == true ]] ; then
   cd avi
   terraform init ; terraform apply auto-approve -var-file=../$jsonFile
-  cd -
+  cd ..
 fi
 echo "----------------------------------------------------------"

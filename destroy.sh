@@ -14,7 +14,7 @@ echo "Destroy DNS/NTP server on the underlay infrastructure"
 if [[ $(jq -c -r .dns_ntp.create $jsonFile) == true ]] ; then
   cd dns_ntp
   terraform destroy auto-approve -var-file=../$jsonFile
-  cd -
+  cd ..
 fi
 echo "----------------------------------------------------------"
 #

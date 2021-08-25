@@ -41,6 +41,6 @@ data "vsphere_network" "vcenter_underlay_network_mgmt" {
 //  datacenter_id = data.vsphere_datacenter.dc.id
 //}
 
-data "vsphere_folder" "esxi_folder" {
-  path = "/${var.vcenter_underlay.dc}/${var.vcenter_underlay.datastore}/${var.vcenter_underlay.folder}"
-}
+//data "vsphere_folder" "esxi_folder" {
+//  path = "/${var.vcenter_underlay.dc}/${var.vcenter_underlay.datastore}/${var.vcenter_underlay.folder}"
+//}

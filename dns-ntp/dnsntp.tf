@@ -1,41 +1,41 @@
 resource "vsphere_content_library" "library" {
-  count = (var.dns-ntp.create == true ? 1 : 0)
+  count = (var.dns_ntp.create == true ? 1 : 0)
   name            = var.vcenter_underlay.cl.name
   storage_backing = [data.vsphere_datastore.datastore.id]
 }
 
 resource "vsphere_content_library_item" "files" {
-  count = (var.dns-ntp.create == true ? 1 : 0)
+  count = (var.dns_ntp.create == true ? 1 : 0)
   name        = basename(var.vcenter_underlay.cl.file)
   library_id  = vsphere_content_library.library[0].id
   file_url = var.vcenter_underlay.cl.file
 }
 
 data "template_file" "dnsntp_userdata" {
-  count = (var.dns-ntp.create == true ? 1 : 0)
-  template = file("${path.module}/userdata/dns-ntp.userdata")
+  count = (var.dns_ntp.create == true ? 1 : 0)
+  template = file("${path.module}/userdata/dns_ntp.userdata")
   vars = {
-    pubkey        = file(var.dns-ntp.public_key_path)
-    username = var.dns-ntp.username
-    ipCidr  = "${var.vcenter.dvs.portgroup.management.dns-ntp_ip}/${var.vcenter.dvs.portgroup.management.prefix}"
-    ip = var.vcenter.dvs.portgroup.management.dns-ntp_ip
-    lastOctet = split(".", var.vcenter.dvs.portgroup.management.dns-ntp_ip)[3]
+    pubkey        = file(var.dns_ntp.public_key_path)
+    username = var.dns_ntp.username
+    ipCidr  = "${var.vcenter.dvs.portgroup.management.dns_ntp_ip}/${var.vcenter.dvs.portgroup.management.prefix}"
+    ip = var.vcenter.dvs.portgroup.management.dns_ntp_ip
+    lastOctet = split(".", var.vcenter.dvs.portgroup.management.dns_ntp_ip)[3]
     defaultGw = var.vcenter.dvs.portgroup.management.gateway
-    dns      = var.dns-ntp.dns
-    netplanFile = var.dns-ntp.netplanFile
-    privateKey = var.dns-ntp.private_key_path
-    forwarders = var.dns-ntp.bind.forwarders
+    dns      = var.dns_ntp.dns
+    netplanFile = var.dns_ntp.netplanFile
+    privateKey = var.dns_ntp.private_key_path
+    forwarders = var.dns_ntp.bind.forwarders
     domain = var.dns.domain
-    reverse = var.dns-ntp.bind.reverse
-    keyName = var.dns-ntp.bind.keyName
+    reverse = var.dns_ntp.bind.reverse
+    keyName = var.dns_ntp.bind.keyName
     secret = base64encode(var.bind_password)
-    ntp = var.dns-ntp.ntp
+    ntp = var.dns_ntp.ntp
   }
 }
 
 resource "vsphere_virtual_machine" "dnsntp" {
-  count = (var.dns-ntp.create == true ? 1 : 0)
-  name             = var.dns-ntp.name
+  count = (var.dns_ntp.create == true ? 1 : 0)
+  name             = var.dns_ntp.name
   datastore_id     = data.vsphere_datastore.datastore.id
   resource_pool_id = data.vsphere_resource_pool.pool.id
   folder           = vsphere_folder.esxi_folder.path
@@ -43,14 +43,14 @@ resource "vsphere_virtual_machine" "dnsntp" {
     network_id = data.vsphere_network.vcenter_underlay_network_mgmt[0].id
   }
 
-  num_cpus = var.dns-ntp.cpu
-  memory = var.dns-ntp.memory
-  wait_for_guest_net_timeout = var.dns-ntp.wait_for_guest_net_timeout
-  guest_id = var.dns-ntp.name
+  num_cpus = var.dns_ntp.cpu
+  memory = var.dns_ntp.memory
+  wait_for_guest_net_timeout = var.dns_ntp.wait_for_guest_net_timeout
+  guest_id = var.dns_ntp.name
 
   disk {
-    size             = var.dns-ntp.disk
-    label            = "${var.dns-ntp.name}.lab_vmdk"
+    size             = var.dns_ntp.disk
+    label            = "${var.dns_ntp.name}.lab_vmdk"
     thin_provisioned = true
   }
 
@@ -64,18 +64,18 @@ resource "vsphere_virtual_machine" "dnsntp" {
 
   vapp {
     properties = {
-      hostname    = var.dns-ntp.name
-      public-keys = file(var.dns-ntp.public_key_path)
+      hostname    = var.dns_ntp.name
+      public-keys = file(var.dns_ntp.public_key_path)
       user-data   = base64encode(data.template_file.dnsntp_userdata[0].rendered)
     }
   }
 
   connection {
-    host        = var.vcenter.dvs.portgroup.management.dns-ntp_ip
+    host        = var.vcenter.dvs.portgroup.management.dns_ntp_ip
     type        = "ssh"
     agent       = false
-    user        = var.dns-ntp.username
-    private_key = file(var.dns-ntp.private_key_path)
+    user        = var.dns_ntp.username
+    private_key = file(var.dns_ntp.private_key_path)
   }
 
   provisioner "remote-exec" {

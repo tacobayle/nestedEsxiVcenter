@@ -77,10 +77,10 @@
     "wait_for_guest_net_timeout": 0,
     "nested_hv_enabled": "true"
   },
-  "dns-ntp": {
+  "dns_ntp": {
     "create": true,
     "dns": "10.23.108.1, 10.16.142.111",
-    "name": "dns-ntp",
+    "name": "dns_ntp",
     "cpu": 2,
     "memory": 4096,
     "disk": 20,
@@ -126,7 +126,7 @@
           "prefix": "22",
           "gateway": "10.41.132.1",
           "vcenter_ip": "10.41.134.135",
-          "dns-ntp_ip": "10.41.134.134",
+          "dns_ntp_ip": "10.41.134.134",
           "nsx_ip": "10.41.134.136"
         },
         "VMotion": {

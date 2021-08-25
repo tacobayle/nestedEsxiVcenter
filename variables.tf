@@ -1,6 +1,6 @@
 variable "esxi" {}
 variable "vcenter_underlay" {}
-variable "dns-ntp" {}
+variable "dns_ntp" {}
 variable "ntp" {}
 variable "dns" {}
 variable "vcenter" {}

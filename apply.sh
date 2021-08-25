@@ -10,8 +10,8 @@ fi
 #
 # Build of a DNS/NTP server on the underlay infrastructure
 #
-if [[ $(jq -c -r .dns-ntp.create $jsonFile) == true ]] ; then
-  cd dns-ntp
+if [[ $(jq -c -r .dns_ntp.create $jsonFile) == true ]] ; then
+  cd dns_ntp
   terraform init ; terraform apply auto-approve -var-file=../$jsonFile
   cd -
 fi

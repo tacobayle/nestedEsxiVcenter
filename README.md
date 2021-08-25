@@ -27,7 +27,7 @@ In this use case, multiple vds switches are configured in the nested vCenter:
 - dvs-2-VSAN with a port group called vcenter.dvs.portgroup.management.VSAN.name - connected to a "physical" uplink to the underlay network (vcenter_underlay.vsan.management)
 Each VDS switch is connected to one "physical" uplink NIC will be connected to the underlay vCenter network defined in underlay_vcenter.network (leveraging 802.1q).
 
-### DNS NTP Server creation - if dns-ntp.create == true
+### DNS NTP Server creation - if dns_ntp.create == true
 
 ## prerequisites on the underlay environment
 - vCenter underlay version:
@@ -94,7 +94,7 @@ All the sensitive variables are stored in environment variables as below:
 export TF_VAR_esxi_root_password=******              # Nested ESXi root password
 export TF_VAR_vsphere_username=******                # Underlay vCenter username
 export TF_VAR_vsphere_password=******                # Underlay vCenter password
-export TF_VAR_bind_password=******                   # Bind password - needs to be defined if dns-ntp.create == true
+export TF_VAR_bind_password=******                   # Bind password - needs to be defined if dns_ntp.create == true
 export TF_VAR_vcenter_password=******                # Overlay vCenter password
 export TF_VAR_nsx_password=******                    # NSX admin password - needs to be defined if nsx.create == true
 ```

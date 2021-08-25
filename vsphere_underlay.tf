@@ -53,11 +53,11 @@ data "vsphere_network" "vcenter_underlay_network_mgmt" {
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
-resource "vsphere_folder" "esxi_folder" {
-  path          = var.vcenter_underlay.folder
-  type          = "vm"
-  datacenter_id = data.vsphere_datacenter.dc.id
-}
+//resource "vsphere_folder" "esxi_folder" {
+//  path          = var.vcenter_underlay.folder
+//  type          = "vm"
+//  datacenter_id = data.vsphere_datacenter.dc.id
+//}
 
 resource "vsphere_content_library" "library" {
   count = (var.dns_ntp.create == true ? 1 : 0)

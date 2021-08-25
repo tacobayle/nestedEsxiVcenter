@@ -67,7 +67,7 @@ resource "vsphere_virtual_machine" "esxi_multiple_vswitch_wo_NSX_wo_Avi" {
   name             = "${var.esxi.basename}${count.index + 1}"
   datastore_id     = data.vsphere_datastore.datastore.id
   resource_pool_id = data.vsphere_resource_pool.pool.id
-  folder           = vsphere_folder.esxi_folder.path
+  folder           = "/${var.vcenter_underlay.dc}/vm/${var.vcenter_underlay.folder}"
 
   dynamic "network_interface" {
     for_each = data.vsphere_network.esxi_networks
@@ -112,7 +112,7 @@ resource "vsphere_virtual_machine" "esxi_multiple_vswitch_wo_NSX_with_Avi" {
   name             = "${var.esxi.basename}${count.index + 1}"
   datastore_id     = data.vsphere_datastore.datastore.id
   resource_pool_id = data.vsphere_resource_pool.pool.id
-  folder           = vsphere_folder.esxi_folder.path
+  folder           = "/${var.vcenter_underlay.dc}/vm/${var.vcenter_underlay.folder}"
 
   dynamic "network_interface" {
     for_each = data.vsphere_network.esxi_networks
@@ -169,7 +169,7 @@ resource "vsphere_virtual_machine" "esxi_multiple_vswitch_with_NSX_with_Avi" {
   name             = "${var.esxi.basename}${count.index + 1}"
   datastore_id     = data.vsphere_datastore.datastore.id
   resource_pool_id = data.vsphere_resource_pool.pool.id
-  folder           = vsphere_folder.esxi_folder.path
+  folder           = "/${var.vcenter_underlay.dc}/vm/${var.vcenter_underlay.folder}"
 
   dynamic "network_interface" {
     for_each = data.vsphere_network.esxi_networks
@@ -214,7 +214,7 @@ resource "vsphere_virtual_machine" "esxi_single_vswitch" {
   name             = "${var.esxi.basename}${count.index + 1}"
   datastore_id     = data.vsphere_datastore.datastore.id
   resource_pool_id = data.vsphere_resource_pool.pool.id
-  folder           = vsphere_folder.esxi_folder.path
+  folder           = "/${var.vcenter_underlay.dc}/vm/${var.vcenter_underlay.folder}"
 
   network_interface {
     network_id = data.vsphere_network.esxi_network[0].id

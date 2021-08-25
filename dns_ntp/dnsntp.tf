@@ -38,7 +38,7 @@ resource "vsphere_virtual_machine" "dns_ntp" {
   name             = var.dns_ntp.name
   datastore_id     = data.vsphere_datastore.datastore.id
   resource_pool_id = data.vsphere_resource_pool.pool.id
-  folder           = "/${var.vcenter_underlay.dc}/${var.vcenter_underlay.datastore}/${var.vcenter_underlay.folder}"
+  folder           = "/${var.vcenter_underlay.dc}/vm/${var.vcenter_underlay.folder}"
   network_interface {
     network_id = data.vsphere_network.vcenter_underlay_network_mgmt[0].id
   }

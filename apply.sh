@@ -20,7 +20,6 @@ echo "----------------------------------------------------------"
 #
 # Build of a DNS/NTP server on the underlay infrastructure
 #
-echo "----------------------------------------------------------"
 echo "Build of a DNS/NTP server on the underlay infrastructure"
 if [[ $(jq -c -r .dns_ntp.create $jsonFile) == true ]] ; then
   cd dns_ntp
@@ -32,7 +31,6 @@ echo "----------------------------------------------------------"
 #
 # Build of the nested ESXi/vCenter infrastructure
 #
-echo "----------------------------------------------------------"
 echo "Build of the nested ESXi/vCenter infrastructure"
 terraform init ; terraform apply -auto-approve -var-file=variables.json
 #
@@ -47,7 +45,6 @@ echo "----------------------------------------------------------"
 #
 # Build of Avi infrastructure
 #
-echo "----------------------------------------------------------"
 echo "Build of Avi infrastructure"
 if [[ $(jq -c -r .avi.create $jsonFile) == true ]] ; then
   cd avi

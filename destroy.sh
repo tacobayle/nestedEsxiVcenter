@@ -18,4 +18,4 @@ fi
 #
 # Destroy the nested ESXi/vCenter infrastructure
 #
-terraform destroy -auto-approve -var-file=variables.json
+terraform refresh -var-file=variables.json ; terraform destroy -auto-approve -var-file=variables.json

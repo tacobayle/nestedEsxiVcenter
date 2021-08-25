@@ -11,7 +11,7 @@ resource "vsphere_content_library_item" "files" {
   file_url = var.vcenter_underlay.cl.file
 }
 
-data "template_file" "dnsntp_userdata" {
+data "template_file" "dns_ntp_userdata" {
   count = (var.dns_ntp.create == true ? 1 : 0)
   template = file("${path.module}/userdata/dns_ntp.userdata")
   vars = {
@@ -33,12 +33,12 @@ data "template_file" "dnsntp_userdata" {
   }
 }
 
-resource "vsphere_virtual_machine" "dnsntp" {
+resource "vsphere_virtual_machine" "dns_ntp" {
   count = (var.dns_ntp.create == true ? 1 : 0)
   name             = var.dns_ntp.name
   datastore_id     = data.vsphere_datastore.datastore.id
   resource_pool_id = data.vsphere_resource_pool.pool.id
-  folder           = vsphere_folder.esxi_folder.path
+  folder           = "/${var.vcenter_underlay.dc}/${var.vcenter_underlay.datastore}/${var.vcenter_underlay.folder}"
   network_interface {
     network_id = data.vsphere_network.vcenter_underlay_network_mgmt[0].id
   }
@@ -66,7 +66,7 @@ resource "vsphere_virtual_machine" "dnsntp" {
     properties = {
       hostname    = var.dns_ntp.name
       public-keys = file(var.dns_ntp.public_key_path)
-      user-data   = base64encode(data.template_file.dnsntp_userdata[0].rendered)
+      user-data   = base64encode(data.template_file.dns_ntp_userdata[0].rendered)
     }
   }
 

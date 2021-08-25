@@ -23,3 +23,13 @@ echo "----------------------------------------------------------"
 echo "Destroy the nested ESXi/vCenter infrastructure"
 terraform refresh -var-file=variables.json ; terraform destroy -auto-approve -var-file=variables.json
 echo "----------------------------------------------------------"
+#
+# Destroy of a folder on the underlay infrastructure
+#
+echo "----------------------------------------------------------"
+echo "Build of a folder on the underlay infrastructure"
+cd vsphere_underlay_folder
+terraform init
+terraform destroy -auto-approve -var-file=../$jsonFile
+cd ..
+echo "----------------------------------------------------------"

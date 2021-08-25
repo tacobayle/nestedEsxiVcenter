@@ -3,5 +3,4 @@ provider "vsphere" {
   password       = var.vcenter_password
   vsphere_server = "${var.vcenter.name}.${var.dns.domain}"
   allow_unverified_ssl = true
-  alias          = "overlay"
 }

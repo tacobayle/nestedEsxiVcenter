@@ -8,8 +8,19 @@ else
   exit 1
 fi
 #
+# Build of a folder on the underlay infrastructure
+#
+echo "----------------------------------------------------------"
+echo "Build of a folder on the underlay infrastructure"
+cd vsphere_underlay_folder
+terraform init
+terraform apply -auto-approve -var-file=../$jsonFile
+cd ..
+echo "----------------------------------------------------------"
+#
 # Build of a DNS/NTP server on the underlay infrastructure
 #
+echo "----------------------------------------------------------"
 echo "Build of a DNS/NTP server on the underlay infrastructure"
 if [[ $(jq -c -r .dns_ntp.create $jsonFile) == true ]] ; then
   cd dns_ntp
@@ -21,6 +32,7 @@ echo "----------------------------------------------------------"
 #
 # Build of the nested ESXi/vCenter infrastructure
 #
+echo "----------------------------------------------------------"
 echo "Build of the nested ESXi/vCenter infrastructure"
 terraform init ; terraform apply -auto-approve -var-file=variables.json
 #
@@ -35,6 +47,7 @@ echo "----------------------------------------------------------"
 #
 # Build of Avi infrastructure
 #
+echo "----------------------------------------------------------"
 echo "Build of Avi infrastructure"
 if [[ $(jq -c -r .avi.create $jsonFile) == true ]] ; then
   cd avi

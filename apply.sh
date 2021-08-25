@@ -10,13 +10,13 @@ fi
 #
 # Build of a folder on the underlay infrastructure
 #
-echo "----------------------------------------------------------"
+echo "--------------------------------------------------------------------------------------------------------------------"
 echo "Build of a folder on the underlay infrastructure"
 cd vsphere_underlay_folder
 terraform init
 terraform apply -auto-approve -var-file=../$jsonFile
 cd ..
-echo "----------------------------------------------------------"
+echo "--------------------------------------------------------------------------------------------------------------------"
 #
 # Build of a DNS/NTP server on the underlay infrastructure
 #
@@ -27,7 +27,7 @@ if [[ $(jq -c -r .dns_ntp.create $jsonFile) == true ]] ; then
   terraform apply -auto-approve -var-file=../$jsonFile
   cd ..
 fi
-echo "----------------------------------------------------------"
+echo "--------------------------------------------------------------------------------------------------------------------"
 #
 # Build of the nested ESXi/vCenter infrastructure
 #
@@ -41,7 +41,7 @@ if [[ $(jq -c -r .nsx.create $jsonFile) == true ]] ; then
   terraform init ; terraform apply -auto-approve -var-file=../$jsonFile
   cd ..
 fi
-echo "----------------------------------------------------------"
+echo "--------------------------------------------------------------------------------------------------------------------"
 #
 # Build of Avi infrastructure
 #
@@ -51,4 +51,4 @@ if [[ $(jq -c -r .avi.create $jsonFile) == true ]] ; then
   terraform init ; terraform apply -auto-approve -var-file=../$jsonFile
   cd ..
 fi
-echo "----------------------------------------------------------"
+echo "--------------------------------------------------------------------------------------------------------------------"

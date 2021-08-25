@@ -86,6 +86,9 @@ curl_put $token '{"name":'\"$(jq -r .ntp.timezone $jsonFile)\"'}' $api_host "app
 ##    echo "toto"
 #  fi
 #done
+#
+# Add host in the cluster
+#
 IFS=$'\n'
 count=1
 for ip in $(jq -r .vcenter.dvs.portgroup.management.esxi_ips[] $jsonFile)

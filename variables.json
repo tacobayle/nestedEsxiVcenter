@@ -23,6 +23,15 @@
     },
     "network": {
       "name": "vxw-dvs-34-virtualwire-3-sid-1080002-sof2-01-vc08-avi-mgmt"
+      },
+    "network_avi_mgmt": {
+      "name": "vxw-dvs-34-virtualwire-121-sid-1080120-sof2-01-vc08-avi-dev117"
+      },
+    "network_avi_vip": {
+      "name": "vxw-dvs-34-virtualwire-122-sid-1080121-sof2-01-vc08-avi-dev118"
+      },
+    "network_avi_backend": {
+      "name": "vxw-dvs-34-virtualwire-123-sid-1080122-sof2-01-vc08-avi-dev119"
       }
     },
   "dns": {
@@ -142,9 +151,10 @@
     "ova_location": "/home/ubuntu/bin/nsx-unified-appliance-3.1.3.0.0.18329005.ova",
     "deployment": "Medium",
     "basename": "nsx-manager",
-    "role": "NSX Manager",
-    "cpu": 6,
-    "memory": 24576,
-    "disk": 200
+    "role": "NSX Manager"
+  },
+  "avi": {
+    "create": true,
+    "ova_location": "/home/ubuntu/bin/controller-21.1.1-9045.ova"
   }
 }

@@ -83,3 +83,7 @@ resource "null_resource" "add_nic_via_govc" {
     EOT
   }
 }
+
+# Avi controller init
+
+# echo "my_password" | sudo -S ip address add 10.1.1.100/24 dev eth1

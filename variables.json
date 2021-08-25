@@ -127,7 +127,8 @@
           "gateway": "10.41.132.1",
           "vcenter_ip": "10.41.134.135",
           "dns_ntp_ip": "10.41.134.134",
-          "nsx_ip": "10.41.134.136"
+          "nsx_ip": "10.41.134.136",
+          "avi_ip": ["10.41.134.137"]
         },
         "VMotion": {
           "name": "VMotion",
@@ -155,6 +156,10 @@
   },
   "avi": {
     "create": true,
-    "ova_location": "/home/ubuntu/bin/controller-21.1.1-9045.ova"
+    "ova_location": "/home/ubuntu/bin/controller-21.1.1-9045.ova",
+    "cpu": 8,
+    "memory": 24768,
+    "disk": 128,
+    "basename": "avi-controller"
   }
 }

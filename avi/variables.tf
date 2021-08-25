@@ -13,5 +13,6 @@ variable "avi" {}
 //variable "vsphere_password" {}
 //variable "bind_password" {}
 variable "vcenter_password" {}
+variable "avi_password" {}
 //variable "nsx_password" {}
 //variable "nsx_license" {}

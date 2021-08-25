@@ -95,6 +95,8 @@ resource "vsphere_distributed_port_group" "pg_avi_backend" {
   vlan_id = 0
 }
 
+
+
 //data "vsphere_network" "vcenter_network_mgmt_nested" {
 //  provider        = vsphere.overlay
 //  name = var.vcenter.dvs.portgroup.management.name

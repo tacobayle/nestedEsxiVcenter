@@ -27,7 +27,8 @@ data "vsphere_host" "host_nested" {
 }
 
 resource "vsphere_distributed_virtual_switch" "network_avi_mgmt" {
-  name = "avi_mgmt_dvs"
+  count = (var.vcenter.dvs.single_vds == false && var.nsx.create == false && var.avi.create == true ? 1 : 0)
+  name = "${var.vcenter.dvs.portgroup.avi_mgmt.name}_vds"
   datacenter_id = data.vsphere_datacenter.dc_nested[0].id
 
   //  uplinks         = ["uplink1", "uplink2", "uplink3", "uplink4"]
@@ -44,13 +45,15 @@ resource "vsphere_distributed_virtual_switch" "network_avi_mgmt" {
 }
 
 resource "vsphere_distributed_port_group" "pg_avi_mgmt" {
-  name                            = "avi_mgmt"
-  distributed_virtual_switch_uuid = vsphere_distributed_virtual_switch.network_avi_mgmt.id
+  count = (var.vcenter.dvs.single_vds == false && var.nsx.create == false && var.avi.create == true ? 1 : 0)
+  name                            = var.vcenter.dvs.portgroup.avi_mgmt.name
+  distributed_virtual_switch_uuid = vsphere_distributed_virtual_switch.network_avi_mgmt[0].id
   vlan_id = 0
 }
 
 resource "vsphere_distributed_virtual_switch" "network_avi_vip" {
-  name = "avi_vip_dvs"
+  count = (var.vcenter.dvs.single_vds == false && var.nsx.create == false && var.avi.create == true ? 1 : 0)
+  name = "${var.vcenter.dvs.portgroup.avi_vip.name}_vds"
   datacenter_id = data.vsphere_datacenter.dc_nested[0].id
 
   //  uplinks         = ["uplink1", "uplink2", "uplink3", "uplink4"]
@@ -67,13 +70,15 @@ resource "vsphere_distributed_virtual_switch" "network_avi_vip" {
 }
 
 resource "vsphere_distributed_port_group" "pg_avi_vip" {
-  name                            = "avi_vip"
-  distributed_virtual_switch_uuid = vsphere_distributed_virtual_switch.network_avi_vip.id
+  count = (var.vcenter.dvs.single_vds == false && var.nsx.create == false && var.avi.create == true ? 1 : 0)
+  name                            = var.vcenter.dvs.portgroup.avi_vip.name
+  distributed_virtual_switch_uuid = vsphere_distributed_virtual_switch.network_avi_vip[0].id
   vlan_id = 0
 }
 
 resource "vsphere_distributed_virtual_switch" "network_avi_backend" {
-  name = "avi_backend_dvs"
+  count = (var.vcenter.dvs.single_vds == false && var.nsx.create == false && var.avi.create == true ? 1 : 0)
+  name = "${var.vcenter.dvs.portgroup.avi_backend.name}_vds"
   datacenter_id = data.vsphere_datacenter.dc_nested[0].id
 
   //  uplinks         = ["uplink1", "uplink2", "uplink3", "uplink4"]
@@ -90,8 +95,9 @@ resource "vsphere_distributed_virtual_switch" "network_avi_backend" {
 }
 
 resource "vsphere_distributed_port_group" "pg_avi_backend" {
-  name                            = "avi_backend"
-  distributed_virtual_switch_uuid = vsphere_distributed_virtual_switch.network_avi_backend.id
+  count = (var.vcenter.dvs.single_vds == false && var.nsx.create == false && var.avi.create == true ? 1 : 0)
+  name                            = var.vcenter.dvs.portgroup.avi_backend.name
+  distributed_virtual_switch_uuid = vsphere_distributed_virtual_switch.network_avi_backend[0].id
   vlan_id = 0
 }
 

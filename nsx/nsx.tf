@@ -55,7 +55,7 @@ resource "vsphere_virtual_machine" "nsx_extra_small" {
 
 resource "vsphere_virtual_machine" "nsx_small" {
   provider        = vsphere.overlay
-  count            = (var.nsx.create == true && var.nsx.deployment == "Extra Small" ? 1 : 0)
+  count            = (var.nsx.create == true && var.nsx.deployment == "Small" ? 1 : 0)
   name             = "${var.nsx.basename}-${count.index}"
   datastore_id     = data.vsphere_datastore.datastore_nested.id
   resource_pool_id = data.vsphere_resource_pool.resource_pool_nested.id
@@ -145,7 +145,7 @@ resource "vsphere_virtual_machine" "nsx_medium" {
 
 resource "vsphere_virtual_machine" "nsx_large" {
   provider        = vsphere.overlay
-  count            = (var.nsx.create == true && var.nsx.deployment == "Medium" ? 1 : 0)
+  count            = (var.nsx.create == true && var.nsx.deployment == "Large" ? 1 : 0)
   name             = "${var.nsx.basename}-${count.index}"
   datastore_id     = data.vsphere_datastore.datastore_nested.id
   resource_pool_id = data.vsphere_resource_pool.resource_pool_nested.id

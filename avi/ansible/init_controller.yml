@@ -1,0 +1,28 @@
+---
+- hosts: localhost
+  gather_facts: no
+
+  roles:
+    - role: "avinetworks.avisdk"
+
+  tasks:
+
+    - name: Set variable avi_credentials
+      set_fact:
+        avi_credentials: >
+          {'api_version': "{{ avi_version }}",
+           'controller': "{{ avi_ip }}",
+           'password': "{{ avi_password }}",
+           'username': "admin"}
+      when:
+        - avi_version is defined
+        - avi_ip is defined
+        - avi_password is defined
+
+    - name: Update user admin password
+      community.network.avi_useraccount:
+        controller: "{{ avi_credentials.controller }}"
+        username: "{{ avi_credentials.username }}"
+        password: "{{ avi_credentials.password }}"
+        old_password: 58NFaGDJm(PJH0G
+        api_version: "{{ avi_credentials.api_version }}"

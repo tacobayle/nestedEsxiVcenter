@@ -3,11 +3,11 @@ data "vsphere_network" "vcenter_network_mgmt_nested" {
   datacenter_id = data.vsphere_datacenter.dc_nested[0].id
 }
 
-data "vsphere_network" "vcenter_network_avi_mgmt_nested" {
-  depends_on = [vsphere_distributed_port_group.pg_avi_vip]
-  name = "avi_mgmt"
-  datacenter_id = data.vsphere_datacenter.dc_nested[0].id
-}
+//data "vsphere_network" "vcenter_network_avi_mgmt_nested" {
+//  depends_on = [vsphere_distributed_port_group.pg_avi_vip]
+//  name = "avi_mgmt"
+//  datacenter_id = data.vsphere_datacenter.dc_nested[0].id
+//}
 
 resource "vsphere_content_library" "nested_library" {
   count = (var.avi.create == true ? 1 : 0)
@@ -84,6 +84,30 @@ resource "null_resource" "add_nic_via_govc" {
   }
 }
 
-# Avi controller init
+resource "null_resource" "ansible_init_controller" {
+  depends_on = [null_resource.add_nic_via_govc]
+  count = (var.vcenter.dvs.single_vds == false && var.nsx.create == false && var.avi.create == true ? length(var.vcenter.dvs.portgroup.management.avi_ip) : 0)
 
-# echo "my_password" | sudo -S ip address add 10.1.1.100/24 dev eth1
+  provisioner "local-exec" {
+    command = "ansible-playbook ansible/init_controller.yml --extra-vars '{\"avi_ip\": ${jsonencode(element(var.vcenter.dvs.portgroup.management.avi_ip, count.index))}, \"avi_password\": ${jsonencode(var.avi_password)}, \"avi_version\": ${split("-", basename(var.avi.ova_location))[1]}}'"
+  }
+}
+
+resource "null_resource" "assign_new_ip" {
+  depends_on = [null_resource.ansible_init_controller]
+  count = (var.vcenter.dvs.single_vds == false && var.nsx.create == false && var.avi.create == true ? length(var.vcenter.dvs.portgroup.management.avi_ip) : 0)
+
+  connection {
+    host        = element(var.vcenter.dvs.portgroup.management.avi_ip, count.index)
+    type        = "ssh"
+    agent       = false
+    user        = "admin"
+    password    = var.avi_password
+  }
+
+  provisioner "remote-exec" {
+    inline      = [
+      "echo \"${var.avi_password}\" | sudo -S ip address add ${element(var.vcenter.dvs.portgroup.avi_mgmt.avi_ips, count.index)}/${var.vcenter.dvs.portgroup.avi_mgmt.prefix} dev eth1",
+    ]
+  }
+}

@@ -52,8 +52,8 @@
     "guest_id": "vmkernel65Guest",
     "keyboard_type": "US Default",
     "basename": "esxi-0",
-    "cpu": 12,
-    "memory": 65536,
+    "cpu": 24,
+    "memory": 131072,
     "disks": [
       {
         "size": 32,
@@ -128,7 +128,7 @@
           "vcenter_ip": "10.41.134.135",
           "dns_ntp_ip": "10.41.134.134",
           "nsx_ip": "10.41.134.136",
-          "avi_ip": ["10.41.134.137"]
+          "avi_ip": ["10.41.134.137", "10.41.134.138"]
         },
         "VMotion": {
           "name": "VMotion",
@@ -143,6 +143,17 @@
           "esxi_ips": ["100.64.132.11", "100.64.132.12", "100.64.132.13"],
           "netmask": "255.255.255.0",
           "prefix": "24"
+        },
+        "avi_mgmt": {
+          "name": "avi_mgmt",
+          "avi_ips": ["10.1.1.100", "10.1.1.101"],
+          "prefix": "24"
+        },
+        "avi_vip": {
+          "name": "avi_vip"
+        },
+        "avi_backend": {
+          "name": "avi_backend"
         }
       }
     }

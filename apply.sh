@@ -79,7 +79,7 @@ if [[ $(jq -c -r .avi.create_controller $jsonFile) == true ]] ; then
     done
     cp avi/templates/nested_content_library_ssh_gw.tf avi/
     cp avi/templates/ssh_gw.tf avi/
-    cp avi/templates/nested_content_library_app.tf avi/
+    cp avi/templates/nested_content_library_avi_app.tf avi/
   else
     cp avi/templates/controllers.tf avi/
     cp avi/templates/avi_app.tf avi/

@@ -20,6 +20,12 @@ data "vsphere_resource_pool" "resource_pool_nested" {
   datacenter_id = data.vsphere_datacenter.dc_nested[0].id
 }
 
+data "vsphere_resource_pool" "resource_pool_nested_avi_app" {
+  count = (var.avi.app.create == true ? 1 : 0)
+  name          = "avi_app"
+  datacenter_id = data.vsphere_datacenter.dc_nested[0].id
+}
+
 data "vsphere_host" "host_nested" {
   count         = var.esxi.count
   name          = "${var.esxi.basename}${count.index + 1}.${var.dns.domain}"

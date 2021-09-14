@@ -17,7 +17,7 @@ resource "vsphere_virtual_machine" "avi_app" {
   count = (var.avi.app.create == true ? length(var.vcenter.dvs.portgroup.management.avi_app_ips) : 0)
   name             = "avi_app-${count.index}"
   datastore_id     = data.vsphere_datastore.datastore_nested.id
-  resource_pool_id = data.vsphere_resource_pool.resource_pool_nested.id
+  resource_pool_id = data.vsphere_resource_pool.resource_pool_nested_avi_app[0].id
 
   network_interface {
     network_id = data.vsphere_network.vcenter_network_mgmt_nested[0].id

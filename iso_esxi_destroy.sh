@@ -1,9 +1,9 @@
 #!/bin/bash
 #
-echo ""
-echo "++++++++++++++++++++++++++++++++"
-echo "Installing packages"
-sudo apt install -y jq
+#echo ""
+#echo "++++++++++++++++++++++++++++++++"
+#echo "Installing packages"
+#sudo apt install -y jq
 #
 if [ -f "variables.json" ]; then
   jsonFile="variables.json"

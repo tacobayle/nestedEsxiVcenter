@@ -3,19 +3,19 @@
 #
 # Check if govc is installed
 #
-if ! command -v govc &> /dev/null
-then
-    cd /usr/local/bin
-    sudo wget https://github.com/vmware/govmomi/releases/download/v0.24.0/govc_linux_amd64.gz
-    sudo gunzip govc_linux_amd64.gz
-    sudo mv govc_linux_amd64 govc
-    sudo chmod +x govc
-fi
-#
-echo ""
-echo "++++++++++++++++++++++++++++++++"
-echo "Installing packages"
-sudo apt install -y jq
+#if ! command -v govc &> /dev/null
+#then
+#    cd /usr/local/bin
+#    sudo wget https://github.com/vmware/govmomi/releases/download/v0.24.0/govc_linux_amd64.gz
+#    sudo gunzip govc_linux_amd64.gz
+#    sudo mv govc_linux_amd64 govc
+#    sudo chmod +x govc
+#fi
+##
+#echo ""
+#echo "++++++++++++++++++++++++++++++++"
+#echo "Installing packages"
+#sudo apt install -y jq
 #
 if [ -f "variables.json" ]; then
   jsonFile="variables.json"

@@ -1,10 +1,10 @@
 #!/bin/bash
 #
-echo ""
-echo "++++++++++++++++++++++++++++++++"
-echo "Installing packages"
-sudo apt install -y jq
-sudo apt install -y genisoimage
+#echo ""
+#echo "++++++++++++++++++++++++++++++++"
+#echo "Installing packages"
+#sudo apt install -y jq
+#sudo apt install -y genisoimage
 #
 if [ -f "variables.json" ]; then
   jsonFile="variables.json"

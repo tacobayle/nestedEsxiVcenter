@@ -3,6 +3,7 @@
 ## Goal
 
 This Infrastructure as code will deploy nested ESXi/vCenter on the top of vCenter environment.
+optionally, it can deploy NSX-T and Avi.
 
 ## Use cases
 
@@ -71,10 +72,21 @@ ansible [core 2.11.3]
   libyaml = False
 ```
 - govc Version
+```shell
+wget https://github.com/vmware/govmomi/releases/download/v0.24.0/govc_linux_amd64.gz
+gunzip govc_linux_amd64.gz
+mv govc_linux_amd64 govc
+chmod +x govc
+```
+
 ```
 govc v0.24.0
 ```
 - jq version
+```shell
+sudo apt install -y jq
+```
+
 ```
 jq - commandline JSON processor [version 1.5-1-a5b5cbe]
 ```
@@ -95,8 +107,11 @@ export TF_VAR_esxi_root_password=******              # Nested ESXi root password
 export TF_VAR_vsphere_username=******                # Underlay vCenter username
 export TF_VAR_vsphere_password=******                # Underlay vCenter password
 export TF_VAR_bind_password=******                   # Bind password - needs to be defined if dns_ntp.create == true
-export TF_VAR_vcenter_password=******                # Overlay vCenter password
+export TF_VAR_vcenter_password=******                # Overlay vCenter admin password
+export TF_VAR_vcenter_readonly_password=******       # Overlay vCenter readonly password
+export TF_VAR_vcenter_avi_password=******            # Overlay vCenter avi password - needs to be defined if vcenter.avi_users == true
 export TF_VAR_nsx_password=******                    # NSX admin password - needs to be defined if nsx.create == true
 export TF_VAR_nsx_license=******                     # NSX license - needs to be defined if nsx.create == true
-export TF_VAR_avi_password=******                    # AVI admin password - needs to be defined if avi.create == true
+export TF_VAR_avi_password=******                    # AVI admin password - needs to be defined if avi.create_controller == true
+export TF_VAR_avi_backup_passphrase=******           # AVI backup passphrase - needs to be defined if avi.create_controller == true
 ```

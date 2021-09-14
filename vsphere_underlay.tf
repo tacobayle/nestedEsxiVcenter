@@ -30,19 +30,19 @@ data "vsphere_network" "esxi_network" {
 }
 
 data "vsphere_network" "network_avi_mgmt" {
-  count = (var.vcenter.dvs.single_vds == false && var.nsx.create == false && var.avi.create == true ? 1 : 0)
+  count = (var.vcenter.dvs.single_vds == false && var.nsx.create == false && var.avi.create_network == true ? 1 : 0)
   name = var.vcenter_underlay.network_avi_mgmt.name
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
 data "vsphere_network" "network_avi_vip" {
-  count = (var.vcenter.dvs.single_vds == false && var.nsx.create == false && var.avi.create == true ? 1 : 0)
+  count = (var.vcenter.dvs.single_vds == false && var.nsx.create == false && var.avi.create_network == true ? 1 : 0)
   name = var.vcenter_underlay.network_avi_vip.name
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
 data "vsphere_network" "network_avi_backend" {
-  count = (var.vcenter.dvs.single_vds == false && var.nsx.create == false && var.avi.create == true ? 1 : 0)
+  count = (var.vcenter.dvs.single_vds == false && var.nsx.create == false && var.avi.create_network == true ? 1 : 0)
   name = var.vcenter_underlay.network_avi_backend.name
   datacenter_id = data.vsphere_datacenter.dc.id
 }
@@ -50,6 +50,12 @@ data "vsphere_network" "network_avi_backend" {
 data "vsphere_network" "vcenter_underlay_network_mgmt" {
   count = (var.vcenter.dvs.single_vds == false ? 1 : 0)
   name = var.vcenter_underlay.networks.management.name
+  datacenter_id = data.vsphere_datacenter.dc.id
+}
+
+data "vsphere_network" "network_nsx_overlay" {
+  count = (var.vcenter.dvs.single_vds == false && var.nsx.create == true ? 1 : 0)
+  name = var.vcenter_underlay.network_nsx_overlay.name
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 

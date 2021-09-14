@@ -1,0 +1,4 @@
+data "vsphere_resource_pool" "resource_pool_nested_{{ username }}" {
+  name          = "{{ username }}"
+  datacenter_id = data.vsphere_datacenter.dc_nested[0].id
+}

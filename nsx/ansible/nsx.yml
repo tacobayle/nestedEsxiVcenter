@@ -33,3 +33,54 @@
           username: "administrator@{{ vcenter.sso.domain_name }}"
           password: "{{ lookup('env', 'TF_VAR_vcenter_password') }}"
         state: present
+
+    - name: Configure virtual IP
+      nsxt_virtual_ip:
+        hostname: "{{ vcenter.dvs.portgroup.management.nsx_ip }}"
+        username: "admin"
+        password: "{{ lookup('env', 'TF_VAR_nsx_password') }}"
+        validate_certs: False
+        virtual_ip_address: "{{ vcenter.dvs.portgroup.management.nsx_vip }}"
+        state: present
+
+    - name: Configure IP Pool # was relying on manager API
+      nsxt_virtual_ip:
+        hostname: "{{ vcenter.dvs.portgroup.management.nsx_ip }}"
+        username: "admin"
+        password: "{{ lookup('env', 'TF_VAR_nsx_password') }}"
+        display_name:
+        validate_certs: False
+        virtual_ip_address: "{{ vcenter.dvs.portgroup.management.nsx_vip }}"
+        state: present
+
+    - name: Create ip pool # was relying on manager API
+      nsxt_ip_pools:
+        hostname: "{{ vcenter.dvs.portgroup.management.nsx_ip }}"
+        username: "admin"
+        password: "{{ lookup('env', 'TF_VAR_nsx_password') }}"
+        validate_certs: False
+        display_name: "{{ item.name }}"
+        subnets:
+          - allocation_ranges:
+              - start: "{{ item.start }}"
+                end: "{{ item.end }}"
+            cidr: "{{ item.cidr }}"
+        state: "present"
+      loop: "{{ nsx.ip_pools}}"
+
+#    - name: Create a Hostswitch Profile # was relying on manager API
+#      nsxt_uplink_profiles:
+#        hostname: "{{ vcenter.dvs.portgroup.management.nsx_ip }}"
+#        username: "admin"
+#        password: "{{ lookup('env', 'TF_VAR_nsx_password') }}"
+#        validate_certs: False
+#        display_name: "{{ item.name }}"
+#        mtu: "{{ item.mtu }}"
+#        resource_type: "UplinkHostSwitchProfile"
+#        teaming:
+#          active_list:
+#            - uplink_name: "uplink-1"
+#              uplink_type: PNIC
+#          policy: FAILOVER_ORDER
+#        transport_vlan: 0,
+#        state: "present",

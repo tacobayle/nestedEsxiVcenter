@@ -1,0 +1,42 @@
+#cloud-config
+users:
+  - name: ${username}
+    lock_passwd: true
+    shell: /bin/bash
+    sudo:  ALL=(ALL) NOPASSWD:ALL
+    chpasswd: {expire: False}
+    ssh_authorized_keys:
+      - ${pubkey}
+
+write_files:
+  - content: |
+      #!/bin/bash
+      # retrieve the network interface names
+      ifaceFirstName=`ip -o link show | awk -F': ' '{print $2}' | tail -1`
+      macFirst=`ip -o link show | awk -F'link/ether ' '{print $2}' | awk -F' ' '{print $1}' | tail -1`
+      hostname=${hostname}
+      echo "${ip_mgmt} $hostname" | sudo tee -a /etc/hosts
+      cp ${netplan_file} ${netplan_file}.old
+      echo "network:" | sudo tee ${netplan_file}
+      echo "    ethernets:" | sudo tee -a ${netplan_file}
+      echo "        $ifaceFirstName:" | sudo tee -a ${netplan_file}
+      echo "            dhcp4: false" | sudo tee -a ${netplan_file}
+      echo "            addresses: [${ip_mgmt}/${prefix_mgmt}]" | sudo tee -a ${netplan_file}
+      echo "            match:" | sudo tee -a ${netplan_file}
+      echo "                macaddress: $macFirst" | sudo tee -a ${netplan_file}
+      echo "            set-name: $ifaceFirstName" | sudo tee -a ${netplan_file}
+      echo "            gateway4: ${default_gw}" | sudo tee -a ${netplan_file}
+      echo "            nameservers:" | sudo tee -a ${netplan_file}
+      echo "              addresses: [${dns}]" | sudo tee -a ${netplan_file}
+      echo "    version: 2" | sudo tee -a ${netplan_file}
+      sudo netplan apply
+      echo "cloud init done" | tee /tmp/cloudInitDone.log
+    path: /opt/bootstrap.sh
+    permissions: 0755
+
+  - content: |
+      ${username} ALL=(ALL) NOPASSWD:ALL
+    path: /etc/sudoers.d/${username}
+
+runcmd:
+  - /opt/bootstrap.sh

@@ -8,7 +8,7 @@
     "server": "sof2-01-vc08.oc.vmware.com",
     "cl": {
       "name": "ubuntu",
-      "file": "/home/ubuntu/bionic-server-cloudimg-amd64.ova"
+      "file": "/home/ubuntu/focal-server-cloudimg-amd64.ova"
     },
     "networks": {
       "management": {
@@ -32,7 +32,10 @@
       },
     "network_avi_backend": {
       "name": "vxw-dvs-34-virtualwire-123-sid-1080122-sof2-01-vc08-avi-dev119"
-      }
+      },
+    "network_nsx_overlay": {
+      "name": "vxw-dvs-34-virtualwire-123-sid-1080122-sof2-01-vc08-avi-dev120"
+    }
     },
   "dns": {
     "nameserver": "10.41.134.134",
@@ -97,7 +100,7 @@
     "ntp": "time.vmware.com,pool.ntp.org"
   },
   "vcenter": {
-    "iso_source_location": "/home/ubuntu/bin/VMware-VCSA-all-7.0.2-17958471.iso",
+    "iso_source_location": "/home/ubuntu/bin/VMware-VCSA-all-7.0.2-18356314.iso",
     "json_config_file": "vcsa-cli-installer/templates/install/vCSA_with_cluster_on_ESXi.json",
     "datacenter": "dc1",
     "cluster": "cluster1",
@@ -108,7 +111,7 @@
     "name": "vcsa-01",
     "ssh_enable": true,
     "sso": {
-      "domain_name": "mydomain.com"
+      "domain_name": "domain.local"
     },
     "ceip_enabled": false,
     "dvs" : {
@@ -128,7 +131,10 @@
           "vcenter_ip": "10.41.134.135",
           "dns_ntp_ip": "10.41.134.134",
           "nsx_ip": "10.41.134.136",
-          "avi_ip": ["10.41.134.137", "10.41.134.138"]
+          "nsx_vip": "10.41.134.140",
+          "avi_ips": ["10.41.134.137", "10.41.134.138", "10.41.134.139"],
+          "ssh_gw_ip": "10.41.134.141",
+          "app_ips": ["10.41.134.142", "10.41.134.143"]
         },
         "VMotion": {
           "name": "VMotion",
@@ -144,9 +150,14 @@
           "netmask": "255.255.255.0",
           "prefix": "24"
         },
+        "nsx_overlay": {
+          "name": "nsx_overlay"
+        },
         "avi_mgmt": {
           "name": "avi_mgmt",
-          "avi_ips": ["10.1.1.100", "10.1.1.101"],
+          "avi_ips": ["100.64.134.11", "100.64.134.12", "100.64.134.13"],
+          "app_ips": ["100.64.134.251", "100.64.134.252"],
+          "ssh_gw_ip": "100.64.134.250",
           "prefix": "24"
         },
         "avi_vip": {
@@ -156,6 +167,9 @@
           "name": "avi_backend"
         }
       }
+    },
+    "avi_users": {
+      "create": true
     }
   },
   "nsx": {
@@ -163,14 +177,52 @@
     "ova_location": "/home/ubuntu/bin/nsx-unified-appliance-3.1.3.0.0.18329005.ova",
     "deployment": "Medium",
     "basename": "nsx-manager",
-    "role": "NSX Manager"
+    "role": "NSX Manager",
+    "ip_pools": [
+      {
+        "name": "ip_pool_1",
+        "cidr": "10.8.1.32/27",
+        "gateway": "10.8.1.33",
+        "start": "10.8.1.34",
+        "end": "10.8.1.62"
+      }
+    ],
+    "uplink_profiles": [
+      {
+        "name": "ip_pool_1",
+        "mtu": 8700
+      }
+    ]
   },
   "avi": {
-    "create": true,
+    "create_network": true,
+    "create_controller": true,
     "ova_location": "/home/ubuntu/bin/controller-21.1.1-9045.ova",
     "cpu": 8,
     "memory": 24768,
     "disk": 128,
-    "basename": "avi-controller"
+    "basename": "avi-controller",
+    "app": {
+      "create": true,
+      "ova_location": "/home/ubuntu/bin/focal-server-cloudimg-amd64.ova",
+      "cpu": 4,
+      "memory": 8192,
+      "disk": 32,
+      "public_key_path": "~/.ssh/cloudKey.pub",
+      "private_key_path": "~/.ssh/cloudKey",
+      "username": "ubuntu",
+      "netplan_file": "/etc/netplan/50-cloud-init.yaml"
+    }
+  },
+  "ssh_gw": {
+    "create": true,
+    "ova_location": "/home/ubuntu/bin/focal-server-cloudimg-amd64.ova",
+    "cpu": 4,
+    "memory": 8192,
+    "disk": 32,
+    "public_key_path": "~/.ssh/cloudKey.pub",
+    "private_key_path": "~/.ssh/cloudKey",
+    "username": "ubuntu",
+    "netplan_file": "/etc/netplan/50-cloud-init.yaml"
   }
 }

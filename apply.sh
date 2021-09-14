@@ -48,10 +48,39 @@ echo "--------------------------------------------------------------------------
 # Build of the Avi infrastructure
 #
 echo "Build of Avi infrastructure"
-if [[ $(jq -c -r .avi.create $jsonFile) == true ]] ; then
-  cd avi
-  terraform init
-  terraform apply -auto-approve -var-file=../$jsonFile
-  cd ..
+if [[ $(jq -c -r .avi.create_controller $jsonFile) == true ]] ; then
+  rm -f avi/controllers.tf avi/rp_attendees_* avi/controllers_attendees_*
+  if [[ $(jq -c -r .vcenter.avi_users.create $jsonFile) == true ]] && [[ -f "attendees.txt" ]]
+  then
+    count=0
+    for username in $(cat attendees.txt)
+    do
+      username_wo_domain=${username%@*}
+      username_wo_domain_wo_dot="${username_wo_domain//./_}"
+      jq -n \
+          --arg username $username_wo_domain_wo_dot \
+          '{username: $username}' | tee config.json >/dev/null
+          python3 python/template.py avi/templates/rp_attendees.tf.j2 config.json avi/rp_attendees_$username_wo_domain_wo_dot.tf
+          rm config.json
+      #
+      jq -n \
+          --arg username $username_wo_domain_wo_dot \
+          --arg ip_controller $(jq -c -r .vcenter.dvs.portgroup.management.avi_ips[$count] $jsonFile) \
+          --arg ip_controller_sec $(jq -c -r .vcenter.dvs.portgroup.avi_mgmt.avi_ips[$count] $jsonFile) \
+          '{username: $username, ip_controller: $ip_controller, ip_controller_sec: $ip_controller_sec}' | tee config.json > /dev/null
+          python3 python/template.py avi/templates/controllers_attendees.tf.j2 config.json avi/controllers_attendees_$username_wo_domain_wo_dot.tf
+          rm config.json
+          #
+      count=$((count+1))
+    done
+    cp avi/templates/nested_content_library_ubuntu.tf avi/
+    cp avi/templates/ssh_gw.tf avi/
+  else
+    cp avi/templates/controllers.tf avi/
+  fi
 fi
+cd avi
+terraform init
+terraform apply -auto-approve -var-file=../$jsonFile
+cd ..
 echo "--------------------------------------------------------------------------------------------------------------------"

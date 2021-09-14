@@ -8,8 +8,6 @@ data "template_file" "ssh_gw_userdata" {
     netplan_file  = var.ssh_gw.netplan_file
     prefix_mgmt = var.vcenter.dvs.portgroup.management.prefix
     ip_mgmt = var.vcenter.dvs.portgroup.management.ssh_gw_ip
-    prefix_mgmt_avi = var.vcenter.dvs.portgroup.avi_mgmt.prefix
-    ip_mgmt_avi = var.vcenter.dvs.portgroup.avi_mgmt.ssh_gw_ip
     default_gw = var.vcenter.dvs.portgroup.management.gateway
     dns = var.dns.nameserver
   }
@@ -45,7 +43,7 @@ resource "vsphere_virtual_machine" "ssh_gw" {
   }
 
   clone {
-    template_uuid = vsphere_content_library_item.nested_library_item_ubuntu[0].id
+    template_uuid = vsphere_content_library_item.nested_library_item_ssh_gw[0].id
   }
 
   vapp {
@@ -83,7 +81,7 @@ resource "null_resource" "add_nic_ssh_gw_via_govc" {
       export GOVC_URL=${var.vcenter.name}.${var.dns.domain}
       export GOVC_CLUSTER=${var.vcenter.cluster}
       export GOVC_INSECURE=true
-      govc vm.network.add -vm "ssh_gw" -net avi_mgmt
+      govc vm.network.add -vm "ssh_gw" -net ${var.vcenter.dvs.portgroup.avi_mgmt.name}
     EOT
   }
 }

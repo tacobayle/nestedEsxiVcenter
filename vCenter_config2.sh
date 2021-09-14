@@ -115,6 +115,18 @@ if [[ $(jq -c -r .vcenter.avi_users.create $jsonFile) == true ]] ; then
     done
 fi
 #
+if [[ $(jq -c -r .avi.app.create $jsonFile) == true ]] ; then
+  echo "Creating resource group avi_app"
+  govc pool.create -cpu.limit=-1 -mem.limit=-1 */Resources/avi_app
+  for username in $(cat attendees.txt)
+    do
+      username_wo_domain=${username%@*}
+      username_wo_domain_wo_dot="${username_wo_domain//./_}"
+      echo "Setting permission for username ${username%@*} for resource pool avi_app"
+      govc permissions.set -principal ${username%@*}@$vcenter_domain -role ReadOnly -propagate=true /$(jq -r .vcenter.datacenter $jsonFile)/host/$(jq -r .vcenter.cluster $jsonFile)/Resources/avi_app
+    done
+fi
+#
 # Permission Config
 #
 load_govc_env

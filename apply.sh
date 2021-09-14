@@ -8,6 +8,10 @@ else
   exit 1
 fi
 #
+# Prerequistes
+#
+# pip3 install pyvmomi
+#
 # Build of a folder on the underlay infrastructure
 #
 echo "--------------------------------------------------------------------------------------------------------------------"
@@ -73,10 +77,12 @@ if [[ $(jq -c -r .avi.create_controller $jsonFile) == true ]] ; then
           #
       count=$((count+1))
     done
-    cp avi/templates/nested_content_library_ubuntu.tf avi/
+    cp avi/templates/nested_content_library_ssh_gw.tf avi/
     cp avi/templates/ssh_gw.tf avi/
+    cp avi/templates/nested_content_library_app.tf avi/
   else
     cp avi/templates/controllers.tf avi/
+    cp avi/templates/avi_app.tf avi/
   fi
 fi
 cd avi

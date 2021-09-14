@@ -57,12 +57,12 @@
           ntp_configuration:
             ntp_servers:
               - type: 'V4'
-                addr: {{ ntp.server }}
+                addr: "{{ ntp.server }}"
           dns_configuration:
-            search_domain: {{ dns.domain }}
+            search_domain: "{{ dns.domain }}"
             server_list:
               - type: 'V4'
-                addr: {{ dns.nameserver }}
+                addr: "{{ dns.nameserver }}"
           email_configuration:
             from_email: 'test@avicontroller.net'
             smtp_type: SMTP_LOCAL_HOST

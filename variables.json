@@ -195,8 +195,8 @@
     ]
   },
   "avi": {
-    "create_network": false,
-    "create_controller": false,
+    "create_network": true,
+    "create_controller": true,
     "ova_location": "/home/ubuntu/bin/controller-21.1.1-9045.ova",
     "cpu": 8,
     "memory": 24768,

@@ -47,7 +47,7 @@ if [[ $(jq -c -r .nsx.create $jsonFile) == true ]] ; then
   terraform apply -auto-approve -var-file=../$jsonFile
   cd ..
 fi
-sleep 60
+sleep 120
 echo "--------------------------------------------------------------------------------------------------------------------"
 #
 # Build of the Nested Avi infrastructure

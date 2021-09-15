@@ -47,12 +47,24 @@ if [[ $(jq -c -r .nsx.create $jsonFile) == true ]] ; then
   terraform apply -auto-approve -var-file=../$jsonFile
   cd ..
 fi
-sleep 120
+sleep 300
 echo "--------------------------------------------------------------------------------------------------------------------"
 #
-# Build of the Nested Avi infrastructure
+# Build of the Nested Networks
 #
-echo "Build of Nested Avi infrastructure"
+echo "Build of Nested Networks"
+if [[ $(jq -c -r .avi.create_network $jsonFile) == true ]] ; then
+  cd avi_network
+  terraform init
+  terraform apply -auto-approve -var-file=../$jsonFile
+  cd ..
+fi
+echo "--------------------------------------------------------------------------------------------------------------------"
+
+#
+# Build of the Nested Avi Controllers
+#
+echo "Build of Nested Avi Controllers"
 if [[ $(jq -c -r .avi.create_controller $jsonFile) == true ]] ; then
   rm -f avi/controllers.tf avi/rp_attendees_* avi/controllers_attendees_*
   if [[ $(jq -c -r .vcenter.avi_users.create $jsonFile) == true ]] && [[ -f "attendees.txt" ]]

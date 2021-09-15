@@ -20,12 +20,6 @@ data "vsphere_resource_pool" "resource_pool_nested" {
   datacenter_id = data.vsphere_datacenter.dc_nested[0].id
 }
 
-data "vsphere_resource_pool" "resource_pool_nested_avi_app" {
-  count = (var.avi.app.create == true ? 1 : 0)
-  name          = "avi_app"
-  datacenter_id = data.vsphere_datacenter.dc_nested[0].id
-}
-
 data "vsphere_host" "host_nested" {
   count         = var.esxi.count
   name          = "${var.esxi.basename}${count.index + 1}.${var.dns.domain}"
@@ -134,7 +128,7 @@ data "vsphere_network" "vcenter_network_avi_mgmt_nested" {
   datacenter_id = data.vsphere_datacenter.dc_nested[0].id
 }
 
-resource "vsphere_content_library" "nested_library" {
+resource "vsphere_content_library" "nested_library_avi" {
   name            = "avi_controller"
   storage_backing = [data.vsphere_datastore.datastore_nested.id]
   description     = "avi_controller"
@@ -143,7 +137,7 @@ resource "vsphere_content_library" "nested_library" {
 resource "vsphere_content_library_item" "aviController" {
   name        = basename(var.avi.ova_location)
   description = basename(var.avi.ova_location)
-  library_id  = vsphere_content_library.nested_library.id
+  library_id  = vsphere_content_library.nested_library_avi.id
   file_url = var.avi.ova_location
 }
 

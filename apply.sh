@@ -47,11 +47,12 @@ if [[ $(jq -c -r .nsx.create $jsonFile) == true ]] ; then
   terraform apply -auto-approve -var-file=../$jsonFile
   cd ..
 fi
+sleep 60
 echo "--------------------------------------------------------------------------------------------------------------------"
 #
-# Build of the Avi infrastructure
+# Build of the Nested Avi infrastructure
 #
-echo "Build of Avi infrastructure"
+echo "Build of Nested Avi infrastructure"
 if [[ $(jq -c -r .avi.create_controller $jsonFile) == true ]] ; then
   rm -f avi/controllers.tf avi/rp_attendees_* avi/controllers_attendees_*
   if [[ $(jq -c -r .vcenter.avi_users.create $jsonFile) == true ]] && [[ -f "attendees.txt" ]]
@@ -77,16 +78,34 @@ if [[ $(jq -c -r .avi.create_controller $jsonFile) == true ]] ; then
           #
       count=$((count+1))
     done
-    cp avi/templates/nested_content_library_ssh_gw.tf avi/
-    cp avi/templates/ssh_gw.tf avi/
-    cp avi/templates/nested_content_library_avi_app.tf avi/
   else
     cp avi/templates/controllers.tf avi/
-    cp avi/templates/avi_app.tf avi/
   fi
 fi
 cd avi
 terraform init
 terraform apply -auto-approve -var-file=../$jsonFile
 cd ..
+echo "--------------------------------------------------------------------------------------------------------------------"
+#
+# Build of the Nested Avi App
+#
+echo "Build of Nested Avi App"
+if [[ $(jq -c -r .avi.app.create $jsonFile) == true ]] ; then
+  cd avi_app
+  terraform init
+  terraform apply -auto-approve -var-file=../$jsonFile
+  cd ..
+fi
+echo "--------------------------------------------------------------------------------------------------------------------"
+#
+# Build of the ssg_gw
+#
+echo "Build of Nested ssh_gw"
+if [[ $(jq -c -r .ssh_gw.create $jsonFile) == true ]] ; then
+  cd ssh_gw
+  terraform init
+  terraform apply -auto-approve -var-file=../$jsonFile
+  cd ..
+fi
 echo "--------------------------------------------------------------------------------------------------------------------"

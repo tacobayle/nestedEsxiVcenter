@@ -51,10 +51,10 @@ echo "waiting for 5 minutes to finish the vCenter config..."
 sleep 300
 echo "--------------------------------------------------------------------------------------------------------------------"
 #
-# Build of the Nested Networks
+# Build of the Avi Nested Networks
 #
-echo "Build of Nested Networks"
 if [[ $(jq -c -r .avi.create_network $jsonFile) == true ]] ; then
+  echo "Build of Avi Nested Networks"
   cd avi_network
   terraform init
   terraform apply -auto-approve -var-file=../$jsonFile
@@ -65,8 +65,8 @@ echo "--------------------------------------------------------------------------
 #
 # Build of the Nested Avi Controllers
 #
-echo "Build of Nested Avi Controllers"
 if [[ $(jq -c -r .avi.create_controller $jsonFile) == true ]] ; then
+  echo "Build of Nested Avi Controllers"
   rm -f avi/controllers.tf avi/rp_attendees_* avi/controllers_attendees_*
   if [[ $(jq -c -r .vcenter.avi_users.create $jsonFile) == true ]] && [[ -f "attendees.txt" ]]
   then
@@ -103,8 +103,8 @@ echo "--------------------------------------------------------------------------
 #
 # Build of the Nested Avi App
 #
-echo "Build of Nested Avi App"
 if [[ $(jq -c -r .avi.app.create $jsonFile) == true ]] ; then
+  echo "Build of Nested Avi App"
   cd avi_app
   terraform init
   terraform apply -auto-approve -var-file=../$jsonFile

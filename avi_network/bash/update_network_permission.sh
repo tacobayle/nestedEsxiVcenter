@@ -3,12 +3,14 @@
 if [ -f "../../variables.json" ]; then
   jsonFile="../../variables.json"
 else
+  echo "variables.json file not found!!"
   exit 1
 fi
 #
 if [ -f "../../attendees.txt" ]; then
   attendeesFile="../../attendees.txt"
 else
+  echo "attendees.txt file not found!!"
   exit 1
 fi
 #

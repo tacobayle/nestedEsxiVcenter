@@ -42,7 +42,7 @@
     "domain": "mydomain.com"
   },
   "ntp": {
-    "server": "time.vmware.com",
+    "server": "10.23.108.1",
     "timezone": "Europe/Zurich"
   },
   "esxi": {
@@ -195,13 +195,17 @@
     ]
   },
   "avi": {
-    "create_network": true,
-    "create_controller": true,
-    "ova_location": "/home/ubuntu/bin/controller-21.1.1-9045.ova",
-    "cpu": 8,
-    "memory": 24768,
-    "disk": 128,
-    "basename": "avi-controller",
+    "networks": {
+      "create": true
+    },
+    "controller": {
+      "create": true,
+      "ova_location": "/home/ubuntu/bin/controller-21.1.1-9045.ova",
+      "cpu": 8,
+      "memory": 24768,
+      "disk": 128,
+      "basename": "avi-controller"
+    },
     "app": {
       "create": false,
       "ova_location": "/home/ubuntu/bin/focal-server-cloudimg-amd64.ova",

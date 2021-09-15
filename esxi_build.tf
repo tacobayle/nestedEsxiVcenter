@@ -63,7 +63,7 @@ resource "null_resource" "iso_destroy" {
 
 resource "vsphere_virtual_machine" "esxi_multiple_vswitch_wo_NSX_wo_Avi" {
   depends_on = [ vsphere_file.iso_upload ]
-  count = (var.vcenter.dvs.single_vds == false && var.nsx.create == false && var.avi.create_network == false ? var.esxi.count : 0)
+  count = (var.vcenter.dvs.single_vds == false && var.nsx.create == false && var.avi.networks.create == false ? var.esxi.count : 0)
   name             = "${var.esxi.basename}${count.index + 1}"
   datastore_id     = data.vsphere_datastore.datastore.id
   resource_pool_id = data.vsphere_resource_pool.pool.id
@@ -108,7 +108,7 @@ resource "vsphere_virtual_machine" "esxi_multiple_vswitch_wo_NSX_wo_Avi" {
 
 //resource "vsphere_virtual_machine" "esxi_multiple_vswitch_wo_NSX_wo_Avi" {
 //  depends_on = [ vsphere_file.iso_upload ]
-//  count = (var.vcenter.dvs.single_vds == false && var.nsx.create == false && var.avi.create_network == false ? var.esxi.count : 0)
+//  count = (var.vcenter.dvs.single_vds == false && var.nsx.create == false && var.avi.networks.create == false ? var.esxi.count : 0)
 //  name             = "${var.esxi.basename}${count.index + 1}"
 //  datastore_id     = data.vsphere_datastore.datastore.id
 //  resource_pool_id = data.vsphere_resource_pool.pool.id
@@ -153,7 +153,7 @@ resource "vsphere_virtual_machine" "esxi_multiple_vswitch_wo_NSX_wo_Avi" {
 
 resource "vsphere_virtual_machine" "esxi_multiple_vswitch_with_NSX_with_Avi" {
   depends_on = [ vsphere_file.iso_upload ]
-  count = (var.vcenter.dvs.single_vds == false && var.nsx.create == true && var.avi.create_network == true ? var.esxi.count : 0)
+  count = (var.vcenter.dvs.single_vds == false && var.nsx.create == true && var.avi.networks.create == true ? var.esxi.count : 0)
   name             = "${var.esxi.basename}${count.index + 1}"
   datastore_id     = data.vsphere_datastore.datastore.id
   resource_pool_id = data.vsphere_resource_pool.pool.id
@@ -215,7 +215,7 @@ resource "vsphere_virtual_machine" "esxi_multiple_vswitch_with_NSX_with_Avi" {
 
 resource "vsphere_virtual_machine" "esxi_multiple_vswitch_with_NSX_without_Avi" {
   depends_on = [ vsphere_file.iso_upload ]
-  count = (var.vcenter.dvs.single_vds == false && var.nsx.create == true && var.avi.create_network == false ? var.esxi.count : 0)
+  count = (var.vcenter.dvs.single_vds == false && var.nsx.create == true && var.avi.networks.create == false ? var.esxi.count : 0)
   name             = "${var.esxi.basename}${count.index + 1}"
   datastore_id     = data.vsphere_datastore.datastore.id
   resource_pool_id = data.vsphere_resource_pool.pool.id
@@ -265,7 +265,7 @@ resource "vsphere_virtual_machine" "esxi_multiple_vswitch_with_NSX_without_Avi" 
 
 resource "vsphere_virtual_machine" "esxi_multiple_vswitch_wo_NSX_with_Avi" {
   depends_on = [ vsphere_file.iso_upload ]
-  count = (var.vcenter.dvs.single_vds == false && var.nsx.create == false && var.avi.create_network == true ? var.esxi.count : 0)
+  count = (var.vcenter.dvs.single_vds == false && var.nsx.create == false && var.avi.networks.create == true ? var.esxi.count : 0)
   name             = "${var.esxi.basename}${count.index + 1}"
   datastore_id     = data.vsphere_datastore.datastore.id
   resource_pool_id = data.vsphere_resource_pool.pool.id
@@ -322,7 +322,7 @@ resource "vsphere_virtual_machine" "esxi_multiple_vswitch_wo_NSX_with_Avi" {
 
 //resource "vsphere_virtual_machine" "esxi_multiple_vswitch_with_NSX_with_Avi" {
 //  depends_on = [ vsphere_file.iso_upload ]
-//  count = (var.vcenter.dvs.single_vds == false && var.nsx.create == true && var.avi.create_network == true ? var.esxi.count : 0)
+//  count = (var.vcenter.dvs.single_vds == false && var.nsx.create == true && var.avi.networks.create == true ? var.esxi.count : 0)
 //  name             = "${var.esxi.basename}${count.index + 1}"
 //  datastore_id     = data.vsphere_datastore.datastore.id
 //  resource_pool_id = data.vsphere_resource_pool.pool.id

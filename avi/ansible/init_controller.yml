@@ -56,8 +56,9 @@
           welcome_workflow_complete: true
           ntp_configuration:
             ntp_servers:
-              - type: 'V4'
-                addr: "{{ ntp.server }}"
+              - server:
+                 type: 'V4'
+                 addr: "{{ ntp.server }}"
           dns_configuration:
             search_domain: "{{ dns.domain }}"
             server_list:

@@ -5,12 +5,15 @@
 if [ -f "variables.json" ]; then
   jsonFile="variables.json"
 else
+  echo "variables.json file not found!!"
   exit 1
 fi
 #
-# Prerequistes
-#
-# pip3 install pyvmomi
+# Prerequisites to be added
+# govc install
+# jq install
+# pip3 install pyvmomi for Ansible
+# check the files
 #
 # Build of a folder on the underlay infrastructure
 #
@@ -24,48 +27,49 @@ echo "--------------------------------------------------------------------------
 #
 # Build of a DNS/NTP server on the underlay infrastructure
 #
-echo "Build of a DNS/NTP server on the underlay infrastructure"
 if [[ $(jq -c -r .dns_ntp.create $jsonFile) == true ]] ; then
+  echo "Build of a DNS/NTP server on the underlay infrastructure"
   cd dns_ntp
   terraform init
   terraform apply -auto-approve -var-file=../$jsonFile
   cd ..
+  echo "--------------------------------------------------------------------------------------------------------------------"
 fi
-echo "--------------------------------------------------------------------------------------------------------------------"
 #
 # Build of the nested ESXi/vCenter infrastructure
 #
 echo "Build of the nested ESXi/vCenter infrastructure"
 terraform init
 terraform apply -auto-approve -var-file=variables.json
+echo "waiting for 15 minutes to finish the vCenter config..."
+sleep 900
+echo "--------------------------------------------------------------------------------------------------------------------"
 #
 # Build of the nested NSX-T appliance
 #
 if [[ $(jq -c -r .nsx.create $jsonFile) == true ]] ; then
+  echo "Build of the nested NSXT infrastructure"
   cd nsx
   terraform init
   terraform apply -auto-approve -var-file=../$jsonFile
   cd ..
+  echo "--------------------------------------------------------------------------------------------------------------------"
 fi
-echo "waiting for 5 minutes to finish the vCenter config..."
-sleep 300
-echo "--------------------------------------------------------------------------------------------------------------------"
 #
 # Build of the Avi Nested Networks
 #
-if [[ $(jq -c -r .avi.create_network $jsonFile) == true ]] ; then
+if [[ $(jq -c -r .avi.networks.create $jsonFile) == true ]] ; then
   echo "Build of Avi Nested Networks"
   cd avi_network
   terraform init
   terraform apply -auto-approve -var-file=../$jsonFile
   cd ..
+  echo "--------------------------------------------------------------------------------------------------------------------"
 fi
-echo "--------------------------------------------------------------------------------------------------------------------"
-
 #
 # Build of the Nested Avi Controllers
 #
-if [[ $(jq -c -r .avi.create_controller $jsonFile) == true ]] ; then
+if [[ $(jq -c -r .avi.controller.create $jsonFile) == true ]] ; then
   echo "Build of Nested Avi Controllers"
   rm -f avi/controllers.tf avi/rp_attendees_* avi/controllers_attendees_*
   if [[ $(jq -c -r .vcenter.avi_users.create $jsonFile) == true ]] && [[ -f "attendees.txt" ]]
@@ -98,8 +102,8 @@ if [[ $(jq -c -r .avi.create_controller $jsonFile) == true ]] ; then
   terraform init
   terraform apply -auto-approve -var-file=../$jsonFile
   cd ..
+  echo "--------------------------------------------------------------------------------------------------------------------"
 fi
-echo "--------------------------------------------------------------------------------------------------------------------"
 #
 # Build of the Nested Avi App
 #
@@ -109,16 +113,16 @@ if [[ $(jq -c -r .avi.app.create $jsonFile) == true ]] ; then
   terraform init
   terraform apply -auto-approve -var-file=../$jsonFile
   cd ..
+  echo "--------------------------------------------------------------------------------------------------------------------"
 fi
-echo "--------------------------------------------------------------------------------------------------------------------"
 #
 # Build of the ssg_gw
 #
-echo "Build of Nested ssh_gw"
 if [[ $(jq -c -r .ssh_gw.create $jsonFile) == true ]] ; then
+  echo "Build of Nested ssh_gw"
   cd ssh_gw
   terraform init
   terraform apply -auto-approve -var-file=../$jsonFile
   cd ..
+  echo "--------------------------------------------------------------------------------------------------------------------"
 fi
-echo "--------------------------------------------------------------------------------------------------------------------"

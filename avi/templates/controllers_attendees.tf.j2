@@ -1,6 +1,6 @@
 resource "vsphere_virtual_machine" "controller_{{ username }}" {
   count = 1
-  name             = "${var.avi.basename}-{{ username }}"
+  name             = "${var.avi.controller.basename}-{{ username }}"
   datastore_id     = data.vsphere_datastore.datastore_nested.id
   resource_pool_id = data.vsphere_resource_pool.resource_pool_nested_{{ username }}.id
 
@@ -8,13 +8,13 @@ resource "vsphere_virtual_machine" "controller_{{ username }}" {
     network_id = data.vsphere_network.vcenter_network_mgmt_nested[0].id
   }
 
-  num_cpus = var.avi.cpu
-  memory = var.avi.memory
+  num_cpus = var.avi.controller.cpu
+  memory = var.avi.controller.memory
   wait_for_guest_net_timeout = 4
   guest_id = "guestid-controller-{{ username }}"
 
   disk {
-    size             = var.avi.disk
+    size             = var.avi.controller.disk
     label            = "controller--{{ username }}.lab_vmdk"
     thin_provisioned = true
   }
@@ -53,7 +53,7 @@ resource "null_resource" "add_nic_via_govc_{{ username }}" {
       export GOVC_URL=${var.vcenter.name}.${var.dns.domain}
       export GOVC_CLUSTER=${var.vcenter.cluster}
       export GOVC_INSECURE=true
-      govc vm.network.add -vm ${var.avi.basename}-{{ username }} -net avi_mgmt
+      govc vm.network.add -vm ${var.avi.controller.basename}-{{ username }} -net avi_mgmt
     EOT
   }
 }
@@ -63,7 +63,7 @@ resource "null_resource" "ansible_init_controller_{{ username }}" {
   count = 1
 
   provisioner "local-exec" {
-    command = "ansible-playbook ansible/init_controller.yml --extra-vars @../variables.json --extra-vars '{\"avi_ip\": \"{{ ip_controller }}\", \"avi_version\": ${split("-", basename(var.avi.ova_location))[1]}}'"
+    command = "ansible-playbook ansible/init_controller.yml --extra-vars @../variables.json --extra-vars '{\"avi_ip\": \"{{ ip_controller }}\", \"avi_version\": ${split("-", basename(var.avi.controller.ova_location))[1]}}'"
   }
 }
 

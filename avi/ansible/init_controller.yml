@@ -66,6 +66,11 @@
           email_configuration:
             from_email: 'test@avicontroller.net'
             smtp_type: SMTP_LOCAL_HOST
+      when:
+        - ntp.server is defined
+        - dns.domain is defined
+        - dns.nameserver is defined
+
 
     - name: Configure Avi System parameters
       community.network.avi_systemconfiguration:

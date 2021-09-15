@@ -63,7 +63,7 @@ resource "null_resource" "ansible_init_controller_{{ username }}" {
   count = 1
 
   provisioner "local-exec" {
-    command = "ansible-playbook ansible/init_controller.yml --extra-vars '{\"avi_ip\": \"{{ ip_controller }}\", \"avi_version\": ${split("-", basename(var.avi.ova_location))[1]}}'"
+    command = "ansible-playbook ansible/init_controller.yml --extra-vars @../variables.json --extra-vars '{\"avi_ip\": \"{{ ip_controller }}\", \"avi_version\": ${split("-", basename(var.avi.ova_location))[1]}}'"
   }
 }
 

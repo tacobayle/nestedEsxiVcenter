@@ -47,6 +47,7 @@ if [[ $(jq -c -r .nsx.create $jsonFile) == true ]] ; then
   terraform apply -auto-approve -var-file=../$jsonFile
   cd ..
 fi
+echo "waiting for 5 minutes to finish the vCenter config..."
 sleep 300
 echo "--------------------------------------------------------------------------------------------------------------------"
 #

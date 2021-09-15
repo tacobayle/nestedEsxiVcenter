@@ -195,15 +195,15 @@
     ]
   },
   "avi": {
-    "create_network": true,
-    "create_controller": true,
+    "create_network": false,
+    "create_controller": false,
     "ova_location": "/home/ubuntu/bin/controller-21.1.1-9045.ova",
     "cpu": 8,
     "memory": 24768,
     "disk": 128,
     "basename": "avi-controller",
     "app": {
-      "create": true,
+      "create": false,
       "ova_location": "/home/ubuntu/bin/focal-server-cloudimg-amd64.ova",
       "cpu": 4,
       "memory": 8192,
@@ -215,7 +215,7 @@
     }
   },
   "ssh_gw": {
-    "create": true,
+    "create": false,
     "ova_location": "/home/ubuntu/bin/focal-server-cloudimg-amd64.ova",
     "cpu": 4,
     "memory": 8192,

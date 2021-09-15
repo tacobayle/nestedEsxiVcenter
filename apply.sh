@@ -81,11 +81,11 @@ if [[ $(jq -c -r .avi.create_controller $jsonFile) == true ]] ; then
   else
     cp avi/templates/controllers.tf avi/
   fi
+  cd avi
+  terraform init
+  terraform apply -auto-approve -var-file=../$jsonFile
+  cd ..
 fi
-cd avi
-terraform init
-terraform apply -auto-approve -var-file=../$jsonFile
-cd ..
 echo "--------------------------------------------------------------------------------------------------------------------"
 #
 # Build of the Nested Avi App

@@ -3,8 +3,8 @@
 resource "vsphere_virtual_machine" "controller" {
   count = (var.vcenter.dvs.single_vds == false && var.nsx.create == false && var.avi.controller.create == true ? 1 : 0)
   name             = "${var.avi.controller.basename}-${count.index + 1}"
-  datastore_id     = data.vsphere_datastore.datastore_nested.id
-  resource_pool_id = data.vsphere_resource_pool.resource_pool_nested.id
+  datastore_id     = data.vsphere_datastore.datastore_nested[0].id
+  resource_pool_id = data.vsphere_resource_pool.resource_pool_nested[0].id
 
   network_interface {
     network_id = data.vsphere_network.vcenter_network_mgmt_nested[0].id
@@ -22,7 +22,7 @@ resource "vsphere_virtual_machine" "controller" {
   }
 
   clone {
-    template_uuid = vsphere_content_library_item.aviController.id
+    template_uuid = vsphere_content_library_item.aviController[0].id
   }
 
   vapp {
@@ -65,7 +65,7 @@ resource "null_resource" "ansible_init_controller" {
   count = (var.vcenter.dvs.single_vds == false && var.nsx.create == false && var.avi.controller.create == true ? 1 : 0)
 
   provisioner "local-exec" {
-    command = "ansible-playbook ansible/init_controller.yml --extra-vars '{\"avi_ip\": ${jsonencode(element(var.vcenter.dvs.portgroup.management.avi_ips, count.index))}, \"avi_version\": ${split("-", basename(var.avi.controller.ova_location))[1]}}'"
+    command = "ansible-playbook ansible/init_controller.yml --extra-vars '{\"avi_ip\": ${jsonencode(element(var.vcenter.dvs.portgroup.management.avi_ips, count.index))}, \"avi_version\": ${split("-", basename(var.avi.content_library.ova_location))[1]}}'"
   }
 }
 

@@ -60,16 +60,16 @@ fi
 #
 if [[ $(jq -c -r .avi.networks.create $jsonFile) == true ]] ; then
   echo "Build of Avi Nested Networks"
-  cd avi_network
+  cd avi/networks
   terraform init
-  terraform apply -auto-approve -var-file=../$jsonFile
-  cd ..
+  terraform apply -auto-approve -var-file=../../$jsonFile
+  cd ../..
   echo "--------------------------------------------------------------------------------------------------------------------"
 fi
 #
 # Build of the Nested Avi Controllers
 #
-if [[ $(jq -c -r .avi.controller.create $jsonFile) == true ]] ; then
+if [[ $(jq -c -r .avi.controller.create $jsonFile) == true ]] || [[ $(jq -c -r .avi.content_library.create $jsonFile) == true ]] ; then
   echo "Build of Nested Avi Controllers"
   rm -f avi/controllers.tf avi/rp_attendees_* avi/controllers_attendees_*
   if [[ $(jq -c -r .vcenter.avi_users.create $jsonFile) == true ]] && [[ -f "attendees.txt" ]]
@@ -109,10 +109,10 @@ fi
 #
 if [[ $(jq -c -r .avi.app.create $jsonFile) == true ]] ; then
   echo "Build of Nested Avi App"
-  cd avi_app
+  cd avi/app
   terraform init
-  terraform apply -auto-approve -var-file=../$jsonFile
-  cd ..
+  terraform apply -auto-approve -var-file=../../$jsonFile
+  cd ../..
   echo "--------------------------------------------------------------------------------------------------------------------"
 fi
 #

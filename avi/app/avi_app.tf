@@ -10,6 +10,8 @@ data "template_file" "avi_app_userdata" {
     ip_mgmt = element(var.vcenter.dvs.portgroup.management.avi_app_ips, count.index)
     default_gw = var.vcenter.dvs.portgroup.management.gateway
     dns = var.dns.nameserver
+    docker_registry_username = var.docker_registry_username
+    docker_registry_password = var.docker_registry_password
     avi_app_docker_image = var.avi.app.avi_app_docker_image
     avi_app_tcp_port = var.avi.app.avi_app_tcp_port
     hackazon_docker_image = var.avi.app.hackazon_docker_image

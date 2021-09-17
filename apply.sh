@@ -138,7 +138,7 @@ if [[ $(jq -c -r .ssh_gw.create $jsonFile) == true ]] ; then
   terraform init > ../logs/tf_init_ssg_gw.stdout 2>../logs/tf_init_ssg_gw.errors
   cat ../logs/tf_init_ssg_gw.errors
   terraform apply -auto-approve -var-file=../$jsonFile > ../logs/tf_apply_ssg_gw.stdout 2>../logs/tf_apply_ssg_gw.errors
-  cat ./logs/tf_apply_ssg_gw.errors
+  cat ../logs/tf_apply_ssg_gw.errors
   cd ..
   echo "--------------------------------------------------------------------------------------------------------------------"
 fi

@@ -19,34 +19,43 @@ fi
 #
 echo "--------------------------------------------------------------------------------------------------------------------"
 echo "Build of a folder on the underlay infrastructure"
+echo "This should take less than a minute"
+date
 cd vsphere_underlay_folder
 terraform init > ../logs/tf_init_vsphere_underlay_folder.stdout 2>../logs/tf_init_vsphere_underlay_folder.errors
 cat ../logs/tf_init_vsphere_underlay_folder.errors
 terraform apply -auto-approve -var-file=../$jsonFile > ../logs/tf_apply_vsphere_underlay_folder.stdout 2>../logs/tf_apply_vsphere_underlay_folder.errors
 cat ../logs/tf_apply_vsphere_underlay_folder.errors
 cd ..
+date
 echo "--------------------------------------------------------------------------------------------------------------------"
 #
 # Build of a DNS/NTP server on the underlay infrastructure
 #
 if [[ $(jq -c -r .dns_ntp.create $jsonFile) == true ]] ; then
   echo "Build of a DNS/NTP server on the underlay infrastructure"
+  echo "This should take around 5 minutes"
+  date
   cd dns_ntp
   terraform init > ../logs/tf_init_dns_ntp.stdout 2>../logs/tf_init_dns_ntp.errors
   cat ../logs/tf_init_dns_ntp.errors
   terraform apply -auto-approve -var-file=../$jsonFile > ../logs/tf_apply_dns_ntp.stdout 2>../logs/tf_apply_dns_ntp.errors
   cat ../logs/tf_apply_dns_ntp.errors
   cd ..
+  date
   echo "--------------------------------------------------------------------------------------------------------------------"
 fi
 #
 # Build of the nested ESXi/vCenter infrastructure
 #
+echo "This should take around 30 minutes"
+date
 echo "Build of the nested ESXi/vCenter infrastructure"
 terraform init > logs/tf_init_nested_esxi_vcenter.stdout 2>logs/tf_init_nested_esxi_vcenter.errors
 cat logs/tf_init_nested_esxi_vcenter.errors
 terraform apply -auto-approve -var-file=variables.json > logs/tf_apply_nested_esxi_vcenter.stdout 2>logs/tf_apply_nested_esxi_vcenter.errors
 cat logs/tf_apply_nested_esxi_vcenter.errors
+date
 echo "waiting for 15 minutes to finish the vCenter config..."
 sleep 900
 echo "--------------------------------------------------------------------------------------------------------------------"
@@ -68,12 +77,15 @@ fi
 #
 if [[ $(jq -c -r .avi.networks.create $jsonFile) == true ]] ; then
   echo "Build of Avi Nested Networks"
+  echo "This should take less than a minute"
+  date
   cd avi/networks
   terraform init > ../../logs/tf_init_avi_networks.stdout 2>../../logs/tf_init_avi_networks.errors
   cat ../../logs/tf_init_avi_networks.errors
   terraform apply -auto-approve -var-file=../../$jsonFile > ../../logs/tf_apply_avi_networks.stdout 2>../../logs/tf_apply_avi_networks.errors
   cat ../../logs/tf_apply_avi_networks.errors
   cd ../..
+  date
   echo "--------------------------------------------------------------------------------------------------------------------"
 fi
 #
@@ -81,6 +93,7 @@ fi
 #
 if [[ $(jq -c -r .avi.controller.create $jsonFile) == true ]] || [[ $(jq -c -r .avi.content_library.create $jsonFile) == true ]] ; then
   echo "Build of Nested Avi Controllers"
+  echo "This should take around 15 minutes"
   rm -f avi/controllers.tf avi/rp_attendees_* avi/controllers_attendees_*
   if [[ $(jq -c -r .avi.controller.create $jsonFile) == true ]] && [[ $(jq -c -r .vcenter.avi_users.create $jsonFile) == true ]] && [[ -f "$(jq -c -r .vcenter.avi_users.file $jsonFile)" ]] ; then
     count=0
@@ -114,6 +127,7 @@ if [[ $(jq -c -r .avi.controller.create $jsonFile) == true ]] || [[ $(jq -c -r .
   terraform apply -auto-approve -var-file=../$jsonFile > ../logs/tf_apply_avi.stdout 2>../logs/tf_apply_avi.errors
   cat ../logs/tf_apply_avi.errors
   cd ..
+  date
   echo "--------------------------------------------------------------------------------------------------------------------"
 fi
 #
@@ -121,12 +135,15 @@ fi
 #
 if [[ $(jq -c -r .avi.app.create $jsonFile) == true ]] ; then
   echo "Build of Nested Avi App"
+  echo "This should take around 5 minutes"
+  date
   cd avi/app
   terraform init > ../../logs/tf_init_avi_app.stdout 2>../../logs/tf_init_avi_app.errors
   cat ../../logs/tf_init_avi_app.errors
   terraform apply -auto-approve -var-file=../../$jsonFile > ../../logs/tf_apply_avi_app.stdout 2>../../logs/tf_apply_avi_app.errors
   cat ./../logs/tf_apply_avi_app.errors
   cd ../..
+  date
   echo "--------------------------------------------------------------------------------------------------------------------"
 fi
 #
@@ -134,11 +151,14 @@ fi
 #
 if [[ $(jq -c -r .ssh_gw.create $jsonFile) == true ]] ; then
   echo "Build of Nested ssh_gw"
+  echo "This should take around 5 minutes"
+  date
   cd ssh_gw
   terraform init > ../logs/tf_init_ssg_gw.stdout 2>../logs/tf_init_ssg_gw.errors
   cat ../logs/tf_init_ssg_gw.errors
   terraform apply -auto-approve -var-file=../$jsonFile > ../logs/tf_apply_ssg_gw.stdout 2>../logs/tf_apply_ssg_gw.errors
   cat ../logs/tf_apply_ssg_gw.errors
   cd ..
+  date
   echo "--------------------------------------------------------------------------------------------------------------------"
 fi

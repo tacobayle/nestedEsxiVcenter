@@ -82,8 +82,7 @@ fi
 if [[ $(jq -c -r .avi.controller.create $jsonFile) == true ]] || [[ $(jq -c -r .avi.content_library.create $jsonFile) == true ]] ; then
   echo "Build of Nested Avi Controllers"
   rm -f avi/controllers.tf avi/rp_attendees_* avi/controllers_attendees_*
-  if [[ $(jq -c -r .vcenter.avi_users.create $jsonFile) == true ]] && [[ -f "$(jq -c -r .vcenter.avi_users.file $jsonFile)" ]]
-  then
+  if [[ $(jq -c -r .avi.controller.create $jsonFile) == true ]] && [[ $(jq -c -r .vcenter.avi_users.create $jsonFile) == true ]] && [[ -f "$(jq -c -r .vcenter.avi_users.file $jsonFile)" ]] ; then
     count=0
     for username in $(cat $(jq -c -r .vcenter.avi_users.file $jsonFile))
     do
@@ -105,7 +104,8 @@ if [[ $(jq -c -r .avi.controller.create $jsonFile) == true ]] || [[ $(jq -c -r .
           #
       count=$((count+1))
     done
-  else
+  fi
+  if [[ $(jq -c -r .avi.controller.create $jsonFile) == true ]] && [[ $(jq -c -r .vcenter.avi_users.create $jsonFile) == false ]] ; then
     cp avi/templates/controllers.tf avi/
   fi
   cd avi
@@ -138,6 +138,7 @@ if [[ $(jq -c -r .ssh_gw.create $jsonFile) == true ]] ; then
   terraform init > ../logs/tf_init_ssg_gw.stdout 2>../logs/tf_init_ssg_gw.errors
   cat ../logs/tf_init_ssg_gw.errors
   terraform apply -auto-approve -var-file=../$jsonFile > ../logs/tf_apply_ssg_gw.stdout 2>../logs/tf_apply_ssg_gw.errors
+  cat ./logs/tf_apply_ssg_gw.errors
   cd ..
   echo "--------------------------------------------------------------------------------------------------------------------"
 fi

@@ -22,7 +22,7 @@ resource "vsphere_virtual_machine" "controller" {
   }
 
   clone {
-    template_uuid = vsphere_content_library_item.aviController[0].id
+    template_uuid = vsphere_content_library_item.nested_library_avi_item[0].id
   }
 
   vapp {

@@ -41,7 +41,7 @@ resource "vsphere_content_library" "nested_library_avi" {
   description     = "avi_controller"
 }
 
-resource "vsphere_content_library_item" "aviController" {
+resource "vsphere_content_library_item" "nested_library_avi_item" {
   count = (var.avi.controller.create == true || var.avi.content_library.create == true ? 1 : 0)
   name        = basename(var.avi.content_library.ova_location)
   description = basename(var.avi.content_library.ova_location)

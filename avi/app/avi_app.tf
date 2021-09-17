@@ -124,7 +124,7 @@ resource "null_resource" "update_ip_avi_app" {
       "echo \"            set-name: $ifaceLastName\" | sudo tee -a ${var.avi.app.netplan_file}",
       "echo \"    version: 2\" | sudo tee -a ${var.avi.app.netplan_file}",
       "sudo netplan apply",
-      "echo \"Hello World - cloud is vCenter - Node is ${element(var.vcenter.dvs.portgroup.avi_backend.avi_app_ips, count.index)}\" | sudo tee /var/www/html/index.html"
+      "echo -e \"Hello World - cloud is vCenter - Node is ${element(var.vcenter.dvs.portgroup.avi_backend.avi_app_ips, count.index)}\" | sudo tee /var/www/html/index.html"
     ]
   }
 }

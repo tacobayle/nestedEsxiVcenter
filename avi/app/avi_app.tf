@@ -10,13 +10,17 @@ data "template_file" "avi_app_userdata" {
     ip_mgmt = element(var.vcenter.dvs.portgroup.management.avi_app_ips, count.index)
     default_gw = var.vcenter.dvs.portgroup.management.gateway
     dns = var.dns.nameserver
+    avi_app_docker_image = var.avi.app.avi_app_docker_image
+    avi_app_tcp_port = var.avi.app.avi_app_tcp_port
+    hackazon_docker_image = var.avi.app.hackazon_docker_image
+    hackazon_tcp_port = var.avi.app.hackazon_tcp_port
   }
 }
 
 resource "vsphere_virtual_machine" "avi_app" {
   count = (var.avi.app.create == true ? length(var.vcenter.dvs.portgroup.management.avi_app_ips) : 0)
   name             = "avi_app-${count.index}"
-  datastore_id     = data.vsphere_datastore.datastore_nested.id
+  datastore_id     = data.vsphere_datastore.datastore_nested[0].id
   resource_pool_id = data.vsphere_resource_pool.resource_pool_nested_avi_app[0].id
 
   network_interface {
@@ -119,7 +123,8 @@ resource "null_resource" "update_ip_avi_app" {
       "echo \"                macaddress: $macLast\" | sudo tee -a ${var.avi.app.netplan_file}",
       "echo \"            set-name: $ifaceLastName\" | sudo tee -a ${var.avi.app.netplan_file}",
       "echo \"    version: 2\" | sudo tee -a ${var.avi.app.netplan_file}",
-      "sudo netplan apply"
+      "sudo netplan apply",
+      "echo \"Hello World - cloud is vCenter - Node is ${element(var.vcenter.dvs.portgroup.avi_backend.avi_app_ips, count.index)}\" | sudo tee /var/www/html/index.html"
     ]
   }
 }

@@ -20,8 +20,10 @@ fi
 echo "--------------------------------------------------------------------------------------------------------------------"
 echo "Build of a folder on the underlay infrastructure"
 cd vsphere_underlay_folder
-terraform init
-terraform apply -auto-approve -var-file=../$jsonFile
+terraform init > ../logs/tf_init_vsphere_underlay_folder.stdout 2>../logs/tf_init_vsphere_underlay_folder.errors
+cat ../logs/tf_init_vsphere_underlay_folder.errors
+terraform apply -auto-approve -var-file=../$jsonFile > ../logs/tf_apply_vsphere_underlay_folder.stdout 2>../logs/tf_apply_vsphere_underlay_folder.errors
+cat ../logs/tf_apply_vsphere_underlay_folder.errors
 cd ..
 echo "--------------------------------------------------------------------------------------------------------------------"
 #
@@ -30,8 +32,10 @@ echo "--------------------------------------------------------------------------
 if [[ $(jq -c -r .dns_ntp.create $jsonFile) == true ]] ; then
   echo "Build of a DNS/NTP server on the underlay infrastructure"
   cd dns_ntp
-  terraform init
-  terraform apply -auto-approve -var-file=../$jsonFile
+  terraform init > ../logs/tf_init_dns_ntp.stdout 2>../logs/tf_init_dns_ntp.errors
+  cat ../logs/tf_init_dns_ntp.errors
+  terraform apply -auto-approve -var-file=../$jsonFile > ../logs/tf_apply_dns_ntp.stdout 2>../logs/tf_apply_dns_ntp.errors
+  cat ../logs/tf_apply_dns_ntp.errors
   cd ..
   echo "--------------------------------------------------------------------------------------------------------------------"
 fi
@@ -39,8 +43,10 @@ fi
 # Build of the nested ESXi/vCenter infrastructure
 #
 echo "Build of the nested ESXi/vCenter infrastructure"
-terraform init
-terraform apply -auto-approve -var-file=variables.json
+terraform init > logs/tf_init_nested_esxi_vcenter.stdout 2>logs/tf_init_nested_esxi_vcenter.errors
+cat logs/tf_init_nested_esxi_vcenter.errors
+terraform apply -auto-approve -var-file=variables.json > logs/tf_apply_nested_esxi_vcenter.stdout 2>logs/tf_apply_nested_esxi_vcenter.errors
+cat logs/tf_apply_nested_esxi_vcenter.errors
 echo "waiting for 15 minutes to finish the vCenter config..."
 sleep 900
 echo "--------------------------------------------------------------------------------------------------------------------"
@@ -50,8 +56,10 @@ echo "--------------------------------------------------------------------------
 if [[ $(jq -c -r .nsx.create $jsonFile) == true ]] ; then
   echo "Build of the nested NSXT infrastructure"
   cd nsx
-  terraform init
-  terraform apply -auto-approve -var-file=../$jsonFile
+  terraform init > ../logs/tf_init_nsx.stdout 2>../logs/tf_init_nsx.errors
+  cat ../logs/tf_init_avi.errors
+  terraform apply -auto-approve -var-file=../$jsonFile > ../logs/tf_apply_nsx.stdout 2>../logs/tf_apply_nsx.errors
+  cat ../logs/tf_apply_nsx.errors
   cd ..
   echo "--------------------------------------------------------------------------------------------------------------------"
 fi
@@ -61,8 +69,10 @@ fi
 if [[ $(jq -c -r .avi.networks.create $jsonFile) == true ]] ; then
   echo "Build of Avi Nested Networks"
   cd avi/networks
-  terraform init
-  terraform apply -auto-approve -var-file=../../$jsonFile
+  terraform init > ../../logs/tf_init_avi_networks.stdout 2>../../logs/tf_init_avi_networks.errors
+  cat ../../logs/tf_init_avi_networks.errors
+  terraform apply -auto-approve -var-file=../../$jsonFile > ../../logs/tf_apply_avi_networks.stdout 2>../../logs/tf_apply_avi_networks.errors
+  cat ../../logs/tf_apply_avi_networks.errors
   cd ../..
   echo "--------------------------------------------------------------------------------------------------------------------"
 fi
@@ -72,10 +82,10 @@ fi
 if [[ $(jq -c -r .avi.controller.create $jsonFile) == true ]] || [[ $(jq -c -r .avi.content_library.create $jsonFile) == true ]] ; then
   echo "Build of Nested Avi Controllers"
   rm -f avi/controllers.tf avi/rp_attendees_* avi/controllers_attendees_*
-  if [[ $(jq -c -r .vcenter.avi_users.create $jsonFile) == true ]] && [[ -f "attendees.txt" ]]
+  if [[ $(jq -c -r .vcenter.avi_users.create $jsonFile) == true ]] && [[ -f "$(jq -c -r .vcenter.avi_users.file $jsonFile)" ]]
   then
     count=0
-    for username in $(cat attendees.txt)
+    for username in $(cat $(jq -c -r .vcenter.avi_users.file $jsonFile))
     do
       username_wo_domain=${username%@*}
       username_wo_domain_wo_dot="${username_wo_domain//./_}"
@@ -99,8 +109,10 @@ if [[ $(jq -c -r .avi.controller.create $jsonFile) == true ]] || [[ $(jq -c -r .
     cp avi/templates/controllers.tf avi/
   fi
   cd avi
-  terraform init
-  terraform apply -auto-approve -var-file=../$jsonFile
+  terraform init > ../logs/tf_init_avi.stdout 2>../logs/tf_init_avi.errors
+  cat ../logs/tf_init_avi.errors
+  terraform apply -auto-approve -var-file=../$jsonFile > ../logs/tf_apply_avi.stdout 2>../logs/tf_apply_avi.errors
+  cat ../logs/tf_apply_avi.errors
   cd ..
   echo "--------------------------------------------------------------------------------------------------------------------"
 fi
@@ -110,8 +122,10 @@ fi
 if [[ $(jq -c -r .avi.app.create $jsonFile) == true ]] ; then
   echo "Build of Nested Avi App"
   cd avi/app
-  terraform init
-  terraform apply -auto-approve -var-file=../../$jsonFile
+  terraform init > ../../logs/tf_init_avi_app.stdout 2>../../logs/tf_init_avi_app.errors
+  cat ../../logs/tf_init_avi_app.errors
+  terraform apply -auto-approve -var-file=../../$jsonFile > ../../logs/tf_apply_avi_app.stdout 2>../../logs/tf_apply_avi_app.errors
+  cat ./../logs/tf_apply_avi_app.errors
   cd ../..
   echo "--------------------------------------------------------------------------------------------------------------------"
 fi
@@ -121,8 +135,9 @@ fi
 if [[ $(jq -c -r .ssh_gw.create $jsonFile) == true ]] ; then
   echo "Build of Nested ssh_gw"
   cd ssh_gw
-  terraform init
-  terraform apply -auto-approve -var-file=../$jsonFile
+  terraform init > ../logs/tf_init_ssg_gw.stdout 2>../logs/tf_init_ssg_gw.errors
+  cat ../logs/tf_init_ssg_gw.errors
+  terraform apply -auto-approve -var-file=../$jsonFile > ../logs/tf_apply_ssg_gw.stdout 2>../logs/tf_apply_ssg_gw.errors
   cd ..
   echo "--------------------------------------------------------------------------------------------------------------------"
 fi

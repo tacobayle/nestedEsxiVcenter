@@ -7,10 +7,10 @@ else
   exit 1
 fi
 #
-if [ -f "../../../attendees.txt" ]; then
-  attendeesFile="../../../attendees.txt"
+if [ -f "../../../$(jq -c -r .vcenter.avi_users.file $jsonFile)" ]; then
+  attendeesFile="../../../$(jq -c -r .vcenter.avi_users.file $jsonFile)"
 else
-  echo "attendees.txt file not found!!"
+  echo "$(jq -c -r .vcenter.avi_users.file $jsonFile) file not found!!"
   exit 1
 fi
 #

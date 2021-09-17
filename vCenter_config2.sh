@@ -96,15 +96,15 @@ done
 load_govc_env
 echo "Configure Avi vCenter users"
 if [[ $(jq -c -r .vcenter.avi_users.create $jsonFile) == true ]] ; then
-  for username in $(cat attendees.txt); do govc sso.user.create -p $TF_VAR_vcenter_avi_password ${username%@*}; echo "Creating user ${username%@*}" ; done
+  for username in $(cat $(jq -c -r .vcenter.avi_users.file $jsonFile)); do govc sso.user.create -p $TF_VAR_vcenter_avi_password ${username%@*}; echo "Creating user ${username%@*}" ; done
 fi
 #
-# Resource Group Config
+# Resource pool Config
 #
 load_govc_env
-echo "Configure Resource Group"
+echo "Configure pool Group"
 if [[ $(jq -c -r .vcenter.avi_users.create $jsonFile) == true ]] ; then
-  for username in $(cat attendees.txt)
+  for username in $(cat $(jq -c -r .vcenter.avi_users.file $jsonFile))
     do
       username_wo_domain=${username%@*}
       username_wo_domain_wo_dot="${username_wo_domain//./_}"
@@ -116,14 +116,14 @@ if [[ $(jq -c -r .vcenter.avi_users.create $jsonFile) == true ]] ; then
 fi
 #
 if [[ $(jq -c -r .avi.app.create $jsonFile) == true ]] ; then
-  echo "Creating resource group avi_app"
-  govc pool.create -cpu.limit=-1 -mem.limit=-1 */Resources/avi_app
-  for username in $(cat attendees.txt)
+  echo "Creating resource pool $(jq -c -r .avi.app.resource_pool $jsonFile)"
+  govc pool.create -cpu.limit=-1 -mem.limit=-1 */Resources/$(jq -c -r .avi.app.resource_pool $jsonFile)
+  for username in $(cat $(jq -c -r .vcenter.avi_users.file $jsonFile))
     do
       username_wo_domain=${username%@*}
       username_wo_domain_wo_dot="${username_wo_domain//./_}"
-      echo "Setting permission for username ${username%@*} for resource pool avi_app"
-      govc permissions.set -principal ${username%@*}@$vcenter_domain -role ReadOnly -propagate=true /$(jq -r .vcenter.datacenter $jsonFile)/host/$(jq -r .vcenter.cluster $jsonFile)/Resources/avi_app
+      echo "Setting permission for username ${username%@*} for resource pool $(jq -c -r .avi.app.resource_pool $jsonFile)"
+      govc permissions.set -principal ${username%@*}@$vcenter_domain -role ReadOnly -propagate=true /$(jq -r .vcenter.datacenter $jsonFile)/host/$(jq -r .vcenter.cluster $jsonFile)/Resources/$(jq -c -r .avi.app.resource_pool $jsonFile)
     done
 fi
 #
@@ -132,7 +132,7 @@ fi
 load_govc_env
 echo "Configure Permission for cluster and hosts access"
 if [[ $(jq -c -r .vcenter.avi_users.create $jsonFile) == true ]] ; then
-  for username in $(cat attendees.txt)
+  for username in $(cat $(jq -c -r .vcenter.avi_users.file $jsonFile))
     do
       echo "Creating permission for resource / for ${username%@*}"
       govc permissions.set -principal ${username%@*}@$vcenter_domain -role Admin -propagate=false /

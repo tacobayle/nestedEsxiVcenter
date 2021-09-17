@@ -11,6 +11,7 @@ data "vsphere_compute_cluster" "compute_cluster_nested" {
 }
 
 data "vsphere_datastore" "datastore_nested" {
+  count = (var.avi.app.create == true ? 1 : 0)
   name = "vsanDatastore"
   datacenter_id = data.vsphere_datacenter.dc_nested[0].id
 }
@@ -23,7 +24,7 @@ data "vsphere_resource_pool" "resource_pool_nested" {
 
 data "vsphere_resource_pool" "resource_pool_nested_avi_app" {
   count = (var.avi.app.create == true ? 1 : 0)
-  name          = "avi_app"
+  name          = var.avi.app.resource_pool
   datacenter_id = data.vsphere_datacenter.dc_nested[0].id
 }
 

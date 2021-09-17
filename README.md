@@ -114,4 +114,5 @@ export TF_VAR_nsx_password=******                    # NSX admin password - need
 export TF_VAR_nsx_license=******                     # NSX license - needs to be defined if nsx.create == true
 export TF_VAR_avi_password=******                    # AVI admin password - needs to be defined if avi.controller.create == true
 export TF_VAR_avi_backup_passphrase=******           # AVI backup passphrase - needs to be defined if avi.controller.create == true
+export TF_VAR_avi_password=******                    # AVI admin password - needs to be defined if avi.controller.create == true
 ```

@@ -33,9 +33,11 @@ write_files:
       sudo apt update
       sudo apt install -y apache2
       sudo mv /var/www/html/index.html /var/www/html/index.html.old
-      echo -e "Hello World - cloud is vCenter - Node is $(hostname)" | sudo tee /var/www/html/index.html
       sudo apt install -y docker.io
       sudo usermod -a -G docker ${username}
+      docker login --username ${docker_registry_username} --password ${docker_registry_password}
+      docker run -d -p ${avi_app_tcp_port}:80 ${avi_app_docker_image}
+      docker run --name hackazon -d -p ${hackazon_tcp_port}:80 ${hackazon_docker_image} supervisord -n
       echo "cloud init done" | tee /tmp/cloudInitDone.log
     path: /opt/bootstrap.sh
     permissions: 0755

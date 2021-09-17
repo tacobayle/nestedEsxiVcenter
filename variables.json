@@ -160,11 +160,15 @@
           "prefix": "24"
         },
         "avi_vip": {
-          "name": "avi_vip"
+          "name": "avi_vip",
+          "prefix": "24",
+          "ssh_gw_ip": "100.64.135.250"
         },
         "avi_backend": {
           "name": "avi_backend",
-          "avi_app_ips": ["100.64.136.251", "100.64.136.252"]
+          "avi_app_ips": ["100.64.136.251", "100.64.136.252"],
+          "prefix": "24",
+          "ssh_gw_ip": "100.64.136.250"
         }
       }
     },

@@ -43,7 +43,7 @@ resource "null_resource" "wait_https_controller_{{ username }}" {
 
 resource "null_resource" "add_nic_via_govc_{{ username }}" {
   depends_on = [null_resource.wait_https_controller_{{ username }}]
-  count = 1
+  count = (var.avi.networks.create == true ? 1 : 0)
 
   provisioner "local-exec" {
     command = <<-EOT
@@ -69,7 +69,7 @@ resource "null_resource" "ansible_init_controller_{{ username }}" {
 
 resource "null_resource" "assign_new_ip_{{ username }}" {
   depends_on = [null_resource.ansible_init_controller_{{ username }}]
-  count = 1
+  count = (var.avi.networks.create == true ? 1 : 0)
 
   connection {
     host        = "{{ ip_controller }}"

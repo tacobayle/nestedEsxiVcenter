@@ -45,7 +45,7 @@ resource "null_resource" "wait_https_controller" {
 
 resource "null_resource" "add_nic_via_govc" {
   depends_on = [null_resource.wait_https_controller]
-  count = (var.vcenter.dvs.single_vds == false && var.nsx.create == false && var.avi.controller.create == true ? 1 : 0)
+  count = (var.vcenter.dvs.single_vds == false && var.nsx.create == false && var.avi.controller.create == true ? 1 : 0 && var.avi.networks.create == true ? 1 : 0)
 
   provisioner "local-exec" {
     command = <<-EOT
@@ -71,7 +71,7 @@ resource "null_resource" "ansible_init_controller" {
 
 resource "null_resource" "assign_new_ip" {
   depends_on = [null_resource.ansible_init_controller]
-  count = (var.vcenter.dvs.single_vds == false && var.nsx.create == false && var.avi.controller.create == true ? 1 : 0)
+  count = (var.vcenter.dvs.single_vds == false && var.nsx.create == false && var.avi.controller.create == true ? 1 : 0 && var.avi.networks.create == true ? 1 : 0)
 
   connection {
     host        = element(var.vcenter.dvs.portgroup.management.avi_ips, count.index)

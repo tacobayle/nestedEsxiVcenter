@@ -22,8 +22,7 @@ tf_init_apply () {
   # $5 is var-file
   echo "--------------------------------------------------------------------------------------------------------------------"
   echo $1
-  echo "starting timestamp"
-  date
+  echo "starting timestamp: $(date)"
   cd $2
   terraform init > $3 2>$4
   if [ -s "$4" ] ; then
@@ -39,8 +38,7 @@ tf_init_apply () {
     cat $3
     exit 1
   fi
-  echo "ending timestamp"
-  date
+  echo "ending timestamp: $(date)"
   cd -
   echo "--------------------------------------------------------------------------------------------------------------------"
 }
@@ -91,18 +89,18 @@ fi
 #
 # Build of the nested ESXi/vCenter infrastructure
 #
-date
-echo "Build of the nested ESXi/vCenter infrastructure - This should take less than 45 minutes"
-terraform init > logs/tf_init_nested_esxi_vcenter.stdout 2>logs/tf_init_nested_esxi_vcenter.errors
-cat logs/tf_init_nested_esxi_vcenter.errors
-terraform apply -auto-approve -var-file=variables.json > logs/tf_apply_nested_esxi_vcenter.stdout 2>logs/tf_apply_nested_esxi_vcenter.errors
-if [ -s "logs/tf_apply_nested_esxi_vcenter.errors" ]
-then
-  echo "TF errors:"
-  cat logs/tf_apply_nested_esxi_vcenter.errors
-  exit 1
-fi
-date
+tf_init_apply "Build of the nested ESXi/vCenter infrastructure - This should take less than 45 minutes" nested_esxi_vcenter ../logs/tf_nested_esxi_vcenter.stdout ../logs/tf_nested_esxi_vcenter.errors ../$jsonFile
+#date
+#echo "Build of the nested ESXi/vCenter infrastructure - This should take less than 45 minutes"
+#terraform init > logs/tf_init_nested_esxi_vcenter.stdout 2>logs/tf_init_nested_esxi_vcenter.errors
+#cat logs/tf_init_nested_esxi_vcenter.errors
+#terraform apply -auto-approve -var-file=variables.json > logs/tf_apply_nested_esxi_vcenter.stdout 2>logs/tf_apply_nested_esxi_vcenter.errors
+#if [ -s "logs/tf_apply_nested_esxi_vcenter.errors" ]
+#then
+#  echo "TF errors:"
+#  cat logs/tf_apply_nested_esxi_vcenter.errors
+#  exit 1
+#fi
 echo "waiting for 15 minutes to finish the vCenter config..."
 sleep 900
 echo "--------------------------------------------------------------------------------------------------------------------"
@@ -110,46 +108,48 @@ echo "--------------------------------------------------------------------------
 # Build of the nested NSX-T appliance
 #
 if [[ $(jq -c -r .nsx.create $jsonFile) == true ]] ; then
-  echo "Build of the nested NSXT infrastructure"
-  cd nsx
-  terraform init > ../logs/tf_init_nsx.stdout 2>../logs/tf_init_nsx.errors
-  cat ../logs/tf_init_avi.errors
-  terraform apply -auto-approve -var-file=../$jsonFile > ../logs/tf_apply_nsx.stdout 2>../logs/tf_apply_nsx.errors
-  if [ -s "../logs/tf_apply_nsx.errors" ]
-  then
-    echo "TF errors:"
-    cat ../logs/tf_apply_nsx.errors
-    exit 1
-  fi
-  cd ..
-  echo "--------------------------------------------------------------------------------------------------------------------"
+  tf_init_apply "Build of the nested NSXT infrastructure" nsx ../logs/tf_nsx.stdout ../logs/tf_nsx.errors ../$jsonFile
+#  echo "Build of the nested NSXT infrastructure"
+#  cd nsx
+#  terraform init > ../logs/tf_init_nsx.stdout 2>../logs/tf_init_nsx.errors
+#  cat ../logs/tf_init_avi.errors
+#  terraform apply -auto-approve -var-file=../$jsonFile > ../logs/tf_apply_nsx.stdout 2>../logs/tf_apply_nsx.errors
+#  if [ -s "../logs/tf_apply_nsx.errors" ]
+#  then
+#    echo "TF errors:"
+#    cat ../logs/tf_apply_nsx.errors
+#    exit 1
+#  fi
+#  cd ..
+#  echo "--------------------------------------------------------------------------------------------------------------------"
 fi
 #
 # Build of the Avi Nested Networks
 #
 if [[ $(jq -c -r .avi.networks.create $jsonFile) == true ]] ; then
-  echo "Build of Avi Nested Networks - This should take less than a minute"
-  date
-  cd avi/networks
-  terraform init > ../../logs/tf_init_avi_networks.stdout 2>../../logs/tf_init_avi_networks.errors
-  cat ../../logs/tf_init_avi_networks.errors
-  terraform apply -auto-approve -var-file=../../$jsonFile > ../../logs/tf_apply_avi_networks.stdout 2>../../logs/tf_apply_avi_networks.errors
-  if [ -s "../../logs/tf_apply_avi_networks.errors" ]
-  then
-    echo "TF errors:"
-    cat ../../logs/tf_apply_avi_networks.errors
-    exit 1
-  fi
-  cd ../..
-  date
-  echo "--------------------------------------------------------------------------------------------------------------------"
+  tf_init_apply "Build of Avi Nested Networks - This should take less than a minute" avi/networks ../../logs/tf_avi_networks.stdout ../../logs/tf_avi_networks.errors ../../$jsonFile
+#  echo "Build of Avi Nested Networks - This should take less than a minute"
+#  date
+#  cd avi/networks
+#  terraform init > ../../logs/tf_init_avi_networks.stdout 2>../../logs/tf_init_avi_networks.errors
+#  cat ../../logs/tf_init_avi_networks.errors
+#  terraform apply -auto-approve -var-file=../../$jsonFile > ../../logs/tf_apply_avi_networks.stdout 2>../../logs/tf_apply_avi_networks.errors
+#  if [ -s "../../logs/tf_apply_avi_networks.errors" ]
+#  then
+#    echo "TF errors:"
+#    cat ../../logs/tf_apply_avi_networks.errors
+#    exit 1
+#  fi
+#  cd ../..
+#  date
+#  echo "--------------------------------------------------------------------------------------------------------------------"
 fi
 #
 # Build of the Nested Avi Controllers
 #
 if [[ $(jq -c -r .avi.controller.create $jsonFile) == true ]] || [[ $(jq -c -r .avi.content_library.create $jsonFile) == true ]] ; then
-  echo "Build of Nested Avi Controllers - This should take around 15 minutes"
-  date
+#  echo "Build of Nested Avi Controllers - This should take around 15 minutes"
+#  date
   rm -f avi/controllers.tf avi/rp_attendees_* avi/controllers_attendees_*
   if [[ $(jq -c -r .avi.controller.create $jsonFile) == true ]] && [[ $(jq -c -r .vcenter.avi_users.create $jsonFile) == true ]] && [[ -f "$(jq -c -r .vcenter.avi_users.file $jsonFile)" ]] ; then
     count=0
@@ -177,57 +177,60 @@ if [[ $(jq -c -r .avi.controller.create $jsonFile) == true ]] || [[ $(jq -c -r .
   if [[ $(jq -c -r .avi.controller.create $jsonFile) == true ]] && [[ $(jq -c -r .vcenter.avi_users.create $jsonFile) == false ]] ; then
     cp avi/templates/controllers.tf avi/
   fi
-  cd avi
-  terraform init > ../logs/tf_init_avi.stdout 2>../logs/tf_init_avi.errors
-  cat ../logs/tf_init_avi.errors
-  terraform apply -auto-approve -var-file=../$jsonFile > ../logs/tf_apply_avi.stdout 2>../logs/tf_apply_avi.errors
-  if [ -s "../logs/tf_apply_avi.errors" ]
-  then
-    echo "TF errors:"
-    cat ../logs/tf_apply_avi.errors
-    exit 1
-  fi
-  cd ..
-  date
-  echo "--------------------------------------------------------------------------------------------------------------------"
+  tf_init_apply "Build of Nested Avi Controllers - This should take around 15 minutes" avi ../logs/tf_avi.stdout ../logs/tf_avi.errors ../$jsonFile
+#  cd avi
+#  terraform init > ../logs/tf_init_avi.stdout 2>../logs/tf_init_avi.errors
+#  cat ../logs/tf_init_avi.errors
+#  terraform apply -auto-approve -var-file=../$jsonFile > ../logs/tf_apply_avi.stdout 2>../logs/tf_apply_avi.errors
+#  if [ -s "../logs/tf_apply_avi.errors" ]
+#  then
+#    echo "TF errors:"
+#    cat ../logs/tf_apply_avi.errors
+#    exit 1
+#  fi
+#  cd ..
+#  date
+#  echo "--------------------------------------------------------------------------------------------------------------------"
 fi
 #
 # Build of the Nested Avi App
 #
 if [[ $(jq -c -r .avi.app.create $jsonFile) == true ]] ; then
-  echo "Build of Nested Avi App - This should take less than 10 minutes"
-  date
-  cd avi/app
-  terraform init > ../../logs/tf_init_avi_app.stdout 2>../../logs/tf_init_avi_app.errors
-  cat ../../logs/tf_init_avi_app.errors
-  terraform apply -auto-approve -var-file=../../$jsonFile > ../../logs/tf_apply_avi_app.stdout 2>../../logs/tf_apply_avi_app.errors
-  if [ -s "../../logs/tf_apply_avi_app.errors" ]
-  then
-    echo "TF errors:"
-    cat ../../logs/tf_apply_avi_app.errors
-    exit 1
-  fi
-  cd ../..
-  date
-  echo "--------------------------------------------------------------------------------------------------------------------"
+  tf_init_apply "Build of Nested Avi App - This should take less than 10 minutes" avi/app ../../logs/tf_avi_app.stdout ../../logs/tfavi_app.errors ../../$jsonFile
+#  echo "Build of Nested Avi App - This should take less than 10 minutes"
+#  date
+#  cd avi/app
+#  terraform init > ../../logs/tf_init_avi_app.stdout 2>../../logs/tf_init_avi_app.errors
+#  cat ../../logs/tf_init_avi_app.errors
+#  terraform apply -auto-approve -var-file=../../$jsonFile > ../../logs/tf_apply_avi_app.stdout 2>../../logs/tf_apply_avi_app.errors
+#  if [ -s "../../logs/tf_apply_avi_app.errors" ]
+#  then
+#    echo "TF errors:"
+#    cat ../../logs/tf_apply_avi_app.errors
+#    exit 1
+#  fi
+#  cd ../..
+#  date
+#  echo "--------------------------------------------------------------------------------------------------------------------"
 fi
 #
 # Build of the ssg_gw
 #
 if [[ $(jq -c -r .ssh_gw.create $jsonFile) == true ]] ; then
-  echo "Build of Nested ssh_gw - This should take around 5 minutes"
-  date
-  cd ssh_gw
-  terraform init > ../logs/tf_init_ssg_gw.stdout 2>../logs/tf_init_ssg_gw.errors
-  cat ../logs/tf_init_ssg_gw.errors
-  terraform apply -auto-approve -var-file=../$jsonFile > ../logs/tf_apply_ssg_gw.stdout 2>../logs/tf_apply_ssg_gw.errors
-  if [ -s "../logs/tf_apply_ssg_gw.errors" ]
-  then
-    echo "TF errors:"
-    cat ../logs/tf_apply_ssg_gw.errors
-    exit 1
-  fi
-  cd ..
-  date
-  echo "--------------------------------------------------------------------------------------------------------------------"
+  tf_init_apply "Build of Nested ssh_gw - This should take around 5 minutes" ssh_gw ../logs/tf_ssg_gw.stdout ../logs/tf_ssg_gw.errors ../$jsonFile
+#  echo "Build of Nested ssh_gw - This should take around 5 minutes"
+#  date
+#  cd ssh_gw
+#  terraform init > ../logs/tf_init_ssg_gw.stdout 2>../logs/tf_init_ssg_gw.errors
+#  cat ../logs/tf_init_ssg_gw.errors
+#  terraform apply -auto-approve -var-file=../$jsonFile > ../logs/tf_apply_ssg_gw.stdout 2>../logs/tf_apply_ssg_gw.errors
+#  if [ -s "../logs/tf_apply_ssg_gw.errors" ]
+#  then
+#    echo "TF errors:"
+#    cat ../logs/tf_apply_ssg_gw.errors
+#    exit 1
+#  fi
+#  cd ..
+#  date
+#  echo "--------------------------------------------------------------------------------------------------------------------"
 fi

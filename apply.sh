@@ -33,8 +33,8 @@ tf_init_apply () {
     rm $3 $4
   fi
   terraform apply -auto-approve -var-file=$5 > $3 2>$4
-  if [ -s "$3" ] ; then
-    echo "TF Init errors:"
+  if [ -s "$4" ] ; then
+    echo "TF Apply errors:"
     cat $3
     exit 1
   fi

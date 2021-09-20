@@ -232,7 +232,7 @@
     }
   },
   "ssh_gw": {
-    "create": false,
+    "create": true,
     "ova_location": "/home/ubuntu/bin/focal-server-cloudimg-amd64.ova",
     "cpu": 4,
     "memory": 8192,

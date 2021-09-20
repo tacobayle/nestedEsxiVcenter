@@ -22,6 +22,7 @@ tf_init_apply () {
   # $5 is var-file
   echo "--------------------------------------------------------------------------------------------------------------------"
   echo $1
+  echo "starting timestamp"
   date
   cd $2
   terraform init > $3 2>$4
@@ -38,7 +39,9 @@ tf_init_apply () {
     cat $3
     exit 1
   fi
+  echo "ending timestamp"
   date
+  cd -
   echo "--------------------------------------------------------------------------------------------------------------------"
 }
 
@@ -47,7 +50,6 @@ tf_init_apply () {
 # Build of a folder on the underlay infrastructure
 #
 tf_init_apply "Build of a folder on the underlay infrastructure - This should take less than a minute" vsphere_underlay_folder ../logs/tf_vsphere_underlay_folder.stdout ../logs/tf_vsphere_underlay_folder.errors ../$jsonFile
-exit 0
 #echo "--------------------------------------------------------------------------------------------------------------------"
 #echo "Build of a folder on the underlay infrastructure - This should take less than a minute"
 #date
@@ -68,21 +70,23 @@ exit 0
 # Build of a DNS/NTP server on the underlay infrastructure
 #
 if [[ $(jq -c -r .dns_ntp.create $jsonFile) == true ]] ; then
-  echo "Build of a DNS/NTP server on the underlay infrastructure - This should take less than 5 minutes"
-  date
-  cd dns_ntp
-  terraform init > ../logs/tf_init_dns_ntp.stdout 2>../logs/tf_init_dns_ntp.errors
-  cat ../logs/tf_init_dns_ntp.errors
-  terraform apply -auto-approve -var-file=../$jsonFile > ../logs/tf_apply_dns_ntp.stdout 2>../logs/tf_apply_dns_ntp.errors
-  if [ -s "../logs/tf_apply_dns_ntp.errors" ]
-  then
-    echo "TF errors:"
-    cat ../logs/tf_apply_dns_ntp.errors
-    exit 1
-  fi
-  cd ..
-  date
-  echo "--------------------------------------------------------------------------------------------------------------------"
+  tf_init_apply "Build of a DNS/NTP server on the underlay infrastructure - This should take less than 5 minutes" dns_ntp ../logs/tf_dns_ntp.stdout ../logs/tf_dns_ntp.errors ../$jsonFile
+#  echo "Build of a DNS/NTP server on the underlay infrastructure - This should take less than 5 minutes"
+#  date
+#
+#  cd dns_ntp
+#  terraform init > ../logs/tf_init_dns_ntp.stdout 2>../logs/tf_init_dns_ntp.errors
+#  cat ../logs/tf_init_dns_ntp.errors
+#  terraform apply -auto-approve -var-file=../$jsonFile > ../logs/tf_apply_dns_ntp.stdout 2>../logs/tf_apply_dns_ntp.errors
+#  if [ -s "../logs/tf_apply_dns_ntp.errors" ]
+#  then
+#    echo "TF errors:"
+#    cat ../logs/tf_apply_dns_ntp.errors
+#    exit 1
+#  fi
+#  cd ..
+#  date
+#  echo "--------------------------------------------------------------------------------------------------------------------"
 fi
 #
 # Build of the nested ESXi/vCenter infrastructure

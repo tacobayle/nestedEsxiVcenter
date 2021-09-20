@@ -19,7 +19,7 @@ tf_init_apply () {
   # $2 is the folder to init/apply tf
   # $3 is the log path file for tf stdout
   # $4 is the log path file for tf error
-  # $5 is var-file
+  # $5 is var-file to feed TF with variables
   echo "--------------------------------------------------------------------------------------------------------------------"
   echo $1
   echo "starting timestamp: $(date)"

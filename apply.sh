@@ -14,20 +14,56 @@ fi
 # jq install
 # pip3 install pyvmomi for Ansible
 # check the files
+tf_init_apply () {
+  # $1 messsage to display
+  # $2 is the folder to init/apply tf
+  # $3 is the log path file for tf stdout
+  # $4 is the log path file for tf error
+  # $5 is var-file
+  echo "--------------------------------------------------------------------------------------------------------------------"
+  echo $1
+  date
+  cd $2
+  terraform init > $3 2>$4
+  if [ -s "$4" ] ; then
+    echo "TF Init errors:"
+    cat $4
+    exit 1
+  else
+    rm $3 $4
+  fi
+  terraform apply -auto-approve -var-file=$5 > $3 2>$4
+  if [ -s "$3" ] ; then
+    echo "TF Init errors:"
+    cat $3
+    exit 1
+  fi
+  date
+  echo "--------------------------------------------------------------------------------------------------------------------"
+}
+
+
 #
 # Build of a folder on the underlay infrastructure
 #
-echo "--------------------------------------------------------------------------------------------------------------------"
-echo "Build of a folder on the underlay infrastructure - This should take less than a minute"
-date
-cd vsphere_underlay_folder
-terraform init > ../logs/tf_init_vsphere_underlay_folder.stdout 2>../logs/tf_init_vsphere_underlay_folder.errors
-cat ../logs/tf_init_vsphere_underlay_folder.errors
-terraform apply -auto-approve -var-file=../$jsonFile > ../logs/tf_apply_vsphere_underlay_folder.stdout 2>../logs/tf_apply_vsphere_underlay_folder.errors
-cat ../logs/tf_apply_vsphere_underlay_folder.errors
-cd ..
-date
-echo "--------------------------------------------------------------------------------------------------------------------"
+tf_init_apply "Build of a folder on the underlay infrastructure - This should take less than a minute" vsphere_underlay_folder ../logs/tf_vsphere_underlay_folder.stdout ../logs/tf_vsphere_underlay_folder.errors ../$jsonFile
+exit 0
+#echo "--------------------------------------------------------------------------------------------------------------------"
+#echo "Build of a folder on the underlay infrastructure - This should take less than a minute"
+#date
+#cd vsphere_underlay_folder
+#terraform init > ../logs/tf_init_vsphere_underlay_folder.stdout 2>../logs/tf_init_vsphere_underlay_folder.errors
+#cat ../logs/tf_init_vsphere_underlay_folder.errors
+#terraform apply -auto-approve -var-file=../$jsonFile > ../logs/tf_apply_vsphere_underlay_folder.stdout 2>../logs/tf_apply_vsphere_underlay_folder.errors
+#if [ -s "../logs/tf_apply_vsphere_underlay_folder.errors" ]
+#then
+#  echo "TF errors:"
+#  cat ../logs/tf_apply_vsphere_underlay_folder.errors
+#  exit 1
+#fi
+#cd ..
+#date
+#echo "--------------------------------------------------------------------------------------------------------------------"
 #
 # Build of a DNS/NTP server on the underlay infrastructure
 #
@@ -38,7 +74,12 @@ if [[ $(jq -c -r .dns_ntp.create $jsonFile) == true ]] ; then
   terraform init > ../logs/tf_init_dns_ntp.stdout 2>../logs/tf_init_dns_ntp.errors
   cat ../logs/tf_init_dns_ntp.errors
   terraform apply -auto-approve -var-file=../$jsonFile > ../logs/tf_apply_dns_ntp.stdout 2>../logs/tf_apply_dns_ntp.errors
-  cat ../logs/tf_apply_dns_ntp.errors
+  if [ -s "../logs/tf_apply_dns_ntp.errors" ]
+  then
+    echo "TF errors:"
+    cat ../logs/tf_apply_dns_ntp.errors
+    exit 1
+  fi
   cd ..
   date
   echo "--------------------------------------------------------------------------------------------------------------------"
@@ -51,7 +92,12 @@ echo "Build of the nested ESXi/vCenter infrastructure - This should take less th
 terraform init > logs/tf_init_nested_esxi_vcenter.stdout 2>logs/tf_init_nested_esxi_vcenter.errors
 cat logs/tf_init_nested_esxi_vcenter.errors
 terraform apply -auto-approve -var-file=variables.json > logs/tf_apply_nested_esxi_vcenter.stdout 2>logs/tf_apply_nested_esxi_vcenter.errors
-cat logs/tf_apply_nested_esxi_vcenter.errors
+if [ -s "logs/tf_apply_nested_esxi_vcenter.errors" ]
+then
+  echo "TF errors:"
+  cat logs/tf_apply_nested_esxi_vcenter.errors
+  exit 1
+fi
 date
 echo "waiting for 15 minutes to finish the vCenter config..."
 sleep 900
@@ -65,7 +111,12 @@ if [[ $(jq -c -r .nsx.create $jsonFile) == true ]] ; then
   terraform init > ../logs/tf_init_nsx.stdout 2>../logs/tf_init_nsx.errors
   cat ../logs/tf_init_avi.errors
   terraform apply -auto-approve -var-file=../$jsonFile > ../logs/tf_apply_nsx.stdout 2>../logs/tf_apply_nsx.errors
-  cat ../logs/tf_apply_nsx.errors
+  if [ -s "../logs/tf_apply_nsx.errors" ]
+  then
+    echo "TF errors:"
+    cat ../logs/tf_apply_nsx.errors
+    exit 1
+  fi
   cd ..
   echo "--------------------------------------------------------------------------------------------------------------------"
 fi
@@ -79,7 +130,12 @@ if [[ $(jq -c -r .avi.networks.create $jsonFile) == true ]] ; then
   terraform init > ../../logs/tf_init_avi_networks.stdout 2>../../logs/tf_init_avi_networks.errors
   cat ../../logs/tf_init_avi_networks.errors
   terraform apply -auto-approve -var-file=../../$jsonFile > ../../logs/tf_apply_avi_networks.stdout 2>../../logs/tf_apply_avi_networks.errors
-  cat ../../logs/tf_apply_avi_networks.errors
+  if [ -s "../../logs/tf_apply_avi_networks.errors" ]
+  then
+    echo "TF errors:"
+    cat ../../logs/tf_apply_avi_networks.errors
+    exit 1
+  fi
   cd ../..
   date
   echo "--------------------------------------------------------------------------------------------------------------------"
@@ -121,7 +177,12 @@ if [[ $(jq -c -r .avi.controller.create $jsonFile) == true ]] || [[ $(jq -c -r .
   terraform init > ../logs/tf_init_avi.stdout 2>../logs/tf_init_avi.errors
   cat ../logs/tf_init_avi.errors
   terraform apply -auto-approve -var-file=../$jsonFile > ../logs/tf_apply_avi.stdout 2>../logs/tf_apply_avi.errors
-  cat ../logs/tf_apply_avi.errors
+  if [ -s "../logs/tf_apply_avi.errors" ]
+  then
+    echo "TF errors:"
+    cat ../logs/tf_apply_avi.errors
+    exit 1
+  fi
   cd ..
   date
   echo "--------------------------------------------------------------------------------------------------------------------"
@@ -136,7 +197,12 @@ if [[ $(jq -c -r .avi.app.create $jsonFile) == true ]] ; then
   terraform init > ../../logs/tf_init_avi_app.stdout 2>../../logs/tf_init_avi_app.errors
   cat ../../logs/tf_init_avi_app.errors
   terraform apply -auto-approve -var-file=../../$jsonFile > ../../logs/tf_apply_avi_app.stdout 2>../../logs/tf_apply_avi_app.errors
-  cat ../../logs/tf_apply_avi_app.errors
+  if [ -s "../../logs/tf_apply_avi_app.errors" ]
+  then
+    echo "TF errors:"
+    cat ../../logs/tf_apply_avi_app.errors
+    exit 1
+  fi
   cd ../..
   date
   echo "--------------------------------------------------------------------------------------------------------------------"
@@ -151,7 +217,12 @@ if [[ $(jq -c -r .ssh_gw.create $jsonFile) == true ]] ; then
   terraform init > ../logs/tf_init_ssg_gw.stdout 2>../logs/tf_init_ssg_gw.errors
   cat ../logs/tf_init_ssg_gw.errors
   terraform apply -auto-approve -var-file=../$jsonFile > ../logs/tf_apply_ssg_gw.stdout 2>../logs/tf_apply_ssg_gw.errors
-  cat ../logs/tf_apply_ssg_gw.errors
+  if [ -s "../logs/tf_apply_ssg_gw.errors" ]
+  then
+    echo "TF errors:"
+    cat ../logs/tf_apply_ssg_gw.errors
+    exit 1
+  fi
   cd ..
   date
   echo "--------------------------------------------------------------------------------------------------------------------"

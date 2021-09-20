@@ -20,13 +20,13 @@ tf_init_apply () {
   # $3 is the log path file for tf stdout
   # $4 is the log path file for tf error
   # $5 is var-file to feed TF with variables
-  echo "-----------------------------------------------------"
+  echo "-----------------------------------------------------"NantesBordeaux
   echo $1
   echo "Starting timestamp: $(date)"
   cd $2
   terraform init > $3 2>$4
   if [ -s "$4" ] ; then
-    echo "TF Init errors:"
+    echo "TF Init ERRORS:"
     cat $4
     exit 1
   else
@@ -34,13 +34,12 @@ tf_init_apply () {
   fi
   terraform apply -auto-approve -var-file=$5 > $3 2>$4
   if [ -s "$4" ] ; then
-    echo "TF Apply errors:"
+    echo "TF Apply ERRORS:"
     cat $3
     exit 1
   fi
   echo "Ending timestamp: $(date)"
   cd - > /dev/null
-  echo "-----------------------------------------------------"
 }
 
 
@@ -103,7 +102,6 @@ tf_init_apply "Build of the nested ESXi/vCenter infrastructure - This should tak
 #fi
 echo "waiting for 15 minutes to finish the vCenter config..."
 sleep 900
-echo "--------------------------------------------------------------------------------------------------------------------"
 #
 # Build of the nested NSX-T appliance
 #

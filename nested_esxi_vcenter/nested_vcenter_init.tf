@@ -39,7 +39,7 @@ resource "null_resource" "vcenter_migrating_vmk_to_dvs" {
   depends_on = [null_resource.vcenter_configure1]
 
   provisioner "local-exec" {
-    command = "ansible-playbook pb-vmk.yml --extra-vars @variables.json"
+    command = "ansible-playbook pb-vmk.yml --extra-vars @../variables.json"
   }
 }
 

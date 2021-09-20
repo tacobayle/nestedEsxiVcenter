@@ -20,9 +20,9 @@ tf_init_apply () {
   # $3 is the log path file for tf stdout
   # $4 is the log path file for tf error
   # $5 is var-file to feed TF with variables
-  echo "--------------------------------------------------------------------------------------------------------------------"
+  echo "-----------------------------------------------------"
   echo $1
-  echo "starting timestamp: $(date)"
+  echo "Starting timestamp: $(date)"
   cd $2
   terraform init > $3 2>$4
   if [ -s "$4" ] ; then
@@ -38,9 +38,9 @@ tf_init_apply () {
     cat $3
     exit 1
   fi
-  echo "ending timestamp: $(date)"
-  cd -
-  echo "--------------------------------------------------------------------------------------------------------------------"
+  echo "Ending timestamp: $(date)"
+  cd - > /dev/null
+  echo "-----------------------------------------------------"
 }
 
 

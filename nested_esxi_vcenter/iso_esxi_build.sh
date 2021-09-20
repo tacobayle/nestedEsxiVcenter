@@ -6,8 +6,8 @@
 #sudo apt install -y jq
 #sudo apt install -y genisoimage
 #
-if [ -f "variables.json" ]; then
-  jsonFile="variables.json"
+if [ -f "../variables.json" ]; then
+  jsonFile="../variables.json"
 else
   exit 1
 fi

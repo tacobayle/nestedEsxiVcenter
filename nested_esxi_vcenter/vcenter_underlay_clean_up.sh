@@ -17,8 +17,8 @@
 #echo "Installing packages"
 #sudo apt install -y jq
 #
-if [ -f "variables.json" ]; then
-  jsonFile="variables.json"
+if [ -f "../variables.json" ]; then
+  jsonFile="../variables.json"
 else
   exit 1
 fi

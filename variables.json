@@ -225,6 +225,9 @@
       "disk": 128,
       "basename": "avi-controller"
     },
+    "config": {
+      "create": true
+      },
     "app": {
       "create": false,
       "ova_location": "/home/ubuntu/bin/focal-server-cloudimg-amd64.ova",

@@ -54,7 +54,7 @@ data "vsphere_network" "vcenter_underlay_network_mgmt" {
 }
 
 data "vsphere_network" "network_nsx_overlay" {
-  count = (var.vcenter.dvs.single_vds == false && var.nsx.manager.create == true ? 1 : 0)
+  count = (var.vcenter.dvs.single_vds == false && var.nsx.networks.create == true ? 1 : 0)
   name = var.vcenter_underlay.network_nsx_overlay.name
   datacenter_id = data.vsphere_datacenter.dc.id
 }

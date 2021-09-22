@@ -70,7 +70,13 @@ fi
 # Build of the nested NSX-T appliance
 #
 if [[ $(jq -c -r .nsx.manager.create $jsonFile) == true ]] || [[ $(jq -c -r .nsx.content_library.create $jsonFile) == true ]] ; then
-  tf_init_apply "Build of the nested NSXT infrastructure" nsx ../logs/tf_nsx.stdout ../logs/tf_nsx.errors ../$jsonFile
+  tf_init_apply "Build of the nested NSXT infrastructure" nsx/manager ../../logs/tf_nsx.stdout ../../logs/tf_nsx.errors ../../$jsonFile
+fi
+#
+# Build of the config of NSX-T
+#
+if [[ $(jq -c -r .nsx.config.create $jsonFile) == true ]] ; then
+  tf_init_apply "Build of the config of NSX-T" nsx/config ../../logs/tf_nsx_config.stdout ../../logs/tf_nsx_config.errors ../../$jsonFile
 fi
 #
 # Build of the Avi Nested Networks

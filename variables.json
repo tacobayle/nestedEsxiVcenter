@@ -186,12 +186,13 @@
       "ova_location": "/home/ubuntu/bin/nsx-unified-appliance-3.1.3.0.0.18329005.ova"
     },
     "manager" : {
-      "create": false,
+      "create": true,
       "deployment": "Medium",
       "basename": "nsx-manager",
       "role": "NSX Manager"
     },
     "config": {
+      "create": false,
       "ip_pools": [
         {
           "name": "ip_pool_1",

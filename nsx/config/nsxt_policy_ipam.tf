@@ -1,4 +1,5 @@
 resource "nsxt_policy_ip_pool" "pools" {
+  depends_on = [null_resource.ansible_init_manager]
   count = length(var.nsx.config.ip_pools)
   display_name = var.nsx.config.ip_pools[count.index].name
 }

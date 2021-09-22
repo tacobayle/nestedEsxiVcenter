@@ -67,10 +67,14 @@ if [[ $(jq -c -r .nsx.networks.create $jsonFile) == true ]] ; then
 fi
 
 #
-# Build of the nested NSX-T appliance
+# Build of the nested NSXT Manager
 #
 if [[ $(jq -c -r .nsx.manager.create $jsonFile) == true ]] || [[ $(jq -c -r .nsx.content_library.create $jsonFile) == true ]] ; then
-  tf_init_apply "Build of the nested NSXT infrastructure" nsx/manager ../../logs/tf_nsx.stdout ../../logs/tf_nsx.errors ../../$jsonFile
+  tf_init_apply "Build of the nested NSXT Manager" nsx/manager ../../logs/tf_nsx.stdout ../../logs/tf_nsx.errors ../../$jsonFile
+  if [[ $(jq -c -r .nsx.manager.create $jsonFile) == true ]] ; then
+    echo "waiting for 15 minutes to finish the NSXT bootsrap..."
+    sleep 900
+  fi
 fi
 #
 # Build of the config of NSX-T
@@ -120,7 +124,7 @@ fi
 #
 # Build of the config of Avi
 #
-if [[ $(jq -c -r .avi.config.create $jsonFile) == true ]] ; then
+if [[ $(jq -c -r .avi.controller.create $jsonFile) == true ]] && [[ $(jq -c -r .avi.config.create $jsonFile) == true ]] ; then
   tf_init_apply "Build of the config of Avi" avi/config ../../logs/tf_avi_config.stdout ../../logs/tf_avi_config.errors ../../$jsonFile
 fi
 #

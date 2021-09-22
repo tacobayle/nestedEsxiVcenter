@@ -11,7 +11,7 @@ data "vsphere_host" "host_nested" {
 
 resource "vsphere_distributed_virtual_switch" "network_nsx_overlay" {
   count = (var.vcenter.dvs.single_vds == false && var.nsx.networks.create == true && var.avi.networks.create == true ? 1 : 0)
-  name = "${var.vcenter.dvs.portgroup.avi_mgmt.name}_vds"
+  name = "${var.vcenter.dvs.portgroup.nsx_overlay.name}_vds"
   datacenter_id = data.vsphere_datacenter.dc_nested[0].id
 
   dynamic "host" {
@@ -25,14 +25,14 @@ resource "vsphere_distributed_virtual_switch" "network_nsx_overlay" {
 
 resource "vsphere_distributed_port_group" "pg_nsx_overlay" {
   count = (var.vcenter.dvs.single_vds == false && var.nsx.networks.create == true ? 1 : 0)
-  name                            = var.vcenter.dvs.portgroup.avi_mgmt.name
+  name                            = var.vcenter.dvs.portgroup.nsx_overlay.name
   distributed_virtual_switch_uuid = vsphere_distributed_virtual_switch.network_nsx_overlay[0].id
   vlan_id = 0
 }
 
 resource "vsphere_distributed_virtual_switch" "network_nsx_overlay_wo_avi_networks" {
   count = (var.vcenter.dvs.single_vds == false && var.nsx.networks.create == true && var.avi.networks.create == false ? 1 : 0)
-  name = "${var.vcenter.dvs.portgroup.avi_mgmt.name}_vds"
+  name = "${var.vcenter.dvs.portgroup.nsx_overlay.name}_vds"
   datacenter_id = data.vsphere_datacenter.dc_nested[0].id
 
   dynamic "host" {
@@ -46,7 +46,7 @@ resource "vsphere_distributed_virtual_switch" "network_nsx_overlay_wo_avi_networ
 
 resource "vsphere_distributed_port_group" "pg_nsx_overlay_wo_avi_networks" {
   count = (var.vcenter.dvs.single_vds == false && var.nsx.networks.create == true && var.avi.networks.create == false ? 1 : 0)
-  name                            = var.vcenter.dvs.portgroup.avi_mgmt.name
+  name                            = var.vcenter.dvs.portgroup.nsx_overlay.name
   distributed_virtual_switch_uuid = vsphere_distributed_virtual_switch.network_nsx_overlay[0].id
   vlan_id = 0
 }

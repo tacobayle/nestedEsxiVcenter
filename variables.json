@@ -214,7 +214,7 @@
       "create": true
     },
     "content_library": {
-      "create": false,
+      "create": true,
       "ova_location": "/home/ubuntu/bin/controller-21.1.1-9045.ova"
     },
     "controller": {

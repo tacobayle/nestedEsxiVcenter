@@ -60,9 +60,15 @@ tf_init_apply "Build of the nested ESXi/vCenter infrastructure - This should tak
 echo "waiting for 15 minutes to finish the vCenter config..."
 sleep 900
 #
+# Build of the NSX Nested Networks
+#
+if [[ $(jq -c -r .nsx.networks.create $jsonFile) == true ]] ; then
+  tf_init_apply "Build of NSX Nested Networks - This should take less than a minute" nsx/networks ../../logs/tf_nsx_networks.stdout ../../logs/tf_nsx_networks.errors ../../$jsonFile
+fi
+
+#
 # Build of the nested NSX-T appliance
 #
-if [[ $(jq -c -r .nsx.manager.create $jsonFile) == true ]] ; then
 if [[ $(jq -c -r .nsx.manager.create $jsonFile) == true ]] || [[ $(jq -c -r .nsx.content_library.create $jsonFile) == true ]] ; then
   tf_init_apply "Build of the nested NSXT infrastructure" nsx ../logs/tf_nsx.stdout ../logs/tf_nsx.errors ../$jsonFile
 fi

@@ -23,13 +23,13 @@ data "vsphere_resource_pool" "resource_pool_nested" {
 }
 
 data "vsphere_network" "vcenter_network_mgmt_nested" {
-  count = (var.vcenter.dvs.single_vds == false && var.nsx.create == false && var.avi.controller.create == true ? 1 : 0)
+  count = (var.vcenter.dvs.single_vds == false && var.nsx.manager.create == false && var.avi.controller.create == true ? 1 : 0)
   name = var.vcenter.dvs.portgroup.management.name
   datacenter_id = data.vsphere_datacenter.dc_nested[0].id
 }
 
 data "vsphere_network" "vcenter_network_avi_mgmt_nested" {
-  count = (var.vcenter.dvs.single_vds == false && var.nsx.create == false && var.avi.controller.create == true ? 1 : 0)
+  count = (var.vcenter.dvs.single_vds == false && var.nsx.manager.create == false && var.avi.controller.create == true ? 1 : 0)
   name = "avi_mgmt"
   datacenter_id = data.vsphere_datacenter.dc_nested[0].id
 }

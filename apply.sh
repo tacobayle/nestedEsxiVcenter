@@ -62,7 +62,8 @@ sleep 900
 #
 # Build of the nested NSX-T appliance
 #
-if [[ $(jq -c -r .nsx.create $jsonFile) == true ]] ; then
+if [[ $(jq -c -r .nsx.manager.create $jsonFile) == true ]] ; then
+if [[ $(jq -c -r .nsx.manager.create $jsonFile) == true ]] || [[ $(jq -c -r .nsx.content_library.create $jsonFile) == true ]] ; then
   tf_init_apply "Build of the nested NSXT infrastructure" nsx ../logs/tf_nsx.stdout ../logs/tf_nsx.errors ../$jsonFile
 fi
 #

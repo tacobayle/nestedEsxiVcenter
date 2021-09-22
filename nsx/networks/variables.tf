@@ -5,12 +5,15 @@ variable "ntp" {}
 variable "dns" {}
 variable "vcenter" {}
 variable "nsx" {}
+variable "avi" {}
+variable "ssh_gw" {}
 
-
-variable "esxi_root_password" {}
+//variable "esxi_root_password" {}
 //variable "vsphere_username" {}
 //variable "vsphere_password" {}
 //variable "bind_password" {}
 variable "vcenter_password" {}
-variable "nsx_password" {}
-variable "nsx_license" {}
+variable "avi_password" {}
+variable "avi_backup_passphrase" {}
+//variable "nsx_password" {}
+//variable "nsx_license" {}

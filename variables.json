@@ -178,26 +178,36 @@
     }
   },
   "nsx": {
-    "create": false,
-    "ova_location": "/home/ubuntu/bin/nsx-unified-appliance-3.1.3.0.0.18329005.ova",
-    "deployment": "Medium",
-    "basename": "nsx-manager",
-    "role": "NSX Manager",
-    "ip_pools": [
-      {
-        "name": "ip_pool_1",
-        "cidr": "10.8.1.32/27",
-        "gateway": "10.8.1.33",
-        "start": "10.8.1.34",
-        "end": "10.8.1.62"
-      }
-    ],
-    "uplink_profiles": [
-      {
-        "name": "ip_pool_1",
-        "mtu": 8700
-      }
-    ]
+    "networks": {
+      "create": true
+    },
+    "content_library": {
+      "create": true,
+      "ova_location": "/home/ubuntu/bin/nsx-unified-appliance-3.1.3.0.0.18329005.ova"
+    },
+    "manager" : {
+      "create": false,
+      "deployment": "Medium",
+      "basename": "nsx-manager",
+      "role": "NSX Manager"
+    },
+    "config": {
+      "ip_pools": [
+        {
+          "name": "ip_pool_1",
+          "cidr": "10.8.1.32/27",
+          "gateway": "10.8.1.33",
+          "start": "10.8.1.34",
+          "end": "10.8.1.62"
+        }
+      ],
+      "uplink_profiles": [
+        {
+          "name": "ip_pool_1",
+          "mtu": 8700
+        }
+      ]
+    }
   },
   "avi": {
     "networks": {

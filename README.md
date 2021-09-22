@@ -110,8 +110,8 @@ export TF_VAR_bind_password=******                   # Bind password - needs to 
 export TF_VAR_vcenter_password=******                # Overlay vCenter admin password
 export TF_VAR_vcenter_readonly_password=******       # Overlay vCenter readonly password
 export TF_VAR_vcenter_avi_password=******            # Overlay vCenter avi password - needs to be defined if vcenter.avi_users == true
-export TF_VAR_nsx_password=******                    # NSX admin password - needs to be defined if nsx.create == true
-export TF_VAR_nsx_license=******                     # NSX license - needs to be defined if nsx.create == true
+export TF_VAR_nsx_password=******                    # NSX admin password - needs to be defined if nsx.manager.create == true
+export TF_VAR_nsx_license=******                     # NSX license - needs to be defined if nsx.manager.create == true
 export TF_VAR_avi_password=******                    # AVI admin password - needs to be defined if avi.controller.create == true
 export TF_VAR_avi_backup_passphrase=******           # AVI backup passphrase - needs to be defined if avi.controller.create == true
 export TF_VAR_avi_password=******                    # AVI admin password - needs to be defined if avi.controller.create == true

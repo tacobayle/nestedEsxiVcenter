@@ -1,6 +1,5 @@
 resource "vsphere_folder" "nsx" {
-  provider        = vsphere.overlay
-  count            = (var.nsx.create == true ? 1 : 0)
+  count            = (var.nsx.manager.create == true ? 1 : 0)
   path          = "nsx"
   type          = "vm"
   datacenter_id = data.vsphere_datacenter.dc_nested.id
@@ -9,13 +8,12 @@ resource "vsphere_folder" "nsx" {
 # https://docs.vmware.com/en/VMware-NSX-T-Data-Center/3.1/installation/GUID-AECA2EE0-90FC-48C4-8EDB-66517ACFE415.html
 
 resource "vsphere_virtual_machine" "nsx_extra_small" {
-  provider        = vsphere.overlay
-  count            = (var.nsx.create == true && var.nsx.deployment == "Extra Small" ? 1 : 0)
-  name             = "${var.nsx.basename}-${count.index}"
+  count            = (var.nsx.manager.create == true && var.nsx.manager.deployment == "Extra Small" ? 1 : 0)
+  name             = "${var.nsx.manager.basename}-${count.index}"
   datastore_id     = data.vsphere_datastore.datastore_nested.id
   resource_pool_id = data.vsphere_resource_pool.resource_pool_nested.id
   folder           = vsphere_folder.nsx[0].path
-  //  deployment_option = var.nsx.deployment
+  //  deployment_option = var.nsx.manager.deployment
 
   network_interface {
     network_id = data.vsphere_network.vcenter_network_mgmt_nested.id
@@ -26,12 +24,12 @@ resource "vsphere_virtual_machine" "nsx_extra_small" {
 
   disk {
     size             = 200
-    label            = "{var.nsx.basename}-${count.index}.lab_vmdk"
+    label            = "{var.nsx.manager.basename}-${count.index}.lab_vmdk"
     thin_provisioned = true
   }
 
   clone {
-    template_uuid = vsphere_content_library_item.OvaNSX[0].id
+    template_uuid = vsphere_content_library_item.nested_library_nsx_item[0].id
   }
 
   vapp {
@@ -41,26 +39,25 @@ resource "vsphere_virtual_machine" "nsx_extra_small" {
       nsx_cli_passwd_0 = var.nsx_password
       nsx_dns1_0 = var.dns.nameserver
       nsx_gateway_0 = var.vcenter.dvs.portgroup.management.gateway
-      nsx_hostname = "${var.nsx.basename}-${count.index}"
+      nsx_hostname = "${var.nsx.manager.basename}-${count.index}"
       nsx_ip_0 = var.vcenter.dvs.portgroup.management.nsx_ip
       nsx_isSSHEnabled = "True"
       nsx_netmask_0 = var.vcenter.dvs.portgroup.management.netmask
       nsx_ntp_0 = var.ntp.server
       nsx_passwd_0 = var.nsx_password
-      nsx_role = var.nsx.role
+      nsx_role = var.nsx.manager.role
       nsx_swIntegrityCheck = "False"
     }
   }
 }
 
 resource "vsphere_virtual_machine" "nsx_small" {
-  provider        = vsphere.overlay
-  count            = (var.nsx.create == true && var.nsx.deployment == "Small" ? 1 : 0)
-  name             = "${var.nsx.basename}-${count.index}"
+  count            = (var.nsx.manager.create == true && var.nsx.manager.deployment == "Small" ? 1 : 0)
+  name             = "${var.nsx.manager.basename}-${count.index}"
   datastore_id     = data.vsphere_datastore.datastore_nested.id
   resource_pool_id = data.vsphere_resource_pool.resource_pool_nested.id
   folder           = vsphere_folder.nsx[0].path
-  //  deployment_option = var.nsx.deployment
+  //  deployment_option = var.nsx.manager.deployment
 
   network_interface {
     network_id = data.vsphere_network.vcenter_network_mgmt_nested.id
@@ -71,12 +68,12 @@ resource "vsphere_virtual_machine" "nsx_small" {
 
   disk {
     size             = 200
-    label            = "{var.nsx.basename}-${count.index}.lab_vmdk"
+    label            = "{var.nsx.manager.basename}-${count.index}.lab_vmdk"
     thin_provisioned = true
   }
 
   clone {
-    template_uuid = vsphere_content_library_item.OvaNSX[0].id
+    template_uuid = vsphere_content_library_item.nested_library_nsx_item[0].id
   }
 
   vapp {
@@ -86,26 +83,25 @@ resource "vsphere_virtual_machine" "nsx_small" {
       nsx_cli_passwd_0 = var.nsx_password
       nsx_dns1_0 = var.dns.nameserver
       nsx_gateway_0 = var.vcenter.dvs.portgroup.management.gateway
-      nsx_hostname = "${var.nsx.basename}-${count.index}"
+      nsx_hostname = "${var.nsx.manager.basename}-${count.index}"
       nsx_ip_0 = var.vcenter.dvs.portgroup.management.nsx_ip
       nsx_isSSHEnabled = "True"
       nsx_netmask_0 = var.vcenter.dvs.portgroup.management.netmask
       nsx_ntp_0 = var.ntp.server
       nsx_passwd_0 = var.nsx_password
-      nsx_role = var.nsx.role
+      nsx_role = var.nsx.manager.role
       nsx_swIntegrityCheck = "False"
     }
   }
 }
 
 resource "vsphere_virtual_machine" "nsx_medium" {
-  provider        = vsphere.overlay
-  count            = (var.nsx.create == true && var.nsx.deployment == "Medium" ? 1 : 0)
-  name             = "${var.nsx.basename}-${count.index}"
+  count            = (var.nsx.manager.create == true && var.nsx.manager.deployment == "Medium" ? 1 : 0)
+  name             = "${var.nsx.manager.basename}-${count.index}"
   datastore_id     = data.vsphere_datastore.datastore_nested.id
   resource_pool_id = data.vsphere_resource_pool.resource_pool_nested.id
   folder           = vsphere_folder.nsx[0].path
-//  deployment_option = var.nsx.deployment
+//  deployment_option = var.nsx.manager.deployment
 
   network_interface {
     network_id = data.vsphere_network.vcenter_network_mgmt_nested.id
@@ -116,12 +112,12 @@ resource "vsphere_virtual_machine" "nsx_medium" {
 
   disk {
     size             = 200
-    label            = "{var.nsx.basename}-${count.index}.lab_vmdk"
+    label            = "{var.nsx.manager.basename}-${count.index}.lab_vmdk"
     thin_provisioned = true
   }
 
   clone {
-    template_uuid = vsphere_content_library_item.OvaNSX[0].id
+    template_uuid = vsphere_content_library_item.nested_library_nsx_item[0].id
   }
 
   vapp {
@@ -131,26 +127,25 @@ resource "vsphere_virtual_machine" "nsx_medium" {
       nsx_cli_passwd_0 = var.nsx_password
       nsx_dns1_0 = var.dns.nameserver
       nsx_gateway_0 = var.vcenter.dvs.portgroup.management.gateway
-      nsx_hostname = "${var.nsx.basename}-${count.index}"
+      nsx_hostname = "${var.nsx.manager.basename}-${count.index}"
       nsx_ip_0 = var.vcenter.dvs.portgroup.management.nsx_ip
       nsx_isSSHEnabled = "True"
       nsx_netmask_0 = var.vcenter.dvs.portgroup.management.netmask
       nsx_ntp_0 = var.ntp.server
       nsx_passwd_0 = var.nsx_password
-      nsx_role = var.nsx.role
+      nsx_role = var.nsx.manager.role
       nsx_swIntegrityCheck = "False"
     }
   }
 }
 
 resource "vsphere_virtual_machine" "nsx_large" {
-  provider        = vsphere.overlay
-  count            = (var.nsx.create == true && var.nsx.deployment == "Large" ? 1 : 0)
-  name             = "${var.nsx.basename}-${count.index}"
+  count            = (var.nsx.manager.create == true && var.nsx.manager.deployment == "Large" ? 1 : 0)
+  name             = "${var.nsx.manager.basename}-${count.index}"
   datastore_id     = data.vsphere_datastore.datastore_nested.id
   resource_pool_id = data.vsphere_resource_pool.resource_pool_nested.id
   folder           = vsphere_folder.nsx[0].path
-  //  deployment_option = var.nsx.deployment
+  //  deployment_option = var.nsx.manager.deployment
 
   network_interface {
     network_id = data.vsphere_network.vcenter_network_mgmt_nested.id
@@ -161,12 +156,12 @@ resource "vsphere_virtual_machine" "nsx_large" {
 
   disk {
     size             = 200
-    label            = "{var.nsx.basename}-${count.index}.lab_vmdk"
+    label            = "{var.nsx.manager.basename}-${count.index}.lab_vmdk"
     thin_provisioned = true
   }
 
   clone {
-    template_uuid = vsphere_content_library_item.OvaNSX[0].id
+    template_uuid = vsphere_content_library_item.nested_library_nsx_item[0].id
   }
 
   vapp {
@@ -176,13 +171,13 @@ resource "vsphere_virtual_machine" "nsx_large" {
       nsx_cli_passwd_0 = var.nsx_password
       nsx_dns1_0 = var.dns.nameserver
       nsx_gateway_0 = var.vcenter.dvs.portgroup.management.gateway
-      nsx_hostname = "${var.nsx.basename}-${count.index}"
+      nsx_hostname = "${var.nsx.manager.basename}-${count.index}"
       nsx_ip_0 = var.vcenter.dvs.portgroup.management.nsx_ip
       nsx_isSSHEnabled = "True"
       nsx_netmask_0 = var.vcenter.dvs.portgroup.management.netmask
       nsx_ntp_0 = var.ntp.server
       nsx_passwd_0 = var.nsx_password
-      nsx_role = var.nsx.role
+      nsx_role = var.nsx.manager.role
       nsx_swIntegrityCheck = "False"
     }
   }

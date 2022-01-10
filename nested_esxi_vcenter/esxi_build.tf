@@ -132,6 +132,10 @@ resource "vsphere_virtual_machine" "esxi_multiple_vswitch_with_NSX_wo_Avi" {
     network_id = data.vsphere_network.network_nsx_overlay[0].id
   }
 
+  network_interface {
+    network_id = data.vsphere_network.network_nsx_external[0].id
+  }
+
   num_cpus = var.esxi.cpu
   memory = var.esxi.memory
   guest_id = var.esxi.guest_id
@@ -236,19 +240,11 @@ resource "vsphere_virtual_machine" "esxi_multiple_vswitch_with_NSX_with_Avi" {
   }
 
   network_interface {
-    network_id = data.vsphere_network.network_avi_mgmt[0].id
-  }
-
-  network_interface {
-    network_id = data.vsphere_network.network_avi_vip[0].id
-  }
-
-  network_interface {
-    network_id = data.vsphere_network.network_avi_backend[0].id
-  }
-
-  network_interface {
     network_id = data.vsphere_network.network_nsx_overlay[0].id
+  }
+
+  network_interface {
+    network_id = data.vsphere_network.network_nsx_external[0].id
   }
 
   num_cpus = var.esxi.cpu

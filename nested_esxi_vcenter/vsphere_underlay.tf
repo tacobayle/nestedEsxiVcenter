@@ -59,6 +59,12 @@ data "vsphere_network" "network_nsx_overlay" {
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
+data "vsphere_network" "network_nsx_external" {
+  count = (var.vcenter.dvs.single_vds == false && var.nsx.networks.create == true ? 1 : 0)
+  name = var.vcenter_underlay.network_nsx_external.name
+  datacenter_id = data.vsphere_datacenter.dc.id
+}
+
 //resource "vsphere_folder" "esxi_folder" {
 //  path          = var.vcenter_underlay.folder
 //  type          = "vm"

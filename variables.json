@@ -35,6 +35,9 @@
       },
     "network_nsx_overlay": {
       "name": "vxw-dvs-34-virtualwire-124-sid-1080123-sof2-01-vc08-avi-dev120"
+      },
+    "network_nsx_external": {
+      "name": "vxw-dvs-34-virtualwire-125-sid-1080124-sof2-01-vc08-avi-dev121"
     }
     },
   "dns": {
@@ -151,7 +154,12 @@
           "prefix": "24"
         },
         "nsx_overlay": {
-          "name": "nsx_overlay"
+          "name": "nsx_overlay",
+          "vlan": 200
+        },
+        "nsx_external": {
+          "name": "nsx_external",
+          "vlan": 200
         },
         "avi_mgmt": {
           "name": "avi_mgmt",
@@ -173,20 +181,20 @@
       }
     },
     "avi_users": {
-      "create": true,
+      "create": false,
       "file": "attendees.txt"
     }
   },
   "nsx": {
     "networks": {
-      "create": true
+      "create": false
     },
     "content_library": {
-      "create": true,
+      "create": false,
       "ova_location": "/home/ubuntu/bin/nsx-unified-appliance-3.1.3.0.0.18329005.ova"
     },
     "manager" : {
-      "create": true,
+      "create": false,
       "deployment": "Medium",
       "basename": "nsx-manager",
       "role": "NSX Manager"
@@ -204,18 +212,122 @@
       ],
       "uplink_profiles": [
         {
-          "name": "ip_pool_1",
-          "mtu": 8700
+          "name": "UP_ESX_Multi-and-Inter-TEP",
+          "mtu": 8700,
+          "teaming": {
+            "policy": "LOADBALANCE_SRCID",
+            "active_list": [
+              {
+                "uplink_name": "uplink-1",
+                "uplink_type": "PNIC"
+              },
+              {
+                "uplink_name": "uplink-2",
+                "uplink_type": "PNIC"
+              }
+            ]
+          }
+        },
+        {
+          "name": "UP_Edge-VM_Multi-TEP",
+          "mtu": 8700,
+          "teaming": {
+            "policy": "LOADBALANCE_SRCID",
+            "active_list": [
+              {
+                "uplink_name": "uplink-1",
+                "uplink_type": "PNIC"
+              },
+              {
+                "uplink_name": "uplink-2",
+                "uplink_type": "PNIC"
+              }
+            ]
+          }
+        }
+      ],
+      "transport_zones": [
+        {
+          "name": "tz1",
+          "nested": true,
+          "type": "OVERLAY"
+        },
+        {
+          "name": "tz2",
+          "type": "VLAN"
+        }
+      ],
+      "segments": [
+        {
+          "name": "segment1",
+          "vlan": "200, 250, 260",
+          "transport_zone": "tz2",
+          "description": "Segment configured as Trunk, used for NSX Edge Nodes external connectivity"
+        },
+        {
+          "name": "segment2",
+          "vlan": "200, 250, 260",
+          "transport_zone": "tz2",
+          "description": "Segment configured as Trunk, used for NSX Edge Nodes external connectivity"
+        }
+      ],
+      "transport_node_profiles": [
+        {
+          "name": "tnp-1",
+          "description": "descr1",
+          "switch": {
+            "name": "nsx_overlay_vds",
+            "mode": "STANDARD",
+            "type": "VDS",
+            "uplink_profile_name": "UP_Edge-VM_Multi-TEP",
+            "ip_pool_name": "ip_pool_1",
+            "uplinks": [
+              {
+                "uplink_name": "uplink-1",
+                "vds_uplink_name": "uplink1"
+              },
+              {
+                "uplink_name": "uplink-2",
+                "vds_uplink_name": "uplink2"
+              }
+            ],
+            "transport_zones": [
+              "tz1",
+              "tz2"
+            ]
+          }
+        },
+        {
+          "name": "tnp-2",
+          "description": "descr2",
+          "switch": {
+            "name": "nsx_overlay_vds",
+            "mode": "STANDARD",
+            "type": "VDS",
+            "uplink_profile_name": "UP_Edge-VM_Multi-TEP",
+            "ip_pool_name": "ip_pool_1",
+            "uplinks": [
+              {
+                "uplink_name": "uplink-1",
+                "vds_uplink_name": "uplink1"
+              }
+            ],
+            "transport_zones": [
+              "tz1",
+              "tz2",
+              "tz3"
+            ]
+          }
         }
       ]
     }
   },
   "avi": {
     "networks": {
-      "create": true
+      "create": false
     },
     "content_library": {
-      "create": true,
+      "create": false,
       "ova_location": "/home/ubuntu/bin/controller-21.1.1-9045.ova"
     },
     "controller": {
@@ -226,7 +338,7 @@
       "basename": "avi-controller"
     },
     "config": {
-      "create": true
+      "create": false
       },
     "app": {
       "create": false,

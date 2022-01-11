@@ -103,7 +103,7 @@
     "ntp": "time.vmware.com,pool.ntp.org"
   },
   "vcenter": {
-    "iso_source_location": "/home/ubuntu/bin/VMware-VCSA-all-7.0.2-18356314.iso",
+    "iso_source_location": "/home/ubuntu/bin/VMware-VCSA-all-7.0.3-18778458.iso",
     "json_config_file": "vcsa-cli-installer/templates/install/vCSA_with_cluster_on_ESXi.json",
     "datacenter": "dc1",
     "cluster": "cluster1",

@@ -1,0 +1,1 @@
+cd ~/nestedEsxiVcenter ; /bin/bash destroy.sh ; cd ~ ; git clone https://github.com/tacobayle/nestedEsxiVcenter ; cd nestedEsxiVcenter ; /bin/bash apply.sh

@@ -122,7 +122,7 @@
       "single_vds": false,
       "mtu": 1500,
       "discovery_protocol": "lldp",
-      "version": "7.0.0",
+      "version": "7.0.2",
       "portgroup": {
         "management": {
           "name": "management",
@@ -188,14 +188,14 @@
   },
   "nsx": {
     "networks": {
-      "create": false
+      "create": true
     },
     "content_library": {
-      "create": false,
-      "ova_location": "/home/ubuntu/bin/nsx-unified-appliance-3.1.3.0.0.18329005.ova"
+      "create": true,
+      "ova_location": "/home/ubuntu/bin/nsx-unified-appliance-3.2.0.0.0.19067081.ova"
     },
     "manager" : {
-      "create": false,
+      "create": true,
       "deployment": "Medium",
       "basename": "nsx-manager",
       "role": "NSX Manager"

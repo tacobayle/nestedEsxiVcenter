@@ -130,9 +130,9 @@ fi
 # if multiple vds switch
 if [[ $(jq -c -r .vcenter.dvs.single_vds $jsonFile) == false ]] ; then
   load_govc_env
-  govc dvs.create -mtu $(jq -r .vcenter.dvs.mtu $jsonFile) -discovery-protocol $(jq -r .vcenter.dvs.discovery_protocol $jsonFile) "$(jq -r .vcenter.dvs.basename $jsonFile)-0"
-  govc dvs.create -mtu $(jq -r .vcenter.dvs.mtu $jsonFile) -discovery-protocol $(jq -r .vcenter.dvs.discovery_protocol $jsonFile) "$(jq -r .vcenter.dvs.basename $jsonFile)-1-VMotion"
-  govc dvs.create -mtu $(jq -r .vcenter.dvs.mtu $jsonFile) -discovery-protocol $(jq -r .vcenter.dvs.discovery_protocol $jsonFile) "$(jq -r .vcenter.dvs.basename $jsonFile)-2-VSAN"
+  govc dvs.create -mtu $(jq -r .vcenter.dvs.mtu $jsonFile) -discovery-protocol $(jq -r .vcenter.dvs.discovery_protocol $jsonFile) -product-version=7.0.0 "$(jq -r .vcenter.dvs.basename $jsonFile)-0"
+  govc dvs.create -mtu $(jq -r .vcenter.dvs.mtu $jsonFile) -discovery-protocol $(jq -r .vcenter.dvs.discovery_protocol $jsonFile) -product-version=7.0.0 "$(jq -r .vcenter.dvs.basename $jsonFile)-1-VMotion"
+  govc dvs.create -mtu $(jq -r .vcenter.dvs.mtu $jsonFile) -discovery-protocol $(jq -r .vcenter.dvs.discovery_protocol $jsonFile) -product-version=7.0.0 "$(jq -r .vcenter.dvs.basename $jsonFile)-2-VSAN"
   govc dvs.portgroup.add -dvs "$(jq -r .vcenter.dvs.basename $jsonFile)-0" -vlan 0 "$(jq -r .vcenter.dvs.portgroup.management.name $jsonFile)"
   govc dvs.portgroup.add -dvs "$(jq -r .vcenter.dvs.basename $jsonFile)-0" -vlan 0 "$(jq -r .vcenter.dvs.portgroup.management.name $jsonFile)-vmk"
   govc dvs.portgroup.add -dvs "$(jq -r .vcenter.dvs.basename $jsonFile)-1-VMotion" -vlan 0 "$(jq -r .vcenter.dvs.portgroup.VMotion.name $jsonFile)"

@@ -23,7 +23,7 @@ resource "local_file" "ks_cust_multiple_vswitch" {
   content     = templatefile("${path.module}/templates/ks_cust_multiple_vswitch.cfg.tmpl",
   { esxi_root_password = var.esxi_root_password,
     keyboard_type = var.esxi.keyboard_type,
-    ip = var.vcenter.dvs.portgroup.management.esxi_ips[count.index],
+    ip_mgmt = var.vcenter.dvs.portgroup.management.esxi_ips[count.index],
     netmask = var.vcenter.dvs.portgroup.management.netmask,
     gateway = var.vcenter.dvs.portgroup.management.gateway,
     ip_vmotion = var.vcenter.dvs.portgroup.VMotion.esxi_ips[count.index],
@@ -318,16 +318,16 @@ resource "null_resource" "wait_esxi" {
   }
 }
 
-resource "null_resource" "esxi_customization" {
+resource "null_resource" "esxi_customization_disk" {
   depends_on = [null_resource.wait_esxi]
 
   provisioner "local-exec" {
-    command = "/bin/bash esxi_customization.sh"
+    command = "/bin/bash esxi_customization_disk.sh"
   }
 }
 
 resource "null_resource" "vcenter_underlay_clean_up" {
-  depends_on = [null_resource.esxi_customization]
+  depends_on = [null_resource.esxi_customization_disk]
 
   provisioner "local-exec" {
     command = "/bin/bash vcenter_underlay_clean_up.sh"

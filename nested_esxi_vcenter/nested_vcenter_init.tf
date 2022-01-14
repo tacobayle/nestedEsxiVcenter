@@ -12,7 +12,7 @@
 
 
 resource "null_resource" "vcenter_install" {
-  depends_on = [null_resource.esxi_customization]
+  depends_on = [null_resource.esxi_customization_disk]
 
   provisioner "local-exec" {
     command = "/bin/bash iso_extract_vCenter.sh"

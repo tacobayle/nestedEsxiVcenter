@@ -18,7 +18,7 @@
       loop: "{{ vcenter.dvs.portgroup.management.esxi_ips }}"
       loop_control:
         index_var: my_idx
-      when: not vcenter.dvs.single_vds
+      when: not vcenter.dvs.single_vds | bool
 
     - name: Migrate vmk2 (VSAN) to the VDS
       community.vmware.vmware_migrate_vmk:
@@ -35,9 +35,9 @@
       loop: "{{ vcenter.dvs.portgroup.management.esxi_ips }}"
       loop_control:
         index_var: my_idx
-      when: not vcenter.dvs.single_vds
+      when: not vcenter.dvs.single_vds | bool
 
-#    - name: Migrate vmk0 (Mgmt) to the VDS
+    #    - name: Migrate vmk0 (Mgmt) to the VDS
 #      community.vmware.vmware_migrate_vmk:
 #        hostname: "{{ vcenter.name }}.{{ dns.domain}}"
 #        username: "administrator@{{ vcenter.sso.domain_name }}"

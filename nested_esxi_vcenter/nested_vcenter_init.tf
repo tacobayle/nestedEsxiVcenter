@@ -151,6 +151,8 @@ resource "null_resource" "dual_uplink_update_multiple_vds" {
 
   provisioner "remote-exec" {
     inline      = [
+      "esxcli network vswitch standard uplink remove -u vmnic4 -v vSwitch1",
+      "esxcli network vswitch standard uplink remove -u vmnic5 -v vSwitch2",
       "portid=$(esxcfg-vswitch -l | grep -A4 ${var.vcenter.dvs.basename}-0 | grep -A2 DVPort | grep -A1 vmnic0 | grep -v vmnic0 |awk '{print $1}')",
       "esxcfg-vswitch -P vmnic3 -V $portid ${var.vcenter.dvs.basename}-0",
       "portid=$(esxcfg-vswitch -l | grep -A4 ${var.vcenter.dvs.basename}-1-VMotion | grep -A2 DVPort | grep -A1 vmnic1 | grep -v vmnic1 |awk '{print $1}')",

@@ -122,6 +122,7 @@
       "single_vds": false,
       "mtu": 1500,
       "discovery_protocol": "lldp",
+      "version": "7.0.0",
       "portgroup": {
         "management": {
           "name": "management",

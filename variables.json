@@ -155,11 +155,11 @@
           "prefix": "24"
         },
         "nsx_overlay": {
-          "name": "nsx_overlay",
+          "name": "nsx-overlay",
           "vlan": 200
         },
         "nsx_external": {
-          "name": "nsx_external",
+          "name": "nsx-external",
           "vlan": 200
         },
         "avi_mgmt": {

@@ -22,7 +22,7 @@ echo "--------------------------------------------------------------------------
 #
 echo "Destroy the nested ESXi/vCenter infrastructure"
 cd nested_esxi_vcenter
-terraform refresh -var-file=variables.json ; terraform destroy -auto-approve -var-file=../$jsonFile
+terraform refresh -var-file=../$jsonFile ; terraform destroy -auto-approve -var-file=../$jsonFile
 cd ..
 echo "--------------------------------------------------------------------------------------------------------------------"
 #

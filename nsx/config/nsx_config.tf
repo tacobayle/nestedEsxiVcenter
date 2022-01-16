@@ -1,7 +1,7 @@
 resource "null_resource" "ansible_init_manager" {
 
   provisioner "local-exec" {
-    command = " ansible-playbook ansible/nsx1.yml -e @../../variables.json"
+    command = "ansible-playbook ansible/nsx1.yml -e @../../variables.json"
   }
 }
 
@@ -50,7 +50,7 @@ resource "nsxt_policy_segment" "segments_for_multiple_vds" {
 resource "null_resource" "ansible_nsx2" {
   depends_on = [nsxt_policy_segment.segments_for_multiple_vds, nsxt_policy_segment.segments_for_single_vds, nsxt_policy_ip_pool_static_subnet.static_subnet]
   provisioner "local-exec" {
-    command = " ansible-playbook ansible/nsx2.yml -e @../../variables.json"
+    command = "ansible-playbook ansible/nsx2.yml -e @../../variables.json"
   }
 }
 

@@ -156,11 +156,13 @@
         },
         "nsx_overlay": {
           "name": "nsx-overlay",
-          "vlan": 200
+          "vlan": 200,
+          "max_mtu": 1600
         },
         "nsx_external": {
           "name": "nsx-external",
-          "vlan": 200
+          "vlan": 200,
+          "max_mtu": 1600
         },
         "avi_mgmt": {
           "name": "avi_mgmt",
@@ -277,7 +279,7 @@
           "name": "tnp-1",
           "description": "descr1",
           "switch": {
-            "name": "nsx_overlay_vds",
+            "name": "nsx-overlay-vds",
             "mode": "STANDARD",
             "type": "VDS",
             "uplink_profile_name": "UP_Edge-VM_Multi-TEP",
@@ -302,7 +304,7 @@
           "name": "tnp-2",
           "description": "descr2",
           "switch": {
-            "name": "nsx_overlay_vds",
+            "name": "nsx-overlay-vds",
             "mode": "STANDARD",
             "type": "VDS",
             "uplink_profile_name": "UP_Edge-VM_Multi-TEP",

@@ -34,14 +34,14 @@
           password: "{{ lookup('env', 'TF_VAR_vcenter_password') }}"
         state: present
 
-    - name: Configure virtual IP
-      nsxt_virtual_ip:
-        hostname: "{{ vcenter.dvs.portgroup.management.nsx_ip }}"
-        username: "admin"
-        password: "{{ lookup('env', 'TF_VAR_nsx_password') }}"
-        validate_certs: False
-        virtual_ip_address: "{{ vcenter.dvs.portgroup.management.nsx_vip }}"
-        state: present
+#    - name: Configure virtual IP
+#      nsxt_virtual_ip:
+#        hostname: "{{ vcenter.dvs.portgroup.management.nsx_ip }}"
+#        username: "admin"
+#        password: "{{ lookup('env', 'TF_VAR_nsx_password') }}"
+#        validate_certs: False
+#        virtual_ip_address: "{{ vcenter.dvs.portgroup.management.nsx_vip }}"
+#        state: present
 
     - name: Create a Hostswitch Profiles
       nsxt_uplink_profiles:

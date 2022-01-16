@@ -14,6 +14,7 @@ resource "vsphere_distributed_virtual_switch" "network_nsx_overlay" {
   name = "${var.vcenter.dvs.portgroup.nsx_overlay.name}-vds"
   datacenter_id = data.vsphere_datacenter.dc_nested[0].id
   version = var.vcenter.dvs.version
+  max_mtu = var.vcenter.dvs.portgroup.nsx_overlay.max_mtu
 
   dynamic "host" {
     for_each = data.vsphere_host.host_nested
@@ -36,6 +37,7 @@ resource "vsphere_distributed_virtual_switch" "network_nsx_external" {
   name = "${var.vcenter.dvs.portgroup.nsx_external.name}-vds"
   datacenter_id = data.vsphere_datacenter.dc_nested[0].id
   version = var.vcenter.dvs.version
+  max_mtu = var.vcenter.dvs.portgroup.nsx_external.max_mtu
 
   dynamic "host" {
     for_each = data.vsphere_host.host_nested

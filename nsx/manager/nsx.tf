@@ -13,6 +13,7 @@ resource "vsphere_virtual_machine" "nsx_extra_small" {
   datastore_id     = data.vsphere_datastore.datastore_nested.id
   resource_pool_id = data.vsphere_resource_pool.resource_pool_nested.id
   folder           = vsphere_folder.nsx[0].path
+  wait_for_guest_net_timeout = 10
   //  deployment_option = var.nsx.manager.deployment
 
   network_interface {
@@ -57,6 +58,7 @@ resource "vsphere_virtual_machine" "nsx_small" {
   datastore_id     = data.vsphere_datastore.datastore_nested.id
   resource_pool_id = data.vsphere_resource_pool.resource_pool_nested.id
   folder           = vsphere_folder.nsx[0].path
+  wait_for_guest_net_timeout = 10
   //  deployment_option = var.nsx.manager.deployment
 
   network_interface {
@@ -101,6 +103,7 @@ resource "vsphere_virtual_machine" "nsx_medium" {
   datastore_id     = data.vsphere_datastore.datastore_nested.id
   resource_pool_id = data.vsphere_resource_pool.resource_pool_nested.id
   folder           = vsphere_folder.nsx[0].path
+  wait_for_guest_net_timeout = 10
 //  deployment_option = var.nsx.manager.deployment
 
   network_interface {
@@ -145,6 +148,7 @@ resource "vsphere_virtual_machine" "nsx_large" {
   datastore_id     = data.vsphere_datastore.datastore_nested.id
   resource_pool_id = data.vsphere_resource_pool.resource_pool_nested.id
   folder           = vsphere_folder.nsx[0].path
+  wait_for_guest_net_timeout = 10
   //  deployment_option = var.nsx.manager.deployment
 
   network_interface {

@@ -47,11 +47,11 @@ resource "nsxt_policy_segment" "segments_for_multiple_vds" {
   description         = var.nsx.config.segments[count.index].description
 }
 
-resource "null_resource" "ansible_nsx2" {
-  depends_on = [nsxt_policy_segment.segments_for_multiple_vds, nsxt_policy_segment.segments_for_single_vds, nsxt_policy_ip_pool_static_subnet.static_subnet]
-  provisioner "local-exec" {
-    command = "ansible-playbook ansible/nsx2.yml -e @../../variables.json"
-  }
-}
+//resource "null_resource" "ansible_nsx2" {
+//  depends_on = [nsxt_policy_segment.segments_for_multiple_vds, nsxt_policy_segment.segments_for_single_vds, nsxt_policy_ip_pool_static_subnet.static_subnet]
+//  provisioner "local-exec" {
+//    command = "ansible-playbook ansible/nsx2.yml -e @../../variables.json"
+//  }
+//}
 
 # we need to apply the above (TNP) to the cluster

@@ -155,12 +155,12 @@
           "prefix": "24"
         },
         "nsx_overlay": {
-          "name": "nsx-overlay",
+          "name": "nsx-overlay-vds",
           "vlan": 200,
           "max_mtu": 1600
         },
         "nsx_external": {
-          "name": "nsx-external",
+          "name": "nsx-external-vds",
           "vlan": 200,
           "max_mtu": 1600
         },
@@ -282,7 +282,7 @@
             "name": "nsx-overlay-vds",
             "mode": "STANDARD",
             "type": "VDS",
-            "uplink_profile_name": "UP_Edge-VM_Multi-TEP",
+            "uplink_profile_name": "UP_ESX_Multi-and-Inter-TEP",
             "ip_pool_name": "ip_pool_1",
             "uplinks": [
               {
@@ -317,8 +317,7 @@
             ],
             "transport_zones": [
               "tz1",
-              "tz2",
-              "tz3"
+              "tz2"
             ]
           }
         }

@@ -3,7 +3,14 @@ resource "null_resource" "ansible_init_manager" {
   provisioner "local-exec" {
     command = "ansible-playbook ansible/nsx1.yml -vvv -e @../../variables.json"
   }
+
+  provisioner "local-exec" {
+    command = "/bin/bash bash/register_compute_manager.sh"
+  }
+
 }
+
+
 
 resource "nsxt_policy_ip_pool" "pools" {
   depends_on = [null_resource.ansible_init_manager]

@@ -19,20 +19,22 @@
       ignore_errors: yes  # If license in already in use or not applicable, it will result in 'failure', so need to ensure we continue by ignoring the error
       no_log: true
 
-    - name: Register NSX-T Compute Manager
-      nsxt_fabric_compute_managers:
-        hostname: "{{ vcenter.dvs.portgroup.management.nsx_ip }}"
-        username: "admin"
-        password: "{{ lookup('env', 'TF_VAR_nsx_password') }}"
-        validate_certs: False
-        display_name: "{{ vcenter.name }}.{{ dns.domain }}"
-        server: "{{ vcenter.name }}.{{ dns.domain }}"
-        origin_type: vCenter
-        credential:
-          credential_type: UsernamePasswordLoginCredential
-          username: "administrator@{{ vcenter.sso.domain_name }}"
-          password: "{{ lookup('env', 'TF_VAR_vcenter_password') }}"
-        state: present
+#    - name: Register NSX-T Compute Manager
+#      nsxt_fabric_compute_managers:
+#        hostname: "{{ vcenter.dvs.portgroup.management.nsx_ip }}"
+#        username: "admin"
+#        password: "{{ lookup('env', 'TF_VAR_nsx_password') }}"
+#        validate_certs: False
+#        display_name: "{{ vcenter.name }}.{{ dns.domain }}"
+#        server: "{{ vcenter.name }}.{{ dns.domain }}"
+#        create_service_account: true
+#        access_level_for_oidc: "Full"
+#        origin_type: vCenter
+#        credential:
+#          credential_type: UsernamePasswordLoginCredential
+#          username: ""administrator@"{{ vcenter.sso.domain_name }}"
+#          password: "{{ lookup('env', 'TF_VAR_vcenter_password') }}"
+#        state: present
 
 #    - name: Configure virtual IP
 #      nsxt_virtual_ip:

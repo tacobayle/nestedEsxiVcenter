@@ -1,7 +1,7 @@
 resource "null_resource" "ansible_init_manager" {
 
   provisioner "local-exec" {
-    command = "ansible-playbook ansible/nsx1.yml -vvv -e @../../variables.json"
+    command = "ansible-playbook ansible/nsx1.yml -e @../../variables.json"
   }
 
   provisioner "local-exec" {

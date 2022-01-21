@@ -59,7 +59,6 @@ resource "null_resource" "register_compute_manager" {
   provisioner "local-exec" {
     command = "/bin/bash bash/register_compute_manager.sh"
   }
-
 }
 
 

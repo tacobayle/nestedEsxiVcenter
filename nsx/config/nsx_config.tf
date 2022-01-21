@@ -2,11 +2,6 @@ resource "null_resource" "ansible_init_manager" {
   provisioner "local-exec" {
     command = "ansible-playbook ansible/ansible_init_manager.yml -e @../../variables.json"
   }
-
-  provisioner "local-exec" {
-    command = "/bin/bash bash/register_compute_manager.sh"
-  }
-
 }
 
 resource "null_resource" "register_compute_manager" {

@@ -9,7 +9,6 @@ resource "null_resource" "register_compute_manager" {
   provisioner "local-exec" {
     command = "/bin/bash bash/register_compute_manager.sh"
   }
-
 }
 
 resource "nsxt_policy_ip_pool" "pools" {
@@ -61,17 +60,15 @@ resource "nsxt_policy_segment" "segments_for_multiple_vds" {
 resource "null_resource" "create_transport_node_profiles" {
   depends_on = [nsxt_policy_ip_pool.pools, nsxt_policy_ip_pool_static_subnet.static_subnet, nsxt_policy_segment.segments_for_single_vds, nsxt_policy_segment.segments_for_multiple_vds]
   provisioner "local-exec" {
-    command = "ansible-playbook ansible/create_transport_zone_profiles.yml -e @../../variables.json"
+    command = "ansible-playbook ansible/create_transport_node_profiles.yml -e @../../variables.json"
   }
 }
 
 resource "null_resource" "create_host_transport_node" {
   depends_on = [null_resource.create_transport_node_profiles]
-
   provisioner "local-exec" {
     command = "/bin/bash bash/create_host_transport_node.sh"
   }
-
 }
 
 

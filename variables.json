@@ -203,7 +203,7 @@
       "role": "NSX Manager"
     },
     "config": {
-      "create": false,
+      "create": true,
       "ip_pools": [
         {
           "name": "ip_pool_1",

@@ -1,5 +1,4 @@
 resource "null_resource" "ansible_init_manager" {
-
   provisioner "local-exec" {
     command = "ansible-playbook ansible/ansible_init_manager.yml -e @../../variables.json"
   }
@@ -26,6 +25,7 @@ resource "nsxt_policy_ip_pool_static_subnet" "static_subnet" {
 }
 
 data "nsxt_policy_transport_zone" "vlan_transport_zone" {
+  depends_on = [null_resource.ansible_init_manager]
   count = length(var.nsx.config.segments)
   display_name        = var.nsx.config.segments[count.index].transport_zone
 }
@@ -47,15 +47,15 @@ resource "nsxt_policy_segment" "segments_for_multiple_vds" {
   description         = var.nsx.config.segments[count.index].description
 }
 
-resource "null_resource" "ansible_nsx2" {
+resource "null_resource" "create_transport_zone_profiles" {
   depends_on = [nsxt_policy_segment.segments_for_multiple_vds, nsxt_policy_segment.segments_for_single_vds, nsxt_policy_ip_pool_static_subnet.static_subnet]
   provisioner "local-exec" {
-    command = "ansible-playbook ansible/nsx2.yml -e @../../variables.json"
+    command = "ansible-playbook ansible/create_transport_zone_profiles.yml -e @../../variables.json"
   }
 }
 
 resource "null_resource" "register_compute_manager" {
-
+  depends_on = [null_resource.create_transport_zone_profiles]
   provisioner "local-exec" {
     command = "/bin/bash bash/register_compute_manager.sh"
   }

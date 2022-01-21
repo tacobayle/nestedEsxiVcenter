@@ -70,6 +70,3 @@ resource "null_resource" "create_host_transport_node" {
     command = "/bin/bash bash/create_host_transport_node.sh"
   }
 }
-
-
-# we need to apply the above (TNP) to the cluster

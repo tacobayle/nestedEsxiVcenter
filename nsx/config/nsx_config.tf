@@ -1,4 +1,12 @@
+resource "null_resource" "waiting_for_nsx_api" {
+  provisioner "local-exec" {
+    command = "/bin/bash bash/waiting_for_nsx_api.sh"
+  }
+}
+
 resource "null_resource" "ansible_init_manager" {
+  depends_on = [null_resource.waiting_for_nsx_api]
+
   provisioner "local-exec" {
     command = "ansible-playbook ansible/ansible_init_manager.yml -e @../../variables.json"
   }

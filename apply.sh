@@ -74,8 +74,8 @@ fi
 if [[ $(jq -c -r .nsx.manager.create $jsonFile) == true ]] || [[ $(jq -c -r .nsx.content_library.create $jsonFile) == true ]] ; then
   tf_init_apply "Build of the nested NSXT Manager - This should take less than 20 minutes" nsx/manager ../../logs/tf_nsx.stdout ../../logs/tf_nsx.errors ../../$jsonFile
   if [[ $(jq -c -r .nsx.manager.create $jsonFile) == true ]] ; then
-    echo "waiting for 15 minutes to finish the NSXT bootsrap..."
-    sleep 900
+    echo "waiting for 5 minutes to finish the NSXT bootsrap..."
+    sleep 300
   fi
 fi
 #

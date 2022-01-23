@@ -11,6 +11,9 @@ vcenter_username=administrator
 vcenter_domain=$(jq -r .vcenter.sso.domain_name $jsonFile)
 vcenter_fqdn="$(jq -r .vcenter.name $jsonFile).$(jq -r .dns.domain $jsonFile)"
 rm -f cookies.txt headers.txt
+#
+# Retrieve session based details
+#
 curl -k -c cookies.txt -D headers.txt -X POST -d 'j_username=admin&j_password='$TF_VAR_nsx_password'' https://$nsx_ip/api/session/create
 #
 # create host transport node

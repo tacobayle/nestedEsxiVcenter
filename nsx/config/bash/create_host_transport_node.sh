@@ -12,6 +12,9 @@ vcenter_domain=$(jq -r .vcenter.sso.domain_name $jsonFile)
 vcenter_fqdn="$(jq -r .vcenter.name $jsonFile).$(jq -r .dns.domain $jsonFile)"
 rm -f cookies.txt headers.txt
 curl -k -c cookies.txt -D headers.txt -X POST -d 'j_username=admin&j_password='$TF_VAR_nsx_password'' https://$nsx_ip/api/session/create
+#
+# create host transport node
+#
 compute_collections=$(curl -k -s -X GET -b cookies.txt -H "`grep X-XSRF-TOKEN headers.txt`" -H "Content-Type: application/json" https://$nsx_ip/api/v1/fabric/compute-collections)
 IFS=$'\n'
 for item in $(echo $compute_collections | jq -c -r .results[])
@@ -30,8 +33,9 @@ do
 done
 curl -k -s -X POST -b cookies.txt -H "`grep X-XSRF-TOKEN headers.txt`" -H "Content-Type: application/json" -d '{"resource_type": "TransportNodeCollection", "display_name": "TransportNodeCollection-1", "description": "Transport Node Collections 1", "compute_collection_id": "'$compute_collection_external_id'", "transport_node_profile_id": "'$transport_node_profile_id'"}' https://$nsx_ip/api/v1/transport-node-collections
 #
-# waiting for transport node to be ready
+# waiting for host transport node to be ready
 #
+sleep 60
 discovered_nodes=$(curl -k -s -X GET -b cookies.txt -H "`grep X-XSRF-TOKEN headers.txt`" -H "Content-Type: application/json" https://$nsx_ip/policy/api/v1/infra/sites/default/enforcement-points/default/host-transport-nodes)
 IFS=$'\n'
 for item in $(echo $discovered_nodes | jq -c -r .results[])

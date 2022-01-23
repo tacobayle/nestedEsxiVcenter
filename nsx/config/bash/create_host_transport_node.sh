@@ -29,6 +29,9 @@ do
   fi
 done
 curl -k -s -X POST -b cookies.txt -H "`grep X-XSRF-TOKEN headers.txt`" -H "Content-Type: application/json" -d '{"resource_type": "TransportNodeCollection", "display_name": "TransportNodeCollection-1", "description": "Transport Node Collections 1", "compute_collection_id": "'$compute_collection_external_id'", "transport_node_profile_id": "'$transport_node_profile_id'"}' https://$nsx_ip/api/v1/transport-node-collections
+#
+# waiting for transport node to be ready
+#
 discovered_nodes=$(curl -k -s -X GET -b cookies.txt -H "`grep X-XSRF-TOKEN headers.txt`" -H "Content-Type: application/json" https://$nsx_ip/policy/api/v1/infra/sites/default/enforcement-points/default/host-transport-nodes)
 IFS=$'\n'
 for item in $(echo $discovered_nodes | jq -c -r .results[])
